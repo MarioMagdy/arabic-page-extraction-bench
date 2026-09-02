@@ -39,13 +39,13 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
 | Gemini 3.5 Flash · blocks + second-pass refs | P2 | 20 | 99.47% | 97% | 100% | 92% | 0 | $0.00113 |
 | Gemini 3.5 Flash · schema prompt | P1 | 20 | 99.46% | 84% | 100% | — | 0 | $0.00048 |
 | Gemini 3.5 Flash · schema · direct API | P1 | 20 | 99.44% | 83% | 100% | — | 0 | $0.00054 |
-| Qwen 3.8 Max · blocks | P2 | 17 | 99.35% | 100% | 100% | 90% | 0 | $0.00815 |
+| Qwen 3.8 Max · blocks | P2 | 20 | 99.36% | 100% | 100% | 92% | 0 | $0.00826 |
 | Gemini 3.7 Flash · schema prompt | P1 | 20 | 99.32% | 84% | 100% | — | 0 | $0.00048 |
 | Gemini 3.7 Flash · blocks | P2 | 20 | 99.22% | 100% | 100% | 92% | 0 | $0.00070 |
 | Claude Sonnet 5 · blocks | P2 | 20 | 99.10% | 100% | 100% | 92% | 0 | $0.01517 |
 | Gemini 3.7 Flash · flat prompt | P0 | 20 | 99.09% | 92% | 75% | — | 0 | $0.00045 |
+| Kimi K3 · blocks | P2 | 20 | 98.04% | 95% | 92% | 85% | 0 | $0.01542 |
 | GPT 5.6 Luna · blocks | P2 | 20 | 97.98% | 98% | 75% | 43% | 0 | $0.00096 |
-| Kimi K3 · blocks | P2 | 16 | 97.57% | 94% | 90% | 80% | 0 | $0.01513 |
 | Gemini 3.5 Flash · blocks + references | P3 | 20 | 97.03% | 97% | 100% | 92% | 0 | $0.00076 |
 | Gemini 3.5 Flash Lite · schema prompt | P1 | 20 | 96.07% | 88% | 100% | — | 0 | $0.00051 |
 | GPT 5.6 Terra · blocks | P2 | 20 | 95.81% | 98% | 92% | 87% | 0 | $0.01100 |
@@ -66,7 +66,7 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
 
 - **P0** — 2 arm(s). Mean transcript accuracy 94.72%, mean footnote-exact 76%.
 - **P1** — 7 arm(s). Mean transcript accuracy 95.71%, mean footnote-exact 92%.
-- **P2** — 11 arm(s). Mean transcript accuracy 96.65%, mean footnote-exact 92%.
+- **P2** — 11 arm(s). Mean transcript accuracy 96.69%, mean footnote-exact 92%.
 - **P3** — 1 arm(s). Mean transcript accuracy 97.03%, mean footnote-exact 100%.
 
 ### Same model, different prompt

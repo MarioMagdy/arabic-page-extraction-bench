@@ -167,13 +167,13 @@ arms:
     pricing: {input: 0.15, output: 0.5, source: list}
     price_note: "Zhipu published rate for GLM-5.3-Flash; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
 
-  # PARTIAL — 13 of 20, and the shortfall is CHARACTERISED rather than shrugged off.
-  # Four consecutive passes failed the SAME seven pages (15, 24, 30, 48, 50, 52, 95); pass three
-  # additionally recovered p93, so it is near-deterministic rather than absolute. Those seven are
-  # measurably the heaviest pages in the set:
+  # PARTIAL — 14 of 20, and the shortfall is CHARACTERISED rather than shrugged off.
+  # Five passes failed the SAME six pages (15, 24, 30, 48, 50, 52); an early pass also failed 93
+  # and 95, which later passes recovered. Measured while seven were failing, those pages are the
+  # heaviest in the set:
   #     failed     182.7 KB image · 1014 body chars · 3.6 notes
   #     succeeded  134.1 KB image ·  836 body chars · 1.3 notes
-  # p15 and p95 carry NO footnotes at all yet still fail, and have the longest bodies — so the
+  # p15 carries NO footnotes at all yet still fails, and has one of the longest bodies — so the
   # driver is total content volume, not apparatus complexity. Consistent with a context or output
   # ceiling, not a flaky timeout. The pages it does complete parse cleanly, so this is a capacity
   # limit rather than a reading-quality verdict; the arm stays below the ranking threshold.
@@ -261,12 +261,11 @@ arms:
     pricing: {input: 2.0, output: 12.0, source: list}
     price_note: "OpenAI published rate, after the 2026-07-30 cut; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
 
-  # EVALUATION PAGES FIRST — a deliberate choice, not an abandoned run. These three took 20-30
-  # MINUTES PER PAGE against roughly one for the Gemini arms, so completing all twenty for each
-  # would have cost hours and bought nothing: only the eight gold pages can produce a ranking, and
-  # the other twelve feed the agreement layer, which cannot rank anything. Their runs were therefore
-  # re-pointed at the evaluation set. They appear as PARTIAL in the 20-page agreement tables — that
-  # is the honest consequence, and the ranking they do appear in is complete.
+  # The heavy third-party arms took 20-30 MINUTES PER PAGE against roughly one for the Gemini arms,
+  # so their first pass was pointed at the eight evaluation pages: only those can produce a ranking,
+  # and the other twelve feed the agreement layer, which cannot rank anything. Qwen and Kimi were
+  # completed to 20/20 on later passes; MiMo could not be (see its note above).
+  #
   # This arm first failed p039 and p052 in a way that read like an output-length limit. It was not:
   # stale runner processes were holding slots against the shared rate limit, and with the field
   # cleared both pages completed on the first try. From the outside, "the model could not finish"
@@ -285,9 +284,8 @@ arms:
     pricing: {input: 0.14, output: 0.28, source: list}
     price_note: "DeepSeek published V4-Flash rate; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
 
-  # 17/20. The three it did not complete — 050, 095, 097 — each exhausted a 15-minute per-page
-  # deadline rather than returning anything malformed, and none of them is an evaluation page, so
-  # the ranking this arm appears in is complete while its agreement-layer row is partial.
+  # 20/20. Pages 050, 095 and 097 ran out a 15-minute per-page deadline on the first pass and
+  # completed on a later pass with a 20-minute cap.
   - id: Y_qwen38_P2
     label: "Qwen 3.8 Max · blocks"
     model: qwen3.8-max
@@ -297,10 +295,9 @@ arms:
     pricing: {input: 2.0, output: 6.0, source: list}
     price_note: "Alibaba published rate for Qwen3.8-Max; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
 
-  # 16/20, on the same pattern as Qwen: 048, 050, 095, 097 each ran out the per-page deadline, and
-  # none is an evaluation page. Worth noting that the two arms failed an overlapping set (050, 095,
-  # 097) — those are heavy pages, so this looks like a property of the leaves rather than of either
-  # model.
+  # 20/20. Pages 048, 050, 095 and 097 ran out a 15-minute per-page deadline on the first pass and
+  # completed on a later pass with a 20-minute cap. The two arms first failed an overlapping set
+  # (050, 095, 097) — the heaviest leaves — so the deadline, not the model, was the limit.
   - id: Z_kimik3_P2
     label: "Kimi K3 · blocks"
     model: kimi-k3

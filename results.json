@@ -15238,6 +15238,28 @@
      "_hand": false
     },
     {
+     "page": 50,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": null,
+      "pageTitle": true,
+      "sectionHeading": true,
+      "printedPageNumber": null,
+      "printerMark": true
+     },
+     "footnote_err": null,
+     "body_purity": 1.0,
+     "anchor_consistency": 1.0,
+     "n_references": 0,
+     "body_cer": 0.006369426751592357,
+     "body_wer": 0.028089887640449437,
+     "output_failed": false,
+     "cost_usd": 0.009709818181818182,
+     "_hand": false
+    },
+    {
      "page": 52,
      "cer_raw": null,
      "cer_norm": null,
@@ -15280,28 +15302,72 @@
      "output_failed": false,
      "cost_usd": 0.008824,
      "_hand": true
+    },
+    {
+     "page": 95,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": true,
+      "pageTitle": true,
+      "sectionHeading": null,
+      "printedPageNumber": true,
+      "printerMark": true
+     },
+     "footnote_err": 0,
+     "body_purity": 1.0,
+     "anchor_consistency": null,
+     "n_references": 0,
+     "body_cer": 0.00832639467110741,
+     "body_wer": 0.057777777777777775,
+     "output_failed": false,
+     "cost_usd": 0.008293818181818182,
+     "_hand": false
+    },
+    {
+     "page": 97,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": true,
+      "pageTitle": true,
+      "sectionHeading": null,
+      "printedPageNumber": null,
+      "printerMark": true
+     },
+     "footnote_err": 0,
+     "body_purity": 1.0,
+     "anchor_consistency": 1.0,
+     "n_references": 0,
+     "body_cer": 0.003952569169960474,
+     "body_wer": 0.01652892561983471,
+     "output_failed": false,
+     "cost_usd": 0.008632,
+     "_hand": false
     }
    ],
    "summary": {
-    "pages": 17,
+    "pages": 20,
     "cer_raw": null,
     "cer_norm": null,
     "wer_norm": null,
     "field_accuracy": 1.0,
-    "field_slots_scored": 54,
+    "field_slots_scored": 64,
     "footnote_err_mean": 0,
     "footnote_exact_rate": 1.0,
-    "footnote_pages_scored": 10,
-    "body_purity": 0.8824,
-    "body_cer": 0.0065,
-    "body_wer": 0.0154,
-    "transcript_accuracy": 0.9935,
-    "body_pages_scored": 15,
-    "anchor_consistency": 0.9,
-    "anchor_pages_scored": 10,
+    "footnote_pages_scored": 12,
+    "body_purity": 0.9,
+    "body_cer": 0.0064,
+    "body_wer": 0.0185,
+    "transcript_accuracy": 0.9936,
+    "body_pages_scored": 18,
+    "anchor_consistency": 0.9167,
+    "anchor_pages_scored": 12,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.008154
+    "cost_per_page_usd": 0.008263
    }
   },
   "Z_kimik3_P2": {
@@ -15900,6 +15966,50 @@
      "_hand": false
     },
     {
+     "page": 48,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": null,
+      "pageTitle": null,
+      "sectionHeading": null,
+      "printedPageNumber": true,
+      "printerMark": true
+     },
+     "footnote_err": null,
+     "body_purity": 1.0,
+     "anchor_consistency": 1.0,
+     "n_references": 0,
+     "body_cer": 0.0,
+     "body_wer": 0.0,
+     "output_failed": false,
+     "cost_usd": 0.016195636363636363,
+     "_hand": false
+    },
+    {
+     "page": 50,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": null,
+      "pageTitle": true,
+      "sectionHeading": true,
+      "printedPageNumber": null,
+      "printerMark": true
+     },
+     "footnote_err": null,
+     "body_purity": 1.0,
+     "anchor_consistency": 1.0,
+     "n_references": 0,
+     "body_cer": 0.0074309978768577496,
+     "body_wer": 0.033707865168539325,
+     "output_failed": false,
+     "cost_usd": 0.018797454545454544,
+     "_hand": false
+    },
+    {
      "page": 52,
      "cer_raw": null,
      "cer_norm": null,
@@ -15942,28 +16052,72 @@
      "output_failed": false,
      "cost_usd": 0.016561090909090907,
      "_hand": true
+    },
+    {
+     "page": 95,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": true,
+      "pageTitle": true,
+      "sectionHeading": null,
+      "printedPageNumber": true,
+      "printerMark": true
+     },
+     "footnote_err": 0,
+     "body_purity": 1.0,
+     "anchor_consistency": null,
+     "n_references": 0,
+     "body_cer": 0.0,
+     "body_wer": 0.0,
+     "output_failed": false,
+     "cost_usd": 0.015241090909090907,
+     "_hand": false
+    },
+    {
+     "page": 97,
+     "cer_raw": null,
+     "cer_norm": null,
+     "wer_norm": null,
+     "fields": {
+      "runningHeader": true,
+      "pageTitle": true,
+      "sectionHeading": null,
+      "printedPageNumber": null,
+      "printerMark": true
+     },
+     "footnote_err": 0,
+     "body_purity": 1.0,
+     "anchor_consistency": 1.0,
+     "n_references": 0,
+     "body_cer": 0.0047430830039525695,
+     "body_wer": 0.02066115702479339,
+     "output_failed": false,
+     "cost_usd": 0.01617381818181818,
+     "_hand": false
     }
    ],
    "summary": {
-    "pages": 16,
+    "pages": 20,
     "cer_raw": null,
     "cer_norm": null,
     "wer_norm": null,
-    "field_accuracy": 0.9423,
-    "field_slots_scored": 52,
-    "footnote_err_mean": 0.2,
-    "footnote_exact_rate": 0.9,
-    "footnote_pages_scored": 10,
-    "body_purity": 0.875,
-    "body_cer": 0.0243,
-    "body_wer": 0.035,
-    "transcript_accuracy": 0.9757,
-    "body_pages_scored": 14,
-    "anchor_consistency": 0.8,
-    "anchor_pages_scored": 10,
+    "field_accuracy": 0.9531,
+    "field_slots_scored": 64,
+    "footnote_err_mean": 0.1667,
+    "footnote_exact_rate": 0.9167,
+    "footnote_pages_scored": 12,
+    "body_purity": 0.9,
+    "body_cer": 0.0196,
+    "body_wer": 0.0302,
+    "transcript_accuracy": 0.9804,
+    "body_pages_scored": 18,
+    "anchor_consistency": 0.8462,
+    "anchor_pages_scored": 13,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.015126
+    "cost_per_page_usd": 0.015421
    }
   }
  }

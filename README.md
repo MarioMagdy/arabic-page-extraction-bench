@@ -21,9 +21,9 @@ agreement layer and every arm's failure detail, are in [RESULTS.md](RESULTS.md).
 | Gemini 3.7 Flash | 99.9% | 99.8–100.0 | $0.00070 | $0.32 |
 | Gemini 3.5 Flash | 98.8% | 97.7–99.6 | $0.00069 | $0.32 |
 | Claude Sonnet 5 | 98.8% | 96.9–99.8 | $0.01517 | $6.99 |
-| Qwen 3.8 Max | 98.7% | 97.3–99.9 | $0.00815 | $3.76 |
+| Qwen 3.8 Max | 98.7% | 97.3–99.9 | $0.00826 | $3.81 |
 | GPT 5.6 Terra | 96.7% | 94.9–98.0 | $0.01100 | $5.07 |
-| Kimi K3 | 96.2% | 93.8–97.9 | $0.01513 | $6.97 |
+| Kimi K3 | 96.2% | 93.8–97.9 | $0.01542 | $7.11 |
 
 Five more models (DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna,
 MiMo v2.5) fail one or more of the gates below and are reported but not ranked.
