@@ -1,0 +1,20 @@
+{
+ "runningHeader": null,
+ "printedPageNumber": null,
+ "printerMark": null,
+ "blocks": [
+  {
+   "type": "pageTitle",
+   "text": "الدفاع الأول",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  }
+ ],
+ "footnotes": [],
+ "foreignRuns": [],
+ "uncertain": [],
+ "schemaVersion": 1,
+ "promptVersion": "structured_v1",
+ "model": "gemini-3.8-flash"
+}

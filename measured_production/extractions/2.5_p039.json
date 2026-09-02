@@ -1,0 +1,76 @@
+{
+ "runningHeader": "الدفاع الأول",
+ "printedPageNumber": "١٩",
+ "printerMark": null,
+ "blocks": [
+  {
+   "type": "pageTitle",
+   "text": "الدفاع الأول",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  },
+  {
+   "type": "paragraph",
+   "text": "إلى سلطان أرضي بل إلى الملكوت السماوي، فهم يطيعون سلطات الدولة في كل الأمور المدنية ويعيشون حياة فاضلة مقدسة. ويصف ق. يوستينوس كل الاتهامات ضد المسيحيين مثل: الكفر وأكل لحوم البشر والفسق، بأنها اتهامات باطلة ولا أساس لها من الصحة. وأما عن إيمانهم بخلود النفس فهو حتى بالنسبة للوثنيين أمر يمكن تصديقه ويتمشى مع العقل.",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  },
+  {
+   "type": "paragraph",
+   "text": "وفي الفصول من ٢١ - ٦٠ يظهر ق. يوستينوس تفوق المسيحية على الوثنية، كما يوضح أن الكثير من نبوءات العهد القديم قد تحققت في السيد المسيح شارحًا الفرق بين معجزات يسوع المسيح وخدع السحرة الوثنيين، وأن الأمم وبخاصة الفلاسفة الوثنيين ومن بينهم أفلاطون نفسه قد اقتبسوا من الكتاب المقدس.",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  },
+  {
+   "type": "paragraph",
+   "text": "وفي الفصول من ٦١ - ٦٨ يشرح ق. يوستينوس الممارسات المسيحية وخاصة طقس اعتناق المسيحية (سر المعمودية) وسر الإفخارستيا المقدس، واجتماع المسيحيين يوم الأحد، كما يتعرض لأصوامهم وصلواتهم واهتمامهم بإخوتهم الفقراء.",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  },
+  {
+   "type": "paragraph",
+   "text": "وختامًا، يرفق ق. يوستينوس نسخة من مرسوم هادريان (فصل ٦٩) والذي تمت كتابته لصالح المسيحيين. وقد قام نساخ آخرون في وقت لاحق بإضافة خطاب أنطونينوس بيوس لمجلس آسيا (فصل ٧٠) وخطاب مرقس أوريليوس لمجلس الشيوخ (فصل ٧١)٨، إلى هذا الدفاع.",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  },
+  {
+   "type": "paragraph",
+   "text": "ويبدو أن ق. يوستينوس قد كتب هذا الدفاع في روما. وقد وضع المؤرخون تواريخ مختلفة٩ لكتابته تتراوح بين عام ١٣٨م وعام ١٥٦م وذلك بناء على أدلة داخلية في مضمون الدفاع والأحداث التاريخية",
+   "noteRefs": [
+    9
+   ],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  },
+  {
+   "type": "paragraph",
+   "text": "٨ هذان الخطابان أيضًا موجودان في الطبعة اليونانية الأولى (عام ١٥٥١) والترجمة اللاتينية الأولى (عام ١٥٥٤).",
+   "noteRefs": [],
+   "opensMidSentence": false,
+   "closesMidSentence": false
+  }
+ ],
+ "footnotes": [
+  {
+   "marker": "٩",
+   "number": 9,
+   "text": "Cf. the detailed analysis in W. Smith and H Wace, loc. cit. 3, 563",
+   "continuedFromPreviousPage": false
+  }
+ ],
+ "foreignRuns": [
+  {
+   "script": "latin",
+   "text": "Cf. the detailed analysis in W. Smith and H Wace, loc. cit. 3, 563"
+  }
+ ],
+ "uncertain": [],
+ "schemaVersion": 1,
+ "promptVersion": "structured_v1",
+ "model": "gemini-2.5-flash"
+}

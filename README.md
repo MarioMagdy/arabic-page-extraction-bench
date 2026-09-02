@@ -26,7 +26,9 @@ agreement layer and every arm's failure detail, are in [RESULTS.md](RESULTS.md).
 | Kimi K3 | 96.2% | 93.8–97.9 | $0.01542 | $7.11 |
 
 Five more models (DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna,
-MiMo v2.5) fail one or more of the gates below and are reported but not ranked.
+MiMo v2.5) fail one or more of the gates below and are reported but not ranked. The Gemini
+prices in this table count candidate tokens only, not thinking tokens; see the thinking bullet
+below for what that hides.
 
 - **The top four cannot be separated on this evidence, and they span 22× in price.** The leader's
   margin over Sonnet falls to +0.15 points if a single evaluation page is dropped. The decision the
@@ -45,6 +47,18 @@ MiMo v2.5) fail one or more of the gates below and are reported but not ranked.
   body accuracy ≥ 0.95, footnote F1 ≥ 0.8, anchor F1 ≥ 0.8. Among arms that clear them the ranking
   is a weighted score over what the product depends on: prose 35%, note text 15%, anchor placement
   15%, block order 10%, heading position 10%, fields 10%, marker fidelity 5%.
+- **Turn thinking off.** The benchmark's runners never saw thinking tokens, so its Gemini prices
+  are a floor. A later measured run of the real production call against the same gold pages
+  ([measured_production/FINDINGS.md](measured_production/FINDINGS.md)) found that on Gemini 3.8
+  Flash thinking was 74% of billed output, and that switching it off moved body accuracy from
+  99.85% to 99.75% while cutting the price 2.6×, from $0.007184 to $0.002746 per page, and making
+  the worst page a quotable number instead of a 1.7× surprise. On this task the thinking budget
+  buys nothing measurable.
+- **The 2.5 Flash caution is now answered, the other way.** The benchmark never ran the
+  production model on the structured prompt and said the evidence did not show it to be a worse
+  reader. The measured run closed that cell: 76.50% body accuracy, the wrong block count on 4 of 7
+  pages, and one page where it emitted far more text than the leaf carries. The prompt is
+  necessary; 2.5 Flash cannot use it. The fix in production was both.
 
 ## How accuracy is measured
 
@@ -116,6 +130,8 @@ runs/<arm>/          one JSON per page, per arm
 truth/gold/          THE REFERENCE: 8 pages, read twice outside the arm pool, adjudicated
 truth/EVAL_SET.md    which 8 pages, chosen before any scoring, and why
 truth/pNNN.json      the older structural truth over all 20 pages (agreement layer)
+measured_production/ a later measured run of the real production call against the gold pages:
+                     thinking tokens counted, corrected prompt, raw rows and outputs, FINDINGS.md
 tools/metrics.py     normalisation, CER/WER, structural scores, P0 structure recovery
 tools/gold.py        accuracy against truth/gold/ — the only ranking evidence
 tools/gold_merge.py  diff two independent readings; refuses to write a disputed page
@@ -198,6 +214,13 @@ Arms that ran through a flat-rate subscription are priced at the vendor's publis
 rate against measured output volume, and say so in `arms.yaml`. That is a public price, not an
 invoice.
 
+**What this model misses.** The API runner recorded `candidatesTokenCount` only, and the CLI
+arms derive cost from visible output characters. Gemini bills thinking tokens at the output rate
+on the 3.x line, so every Gemini 3.x figure in this repo's results is a floor, not a bill. The
+run in `measured_production/` read `thoughtsTokenCount` and folded it in; with thinking on, the
+real number was 2.6× the floor. The comparison between models is unaffected. The absolute price
+of a Gemini arm is, unless thinking is off.
+
 ## Two defects the benchmark found in itself, deliberately not fixed
 
 **The recommended prompt teaches with a wrong example.** `prompts/P2_blocks.txt` illustrates the
@@ -214,6 +237,9 @@ them. Fix it in the next run and re-run the P2 field, which is itself a worthwhi
 pages open or close mid-sentence. A reader that does not know a paragraph runs on will render it
 as complete, and a read-aloud voice will speak a full stop the page does not print. Two booleans
 per block, opens-mid-sentence and closes-mid-sentence, would fix it at no cost in output size.
+
+Both are fixed in the production prompt, `measured_production/structured_v1.txt`, which is what
+the measured run used. The benchmark arms still ran against the original, on purpose.
 
 ## Not yet done
 
