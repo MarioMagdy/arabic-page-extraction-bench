@@ -8,7 +8,7 @@ The raw evidence is preserved in this directory:
 - `results.json` — per-page measured rows for each tested configuration (token counts, thinking tokens, latency, cost, and accuracy against gold).
 - `extractions/` — raw model output for every completed page and configuration, stored as `{config}_p{page}.json`.
 - `structured_v1.txt` — the prompt used for this run (the benchmark's `prompts/P2_blocks.txt` with four targeted corrections).
-- `measure.py` — the execution harness, allowing the run to be reproduced directly.
+- `measure.py` — the harness exactly as run. It imports the consuming pipeline's Gemini engine, inventory and prompt module, so from this repo it documents the call (model ids, thinking setting, schema mode, what was measured) rather than running standalone.
 
 ---
 
