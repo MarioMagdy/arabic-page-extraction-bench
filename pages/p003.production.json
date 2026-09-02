@@ -1,0 +1,128 @@
+{
+ "book": "justin_martyr_apologies_clean",
+ "batch": "primary-1-100",
+ "page": 3,
+ "printedPage": null,
+ "pageLabel": "p. 3",
+ "language": "ar",
+ "image": "p003.webp",
+ "imageBytes": 80524,
+ "imagePx": [
+  1464,
+  2382
+ ],
+ "ocrText": "الترجمة عن اللغة الإنجليزية\nالأستاذة آمال فؤاد\n\nالمراجعات\n\nمراجعة الترجمة على النسخة الإنجليزية\nالدكتورة إيريني ثابت جورج\nالأستاذة مريم سعد مينا\n\nمراجعة الترجمة على النص اليوناني\nالدكتور جرجس جمال فايز\n\nالمراجعة اللغوية وتدقيق النص العربي\nالدكتور وجدي رزق غالي\n\nالمراجعة العامة والفهرس الموضوعي\nالدكتور عماد موريس اسكندر\n\nالمقدمة والمراجعة النهائية واللاهوتية\nالدكتور جوزيف موريس فلتس",
+ "cleanText": "الترجمة عن اللغة الإنجليزية\nالأستاذة آمال فؤاد\n\nالمراجعات\n\nمراجعة الترجمة على النسخة الإنجليزية\nالدكتورة إيريني ثابت جورج\nالأستاذة مريم سعد مينا\n\nمراجعة الترجمة على النص اليوناني\nالدكتور جرجس جمال فايز\n\nالمراجعة اللغوية وتدقيق النص العربي\nالدكتور وجدي رزق غالي\n\nالمراجعة العامة والفهرس الموضوعي\nالدكتور عماد موريس اسكندر\n\nالمقدمة والمراجعة النهائية واللاهوتية\nالدكتور جوزيف موريس فلتس",
+ "displayBody": "الترجمة عن اللغة الإنجليزية الأستاذة آمال فؤاد\n\nالمراجعات\n\nمراجعة الترجمة على النسخة الإنجليزية الدكتورة إيريني ثابت جورج الأستاذة مريم سعد مينا\n\nمراجعة الترجمة على النص اليوناني الدكتور جرجس جمال فايز\n\nالمراجعة اللغوية وتدقيق النص العربي الدكتور وجدي رزق غالي\n\nالمراجعة العامة والفهرس الموضوعي الدكتور عماد موريس اسكندر\n\nالمقدمة والمراجعة النهائية واللاهوتية الدكتور جوزيف موريس فلتس",
+ "displayBodyParagraphs": [
+  "الترجمة عن اللغة الإنجليزية الأستاذة آمال فؤاد",
+  "المراجعات",
+  "مراجعة الترجمة على النسخة الإنجليزية الدكتورة إيريني ثابت جورج الأستاذة مريم سعد مينا",
+  "مراجعة الترجمة على النص اليوناني الدكتور جرجس جمال فايز",
+  "المراجعة اللغوية وتدقيق النص العربي الدكتور وجدي رزق غالي",
+  "المراجعة العامة والفهرس الموضوعي الدكتور عماد موريس اسكندر",
+  "المقدمة والمراجعة النهائية واللاهوتية الدكتور جوزيف موريس فلتس"
+ ],
+ "displayFootnotes": [],
+ "narrationSpans": [
+  {
+   "spanId": "p3-par1-s1",
+   "text": "الترجمة عن اللغة الإنجليزية الأستاذة آمال فؤاد",
+   "speechText": "الترجمة عن اللغة الإنجليزية الأستاذة آمال فؤاد",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p3-par2-s1",
+   "text": "المراجعات",
+   "speechText": "المراجعات",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p3-par3-s1",
+   "text": "مراجعة الترجمة على النسخة الإنجليزية الدكتورة إيريني ثابت جورج الأستاذة مريم سعد مينا",
+   "speechText": "مراجعة الترجمة على النسخة الإنجليزية الدكتورة إيريني ثابت جورج الأستاذة مريم سعد مينا",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p3-par4-s1",
+   "text": "مراجعة الترجمة على النص اليوناني الدكتور جرجس جمال فايز",
+   "speechText": "مراجعة الترجمة على النص اليوناني الدكتور جرجس جمال فايز",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p3-par5-s1",
+   "text": "المراجعة اللغوية وتدقيق النص العربي الدكتور وجدي رزق غالي",
+   "speechText": "المراجعة اللغوية وتدقيق النص العربي الدكتور وجدي رزق غالي",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p3-par6-s1",
+   "text": "المراجعة العامة والفهرس الموضوعي الدكتور عماد موريس اسكندر",
+   "speechText": "المراجعة العامة والفهرس الموضوعي الدكتور عماد موريس اسكندر",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p3-par7-s1",
+   "text": "المقدمة والمراجعة النهائية واللاهوتية الدكتور جوزيف موريس فلتس",
+   "speechText": "المقدمة والمراجعة النهائية واللاهوتية الدكتور جوزيف موريس فلتس",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  }
+ ],
+ "displayParse": {
+  "trusted": false,
+  "failOpen": {
+   "reason": "no-parsed-note",
+   "benign": true,
+   "note": "No [FOOTNOTE] block on this page at all — nothing to route out, so an empty displayFootnotes is CORRECT."
+  },
+  "sourceHasFootnoteTags": false,
+  "allSpansFootnote": false,
+  "bodyChars": 372,
+  "footnoteChars": 0,
+  "parsedNotes": [],
+  "parsedNotesIfTrusted": [],
+  "remainder": "",
+  "error": null
+ },
+ "narrationParity": {
+  "gemini/Charon": {
+   "storedRows": 7,
+   "storedNotDerived": [],
+   "derivedNotStored": [],
+   "states": [
+    "done"
+   ]
+  },
+  "google-cloud/ar-XA-Chirp3-HD-Charon": {
+   "storedRows": 7,
+   "storedNotDerived": [],
+   "derivedNotStored": [],
+   "states": [
+    "done"
+   ]
+  }
+ },
+ "segmenterParityFeVsBe": {
+  "spanIdsIdentical": true,
+  "spanTextsIdentical": true,
+  "feSpanCount": 7,
+  "beSpanCount": 7
+ },
+ "source": {
+  "bookId": "justin_martyr_apologies_clean",
+  "pageNumbering": "PDF page (1-based). `printedPage` is the number printed on the leaf.",
+  "image": "RENDERED LOCALLY from data/.r2_cache/justin_martyr_apologies_clean.pdf via PyMuPDF at 300 DPI (= the scan's native resolution), WebP q82. The local PDF is byte-size identical to the production R2 object (111,244,749 B). Nothing uploaded.",
+  "ocrText": "PRODUCTION. `text` field of page_NNNN.json inside the R2 object `justin_martyr_apologies_clean.ocr.zip` (uploaded 2026-08-01T00:46:32Z), i.e. exactly what `GET /books/{bookId}/pages/{n}/ocr` returns after `ensure_text_local`.",
+  "cleanText": "PRODUCTION. `text_clean or text` of page_NNNN.json inside the R2 object `justin_martyr_apologies_clean.clean.zip` (uploaded 2026-08-01T00:46:33Z), i.e. exactly what `GET /books/{bookId}/pages/{n}/clean`.textClean returns and what the reader loads (Patristic-AI-Fe src/room/lib/api.ts fetchPageText).",
+  "displayBody": "DERIVED at FE 3add663 (deployed origin/main). Produced by running the committed audit harness scripts/audit-footnotes.ts `classifyPage()` — the repo's own replica of src/room/reader/TextView.tsx routing, over the real src/room/tts/segmentation.ts + src/room/reader/footnotes.ts. NOT a React render.",
+  "displayFootnotes": "DERIVED at FE 3add663. One entry per parsed note rendered as `label + raw` (TextView room-footnotes-list), with the parseFootnotes().bodyText REMAINDER appended last (room-footnotes-remainder). EMPTY whenever `trusted` is false — see failOpen.",
+  "narrationSpans": "DERIVED at BE 1799de2 (deployed origin/main) by src/lib/audiobook/segmentation.py::segment_page(page, cleanText, language), the same call src/lib/audiobook/pipeline.py::plan_spans makes. The span TEXT is not stored in the production book_audio table (only span_id/page/state), so it is DERIVED, not stored; span-id parity against the stored rows is reported per page in `narrationParity`."
+ }
+}

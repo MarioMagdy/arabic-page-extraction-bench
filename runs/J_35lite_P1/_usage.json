@@ -1,0 +1,142 @@
+[
+ {
+  "page": 3,
+  "prompt_tokens": 2212,
+  "output_tokens": 242,
+  "total_tokens": 2454,
+  "chars": 646
+ },
+ {
+  "page": 8,
+  "prompt_tokens": 2212,
+  "output_tokens": 921,
+  "total_tokens": 3133,
+  "chars": 2447
+ },
+ {
+  "page": 9,
+  "prompt_tokens": 2195,
+  "output_tokens": 573,
+  "total_tokens": 2768,
+  "chars": 1656
+ },
+ {
+  "page": 12,
+  "prompt_tokens": 2212,
+  "output_tokens": 584,
+  "total_tokens": 2796,
+  "chars": 1521
+ },
+ {
+  "page": 15,
+  "prompt_tokens": 2212,
+  "output_tokens": 558,
+  "total_tokens": 2770,
+  "chars": 1568
+ },
+ {
+  "page": 17,
+  "prompt_tokens": 2195,
+  "output_tokens": 565,
+  "total_tokens": 2760,
+  "chars": 1531
+ },
+ {
+  "page": 23,
+  "prompt_tokens": 2212,
+  "output_tokens": 130,
+  "total_tokens": 2342,
+  "chars": 365
+ },
+ {
+  "page": 24,
+  "prompt_tokens": 2212,
+  "output_tokens": 1042,
+  "total_tokens": 3254,
+  "chars": 2966
+ },
+ {
+  "page": 25,
+  "prompt_tokens": 2195,
+  "output_tokens": 913,
+  "total_tokens": 3108,
+  "chars": 2574
+ },
+ {
+  "page": 28,
+  "prompt_tokens": 2212,
+  "output_tokens": 1066,
+  "total_tokens": 3278,
+  "chars": 2884
+ },
+ {
+  "page": 30,
+  "prompt_tokens": 2212,
+  "output_tokens": 1217,
+  "total_tokens": 3429,
+  "chars": 3313
+ },
+ {
+  "page": 36,
+  "prompt_tokens": 2212,
+  "output_tokens": 76,
+  "total_tokens": 2288,
+  "chars": 218
+ },
+ {
+  "page": 39,
+  "prompt_tokens": 2212,
+  "output_tokens": 727,
+  "total_tokens": 2939,
+  "chars": 1978
+ },
+ {
+  "page": 45,
+  "prompt_tokens": 2195,
+  "output_tokens": 466,
+  "total_tokens": 2661,
+  "chars": 1115
+ },
+ {
+  "page": 48,
+  "prompt_tokens": 2212,
+  "output_tokens": 722,
+  "total_tokens": 2934,
+  "chars": 1980
+ },
+ {
+  "page": 50,
+  "prompt_tokens": 2195,
+  "output_tokens": 1208,
+  "total_tokens": 3403,
+  "chars": 3409
+ },
+ {
+  "page": 52,
+  "prompt_tokens": 2212,
+  "output_tokens": 1194,
+  "total_tokens": 3406,
+  "chars": 3241
+ },
+ {
+  "page": 93,
+  "prompt_tokens": 2212,
+  "output_tokens": 746,
+  "total_tokens": 2958,
+  "chars": 2046
+ },
+ {
+  "page": 95,
+  "prompt_tokens": 2212,
+  "output_tokens": 590,
+  "total_tokens": 2802,
+  "chars": 1540
+ },
+ {
+  "page": 97,
+  "prompt_tokens": 2212,
+  "output_tokens": 712,
+  "total_tokens": 2924,
+  "chars": 1846
+ }
+]

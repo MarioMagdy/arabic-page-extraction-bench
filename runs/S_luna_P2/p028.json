@@ -1,0 +1,75 @@
+{
+  "page": 28,
+  "runningHeader": "تمهيد",
+  "printedPageNumber": "٧",
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "اعتماد تيليمونت (Tillemont) و دوم ماران (Dom Maran) وأما كونه شماساً١٩ فإن هذا هو مجرد تخمين، غير أن غالبية المؤرخين يتفقون مع سيليلية (Ceillier) في أن ق. يوستينوس ظل علمانياً يتجول في ثياب فيلسوف متحدثاً مع أناس من كل الأشكال مطبقاً ما قاله ترتيفون: \"أنا الآن لابعد أن صرت مسيحياً فيلسوف وأمنيتي أن يشعر الكل بنفس مشاعري ولا يزرون قط بكلام المخلص لأن فيه جلال عظيم يبيت الخوف داخل نفوس الذين حادوا عن طريق البر ولكنه أيضاً يبقى عزاء أبدياً لهؤلاء الذين يهتمون به ولذلك، إذا كنت تهتم بهم فيه خيرك وخلاص نفسك وإذا كنت تؤمن بالله. لأني أعلم أنك لست بغريب عن هذا الأمر. فقد تتاح لك الفرصة أن تصل إلى معرفة مسيح الرب، وبعد أن تصير مسيحياً أن تستمتع بحياة سعيدة.٢٠",
+      "noteRefs": [18, 19, 20]
+    },
+    {
+      "type": "paragraph",
+      "text": "وذهب ق. يوستينوس إلى روما بعد اعتناقه المسيحية بعض الوقت٢١ ومكث هناك فترة من الزمن. وقد أنشأ مدرسة للفلسفة، وكان تاتيان (Tatian) من أبرز تلاميذه، وكان كلما أتيحت له الفرصة دخل في مناقشات فكرية ومجادلات دفاعية بحرية وشجاعة.",
+      "noteRefs": [21]
+    },
+    {
+      "type": "paragraph",
+      "text": "وقد سُجّلت إحدى هذه المناقشات مع كريسنس الكلبي (Crescens the Cynic) \"المحب للآراء الباطلة وليس للحكمة\"٢٢ والذي استخدم بعبارة سقراط٢٣ الجديدة بشأن: \"لا ينبغي إكرام إنسان أكثر من الحق\". وعلى الرغم من أن ق. يوستينوس قد فضح جهل كريسنس التام بتعاليم المسيحية في مناظرة عامة معلناً: \"إنني أتوقع أن أكون ضحية لمؤامرة وأن أعدم حرقاً ... ربما بواسطة",
+      "noteRefs": [22, 23]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "18",
+      "number": 18,
+      "text": "Migne, P.G. 6.113f.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "19",
+      "number": 19,
+      "text": "A. Butler, loc. cit.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٢٠",
+      "number": 20,
+      "text": "الحوار مع ترتيفون، فصل ٨.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "21",
+      "number": 21,
+      "text": "Cf. Eusebius, Historia ecclesiastica 4.11.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٢٢",
+      "number": 22,
+      "text": "الدفاع الثاني، فصل ٣.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "23",
+      "number": 23,
+      "text": "Cf. Plato, Republic 10.595C.",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [
+    { "script": "latin", "text": "Tillemont" },
+    { "script": "latin", "text": "Dom Maran" },
+    { "script": "latin", "text": "Ceillier" },
+    { "script": "latin", "text": "Tatian" },
+    { "script": "latin", "text": "Crescens the Cynic" },
+    { "script": "latin", "text": "Migne, P.G. 6.113f." },
+    { "script": "latin", "text": "A. Butler, loc. cit." },
+    { "script": "latin", "text": "Cf. Eusebius, Historia ecclesiastica 4.11." },
+    { "script": "latin", "text": "Cf. Plato, Republic 10.595C." }
+  ],
+  "uncertain": [
+    "The final sentence is visibly cut off at the bottom of the page and continues beyond it."
+  ]
+}

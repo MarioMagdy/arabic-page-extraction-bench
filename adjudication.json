@@ -1,0 +1,1192 @@
+{
+ "3": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الترجمة عن اللغة الإنجليزية",
+    "B_gemini37_P0": "الترجمة عن اللغة الإنجليزية",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": "المراجعات",
+    "E_haiku_P1": "الترجمة عن اللغة الإنجليزية",
+    "F_sonnet_P1": "الترجمة عن اللغة الإنجليزية"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0,
+    "F_sonnet_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "8": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "مقدمة¹",
+    "B_gemini37_P0": "مقدمة",
+    "C_gemini37_P1": "مقدمة",
+    "D_gemini35_P1": "مقدمة",
+    "E_haiku_P1": "مقدمة",
+    "F_sonnet_P1": "مقدمة"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "مقدمة¹",
+    "D_gemini35_P1": "مقدمة١",
+    "E_haiku_P1": "مقدمة",
+    "F_sonnet_P1": "مقدمة١"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "م ١١",
+    "B_gemini37_P0": "١١ م",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": "١١",
+    "F_sonnet_P1": "م ١١"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "١١ م",
+    "D_gemini35_P1": "١١ م",
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 2,
+    "D_gemini35_P1": 2,
+    "E_haiku_P1": 5,
+    "F_sonnet_P1": 2
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "9": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "F_sonnet_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": true,
+   "consensus": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "١٢م",
+    "B_gemini37_P0": "١٢ م",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": "١٢",
+    "F_sonnet_P1": "م ١٢"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "١٢ م",
+    "D_gemini35_P1": "١٢ م",
+    "E_haiku_P1": "م",
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0,
+    "F_sonnet_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "12": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "مقدمة",
+    "B_gemini37_P0": "مقدمة",
+    "C_gemini37_P1": "مقدمة",
+    "D_gemini35_P1": "مقدمة",
+    "E_haiku_P1": "مقدمة",
+    "F_sonnet_P1": "مقدمة"
+   },
+   "unanimous": true,
+   "consensus": "مقدمة"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "م ١٥",
+    "B_gemini37_P0": "١٥ م",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": "١٥",
+    "F_sonnet_P1": "م ١٥"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "١٥ م",
+    "D_gemini35_P1": "١٥ م",
+    "E_haiku_P1": "م",
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0,
+    "F_sonnet_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "15": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "F_sonnet_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": true,
+   "consensus": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "م ١٨",
+    "B_gemini37_P0": "١٨ م",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": "١٨",
+    "F_sonnet_P1": "م ١٨"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "١٨ م",
+    "D_gemini35_P1": "١٨ م",
+    "E_haiku_P1": "م",
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0,
+    "F_sonnet_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "17": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "F_sonnet_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": true,
+   "consensus": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "م ٢٠",
+    "B_gemini37_P0": "٢٠ م",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": "٢٠",
+    "F_sonnet_P1": "م ٢٠"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "٢٠ م",
+    "D_gemini35_P1": "٢٠ م",
+    "E_haiku_P1": "م",
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0,
+    "F_sonnet_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "23": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "تَمْهِيدٌ",
+    "B_gemini37_P0": "تَمْهِيدْ١",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "تَمْهِيدٌ¹",
+    "D_gemini35_P1": "تَمْهِيدٌ١",
+    "E_haiku_P1": "تمهيد",
+    "F_sonnet_P1": "تمهيد١"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 1,
+    "D_gemini35_P1": 1,
+    "E_haiku_P1": 0,
+    "F_sonnet_P1": 1
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "24": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "تمهيد",
+    "B_gemini37_P0": "تمهيد",
+    "C_gemini37_P1": "تمهيد",
+    "D_gemini35_P1": "تمهيد",
+    "E_haiku_P1": "تمهيد",
+    "F_sonnet_P1": "تمهيد"
+   },
+   "unanimous": true,
+   "consensus": "تمهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": "٣",
+    "C_gemini37_P1": "٣",
+    "D_gemini35_P1": "٣",
+    "E_haiku_P1": "3",
+    "F_sonnet_P1": "٣"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 10,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 6,
+    "D_gemini35_P1": 6,
+    "E_haiku_P1": 6,
+    "F_sonnet_P1": 6
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "25": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كاتبات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "F_sonnet_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "٤",
+    "B_gemini37_P0": "٤",
+    "C_gemini37_P1": "٤",
+    "D_gemini35_P1": "٤",
+    "E_haiku_P1": "4",
+    "F_sonnet_P1": "٤"
+   },
+   "unanimous": true,
+   "consensus": "٤"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 3,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 3,
+    "D_gemini35_P1": 3,
+    "E_haiku_P1": 4,
+    "F_sonnet_P1": 3
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "28": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "تمهيد",
+    "B_gemini37_P0": "تمهيد",
+    "C_gemini37_P1": "تمهيد",
+    "D_gemini35_P1": "تمهيد",
+    "E_haiku_P1": "تمهيد",
+    "F_sonnet_P1": "تمهيد"
+   },
+   "unanimous": true,
+   "consensus": "تمهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": "٧",
+    "C_gemini37_P1": "٧",
+    "D_gemini35_P1": "٧",
+    "E_haiku_P1": "v",
+    "F_sonnet_P1": "٧"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null,
+    "F_sonnet_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 12,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 6,
+    "D_gemini35_P1": 6,
+    "E_haiku_P1": 6,
+    "F_sonnet_P1": 6
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "30": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "تمهيد",
+    "B_gemini37_P0": "تمهيد",
+    "C_gemini37_P1": "تمهيد",
+    "D_gemini35_P1": "تمهيد",
+    "E_haiku_P1": "تمهيد"
+   },
+   "unanimous": true,
+   "consensus": "تمهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "٩",
+    "B_gemini37_P0": "٩",
+    "C_gemini37_P1": "٩",
+    "D_gemini35_P1": "٩",
+    "E_haiku_P1": "9"
+   },
+   "unanimous": true,
+   "consensus": "٩"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 6,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 7,
+    "D_gemini35_P1": 7,
+    "E_haiku_P1": 7
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "36": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الدفاع الأول",
+    "B_gemini37_P0": "الدفاع الأول",
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": "الدفاع الأول",
+    "D_gemini35_P1": "الدفاع الأول",
+    "E_haiku_P1": "الدفاع الأول"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "39": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الدفاع الأول",
+    "B_gemini37_P0": "الدفاع الأول",
+    "C_gemini37_P1": "الدفاع الأول",
+    "D_gemini35_P1": "الدفاع الأول",
+    "E_haiku_P1": "الدفاع الأول"
+   },
+   "unanimous": true,
+   "consensus": "الدفاع الأول"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "١٩",
+    "B_gemini37_P0": "١٩",
+    "C_gemini37_P1": "١٩",
+    "D_gemini35_P1": "١٩",
+    "E_haiku_P1": "19"
+   },
+   "unanimous": true,
+   "consensus": "١٩"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 2,
+    "D_gemini35_P1": 2,
+    "E_haiku_P1": 2
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "45": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الدفاع الأول",
+    "B_gemini37_P0": "الدفاع الأول",
+    "C_gemini37_P1": "الدفاع الأول",
+    "D_gemini35_P1": "الدفاع الأول",
+    "E_haiku_P1": "الدفاع الأول"
+   },
+   "unanimous": true,
+   "consensus": "الدفاع الأول"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": "٢٥",
+    "C_gemini37_P1": "٢٥",
+    "D_gemini35_P1": "٢٥",
+    "E_haiku_P1": "25"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "48": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": true,
+   "consensus": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "٢٨",
+    "B_gemini37_P0": "٢٨",
+    "C_gemini37_P1": "٢٨",
+    "D_gemini35_P1": "٢٨",
+    "E_haiku_P1": "28"
+   },
+   "unanimous": true,
+   "consensus": "٢٨"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 3,
+    "D_gemini35_P1": 3,
+    "E_haiku_P1": 3
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "50": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": true,
+   "consensus": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": "٣٠",
+    "C_gemini37_P1": "٣٠",
+    "D_gemini35_P1": "٣٠",
+    "E_haiku_P1": "30"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 6,
+    "D_gemini35_P1": 6,
+    "E_haiku_P1": 7
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "52": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "B_gemini37_P0": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "C_gemini37_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "D_gemini35_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد",
+    "E_haiku_P1": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+   },
+   "unanimous": true,
+   "consensus": "كتابات القديس يوستينوس الفيلسوف والشهيد"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "٣٢",
+    "B_gemini37_P0": "٣٢",
+    "C_gemini37_P1": "٣٢",
+    "D_gemini35_P1": "٣٢",
+    "E_haiku_P1": "32"
+   },
+   "unanimous": true,
+   "consensus": "٣٢"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 2,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 3,
+    "D_gemini35_P1": 3,
+    "E_haiku_P1": 4
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "93": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الدفـاع الأول",
+    "B_gemini37_P0": "الدفاع الأول",
+    "C_gemini37_P1": "الدفاع الأول",
+    "D_gemini35_P1": "الدفاع الأول",
+    "E_haiku_P1": "الدفاع الأول"
+   },
+   "unanimous": true,
+   "consensus": "الدفـاع الأول"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": "٧٣",
+    "C_gemini37_P1": "٧٣",
+    "D_gemini35_P1": "٧٣",
+    "E_haiku_P1": "73"
+   },
+   "unanimous": false,
+   "consensus": null
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 2,
+    "D_gemini35_P1": 2,
+    "E_haiku_P1": 2
+   },
+   "unanimous": false,
+   "consensus": null
+  }
+ },
+ "95": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الدفاع الأول",
+    "B_gemini37_P0": "الدفاع الأول",
+    "C_gemini37_P1": "الدفاع الأول",
+    "D_gemini35_P1": "الدفاع الأول",
+    "E_haiku_P1": "الدفاع الأول"
+   },
+   "unanimous": true,
+   "consensus": "الدفاع الأول"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "٧٥",
+    "B_gemini37_P0": "٧٥",
+    "C_gemini37_P1": "٧٥",
+    "D_gemini35_P1": "٧٥",
+    "E_haiku_P1": "75"
+   },
+   "unanimous": true,
+   "consensus": "٧٥"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 0,
+    "B_gemini37_P0": 0,
+    "C_gemini37_P1": 0,
+    "D_gemini35_P1": 0,
+    "E_haiku_P1": 0
+   },
+   "unanimous": true,
+   "consensus": 0
+  }
+ },
+ "97": {
+  "runningHeader": {
+   "answers": {
+    "A_gemini25_P0": "الدفاع الأول",
+    "B_gemini37_P0": "الدفاع الأول",
+    "C_gemini37_P1": "الدفاع الأول",
+    "D_gemini35_P1": "الدفاع الأول",
+    "E_haiku_P1": "الدفاع الأول"
+   },
+   "unanimous": true,
+   "consensus": "الدفاع الأول"
+  },
+  "pageTitle": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "printedPageNumber": {
+   "answers": {
+    "A_gemini25_P0": "٧٧",
+    "B_gemini37_P0": "٧٧",
+    "C_gemini37_P1": "٧٧",
+    "D_gemini35_P1": "٧٧",
+    "E_haiku_P1": "77"
+   },
+   "unanimous": true,
+   "consensus": "٧٧"
+  },
+  "printerMark": {
+   "answers": {
+    "A_gemini25_P0": null,
+    "B_gemini37_P0": null,
+    "C_gemini37_P1": null,
+    "D_gemini35_P1": null,
+    "E_haiku_P1": null
+   },
+   "unanimous": true,
+   "consensus": null
+  },
+  "footnoteCount": {
+   "answers": {
+    "A_gemini25_P0": 1,
+    "B_gemini37_P0": 1,
+    "C_gemini37_P1": 1,
+    "D_gemini35_P1": 1,
+    "E_haiku_P1": 1
+   },
+   "unanimous": true,
+   "consensus": 1
+  }
+ }
+}

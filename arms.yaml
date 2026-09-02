@@ -1,0 +1,311 @@
+# ── Arm registry ──────────────────────────────────────────────────────────────
+# ADD A MODEL = ADD A BLOCK HERE + DROP ITS OUTPUTS IN runs/<id>/pNNN.json.
+# Nothing in tools/ needs editing. The scorer discovers arms from this file, and
+# any run directory present is scored; any arm listed but absent is skipped.
+#
+# ┌─ RULE: A NEW MODEL IS ALWAYS ADDED ON P1 (the schema prompt). ─────────────┐
+# │ P0 does not measure whether a model can read the page. It measures whether │
+# │ the model can GUESS what we wanted, because it is never told what the      │
+# │ output should contain. Judging a new model on P0 would blame it for our    │
+# │ own under-specification.                                                   │
+# │                                                                            │
+# │ P0 therefore appears exactly twice, and both are marked `control: true`:   │
+# │   A — it IS production. The thing to beat, not a fair test of the model.   │
+# │   B — the same model as C on the flat prompt. It exists only to prove that │
+# │       the prompt, not the model, is what fails: without it, someone can    │
+# │       argue the schema arms merely won by being newer.                     │
+# │ Neither is a fair evaluation of its model, and the report says so.         │
+# └────────────────────────────────────────────────────────────────────────────┘
+#
+# prompt:   P0 = flat baseline (the production prompt, verbatim)
+#           P1 = structured schema
+#           add your own by dropping a file in prompts/ and naming it here.
+# pricing:  input/output USD per million tokens. Set `source: measured` when the
+#           number comes from real billing, `list` when it is a published rate,
+#           `proxy` when you are borrowing another model's row — the report prints
+#           this, so a borrowed price can never silently read as a measured one.
+# local:    true for a self-hosted/open-source model. cost_note carries whatever
+#           makes its economics legible (GPU-hours, tokens/sec, hardware).
+
+cost_model:
+  # Characters-per-token is NOT one constant — it depends on the SHAPE of the output, and
+  # assuming otherwise overcharged every schema arm.
+  #   P0 = flowing Arabic prose. CALIBRATED from real billing: gemini-2.5-flash OCR of this book
+  #        cost a MEASURED $0.001881/page over 468 calls; minus input at list price that leaves
+  #        707 output tokens against 1392 output characters over the same 139 pages -> 1.97.
+  #   P1 = JSON. MEASURED directly from the API's own usageMetadata on this corpus: the ASCII
+  #        field names and punctuation tokenise far more efficiently than Arabic script -> 2.79.
+  chars_per_output_token: {P0: 1.97, P1: 2.79, P2: 2.75, P3: 2.75}
+  # Input tokens per call. P0 is the figure the P0 calibration is self-consistent with; P1 is the
+  # mean promptTokenCount the API actually reported for image + schema prompt.
+  # Fallbacks only. Any arm run through the API carries a `_usage.json` of REAL token
+  # counts, and those are used in preference to everything here.
+  input_tokens: {P0: 378, P1: 1378, P2: 2744, P3: 3200}
+
+arms:
+  - id: A_gemini25_P0
+    label: "Gemini 2.5 Flash · flat prompt"
+    model: gemini-2.5-flash
+    prompt: P0
+    role: production reference
+    control: true
+    runner: "already in production — outputs lifted from the live pipeline"
+    pricing: {input: 0.30, output: 2.50, source: measured}
+
+  - id: B_gemini37_P0
+    label: "Gemini 3.7 Flash · flat prompt"
+    model: gemini-3.7-flash
+    prompt: P0
+    role: isolates the MODEL (prompt held fixed vs A)
+    control: true
+    runner: "agy --model gemini-3.7-flash-high"
+    pricing: {input: 0.15, output: 0.60, source: proxy}   # no published row yet
+
+  - id: C_gemini37_P1
+    label: "Gemini 3.7 Flash · schema prompt"
+    model: gemini-3.7-flash
+    prompt: P1
+    role: isolates the PROMPT (model held fixed vs B)
+    runner: "agy --model gemini-3.7-flash-high"
+    pricing: {input: 0.15, output: 0.60, source: proxy}
+
+  - id: D_gemini35_P1
+    label: "Gemini 3.5 Flash · schema prompt"
+    model: gemini-3.5-flash
+    prompt: P1
+    role: cheaper model at the good prompt
+    runner: "agy --model gemini-3.5-flash-high"
+    pricing: {input: 0.15, output: 0.60, source: list}
+
+  - id: E_haiku_P1
+    label: "Claude Haiku 4.5 · schema prompt"
+    model: claude-haiku-4.5
+    prompt: P1
+    role: second vendor at the good prompt
+    runner: "subagent, model=haiku"
+    pricing: {input: 1.00, output: 5.00, source: list}
+
+  - id: F_sonnet_P1
+    label: "Claude Sonnet 5 · schema prompt"
+    model: claude-sonnet-5
+    prompt: P1
+    role: headroom — best available
+    runner: "subagent, model=sonnet"
+    pricing: {input: 3.00, output: 15.00, source: list}
+
+# Open-weight vision models (Qwen-VL, InternVL, Llama Vision) are the obvious missing arms. They
+# need a different cost axis — GPU-seconds and hardware, not $/token. GPT-OSS 120B was tried and is
+# text-only: handed a page image it asked which tool to open it with, so it is not a candidate.
+
+  - id: D2_gemini35api_P1
+    label: "Gemini 3.5 Flash · schema · direct API"
+    model: gemini-3.5-flash
+    prompt: P1
+    role: HARNESS CONTROL — same model+prompt as arm D, called directly instead of through the agent CLI
+    runner: "tools/run_gemini_api.py (direct API)"
+    pricing: {input: 0.15, output: 0.60, source: list}
+
+  - id: J_35lite_P1
+    label: "Gemini 3.5 Flash Lite · schema prompt"
+    model: gemini-3.5-flash-lite
+    prompt: P1
+    role: the cheapest tier of the current generation
+    runner: "tools/run_gemini_api.py (direct API)"
+    pricing: {input: 0.10, output: 0.40, source: list}
+
+  - id: I_flashlite_P1
+    label: "Gemini 2.5 Flash Lite · schema prompt"
+    model: gemini-2.5-flash-lite
+    prompt: P1
+    role: the cheapest tier — is lite good enough?
+    runner: "tools/run_gemini_api.py (direct API; returns real token counts)"
+    pricing: {input: 0.10, output: 0.40, source: list}
+
+  # ── P2: ordered typed blocks + inline footnote anchors ──────────────────────
+  # P1 returns headings in a list parallel to the body, which loses WHERE the heading sits. On this
+  # corpus 6 of 20 pages carry a heading and every one of them has several paragraphs, so P1 cannot
+  # faithfully rebuild 30% of the corpus. P2 returns one ordered block sequence instead.
+  - id: K_35flash_P2
+    label: "Gemini 3.5 Flash · blocks"
+    model: gemini-3.5-flash
+    prompt: P2
+    role: does ordered structure cost anything? (vs D2, same model on P1)
+    runner: "tools/run_gemini_api.py, completed on agy after the API credit ran out (MIXED harness)"
+    pricing: {input: 0.15, output: 0.60, source: list}
+
+  - id: L_37flash_P2
+    label: "Gemini 3.7 Flash · blocks"
+    model: gemini-3.7-flash
+    prompt: P2
+    role: best flash on ordered structure
+    runner: "tools/run_gemini_api.py"
+    pricing: {input: 0.15, output: 0.60, source: proxy}
+
+  # ── P3: P2 plus semantic extraction (references, people, works, dates) ──────
+  # Kept SEPARATE from P2 on purpose. Annotation is interpretation, not transcription, and asking
+  # for it may cost reading accuracy. P2-vs-P3 on the same model measures that price instead of
+  # assuming it is zero.
+  - id: N_35flash_P3
+    label: "Gemini 3.5 Flash · blocks + references"
+    model: gemini-3.5-flash
+    prompt: P3
+    role: what does semantic extraction cost? (vs K, same model on P2)
+    runner: "tools/run_gemini_api.py"
+    pricing: {input: 0.15, output: 0.60, source: list}
+
+  # ── Third-party models via the opencode CLI, all on P2 ──────────────────────
+  # All three were probed for vision before being added: each read a page image correctly. Cost is
+  # `plan` — they run under a flat-rate subscription, so there is no per-page price to quote. That
+  # is NOT the same as free: it is unmeasurable here, and the report says so rather than showing $0
+  # as if it were a bargain.
+  - id: Q_glm53flash_P2
+    label: "GLM 5.3 Flash · blocks"
+    model: glm-5.3-flash
+    prompt: P2
+    role: third-party model on ordered structure
+    runner: "opencode run --model opencode-go/glm-5.3-flash"
+    pricing: {input: 0.15, output: 0.5, source: list}
+    price_note: "Zhipu published rate for GLM-5.3-Flash; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
+
+  # PARTIAL — 13 of 20, and the shortfall is CHARACTERISED rather than shrugged off.
+  # Four consecutive passes failed the SAME seven pages (15, 24, 30, 48, 50, 52, 95); pass three
+  # additionally recovered p93, so it is near-deterministic rather than absolute. Those seven are
+  # measurably the heaviest pages in the set:
+  #     failed     182.7 KB image · 1014 body chars · 3.6 notes
+  #     succeeded  134.1 KB image ·  836 body chars · 1.3 notes
+  # p15 and p95 carry NO footnotes at all yet still fail, and have the longest bodies — so the
+  # driver is total content volume, not apparatus complexity. Consistent with a context or output
+  # ceiling, not a flaky timeout. The pages it does complete parse cleanly, so this is a capacity
+  # limit rather than a reading-quality verdict; the arm stays below the ranking threshold.
+  - id: R_mimo25_P2
+    label: "MiMo v2.5 · blocks"
+    model: mimo-v2.5
+    prompt: P2
+    role: third-party model on ordered structure
+    runner: "opencode run --model opencode-go/mimo-v2.5"
+    pricing: {input: 0.14, output: 0.28, source: list}
+    price_note: "Xiaomi's first-party rate for MiMo-V2.5; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
+
+  - id: S_luna_P2
+    label: "GPT 5.6 Luna · blocks"
+    model: gpt-5.6-luna
+    prompt: P2
+    role: third-party model on ordered structure
+    runner: "opencode run --model opencode-go/gpt-5.6-luna"
+    pricing: {input: 0.2, output: 1.2, source: list}
+    price_note: "OpenAI published rate, after the 2026-07-30 cut; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
+
+  # ── Completing the P2 field so every model can be compared at ONE prompt ────
+  # A chart that mixes models and prompts answers nothing: a gap between two arms differing in both
+  # is unattributable. The primary comparison is therefore all models at a FIXED prompt, which means
+  # every model needs a P2 run.
+  - id: T_sonnet_P2
+    label: "Claude Sonnet 5 · blocks"
+    model: claude-sonnet-5
+    prompt: P2
+    role: strongest available model on ordered structure
+    runner: "subagent, model=sonnet"
+    pricing: {input: 3.00, output: 15.00, source: list}
+
+  - id: U_haiku_P2
+    label: "Claude Haiku 4.5 · blocks"
+    model: claude-haiku-4.5
+    prompt: P2
+    role: cheap Anthropic tier on ordered structure
+    runner: "subagent, model=haiku"
+    pricing: {input: 1.00, output: 5.00, source: list}
+
+  # ── The experiment that settles P2-vs-P3 ────────────────────────────────────
+  # P3 asks one call to transcribe AND annotate, and the reading is what gives way. This arm keeps
+  # arm K's P2 transcription EXACTLY as it stands and runs a second, text-only call over it (P4) to
+  # pull the references out. The transcription is carried through unchanged, so the arm is directly
+  # comparable to K on every reading metric — the only thing added is the reference list.
+  #
+  # RESULT: 135 references, the same 135 P3 found, character-for-character identical after
+  # normalisation (100% exact overlap on 20 pages) — with P2's transcription instead of P3's. The
+  # entire accuracy cost of semantic extraction is an artifact of asking for it in the same call.
+  - id: V_secondpass_P2
+    label: "Gemini 3.5 Flash · blocks + second-pass refs"
+    model: gemini-3.5-flash
+    prompt: P2
+    role: DECOUPLED semantic extraction — arm K's transcription plus a separate text-only pass
+    runner: "tools/run_second_pass.py --source K_35flash_P2 (P4 prompt, text only)"
+    pricing: {input: 0.15, output: 0.60, source: list}
+    # THIS ARM IS TWO API CALLS, so its price is not its source arm's price. The scorer derives cost
+    # from the output it can see, which is only the first call — without this addend the arm would
+    # be published at the cost of P2 alone, making a two-call route look free. Derived from the
+    # ACTUAL character volumes of the second call (mean 4,157 input / 970 output chars per page)
+    # through the same calibrated 2.75 chars-per-token used everywhere else.
+    # `estimated`, not `measured`: the runner's usage record was overwritten by a later resume, so
+    # the real token counts for this batch are gone.
+    cost_addend_usd: 0.000438
+    cost_addend_source: estimated
+    cost_addend_note: "the P4 second call, priced from measured character volumes"
+    # NOT an independent reading, and therefore never in the model ranking: its transcription IS
+    # arm K's, character for character, because the second pass never sees the image. Ranking it
+    # beside K would enter the same reading twice and make the field look more populated than it is.
+    # It answers a PROMPT-ARCHITECTURE question, and is reported there.
+    derived_from: K_35flash_P2
+
+  # ── Final round: widening the field before the verdict ──────────────────────
+  # Each was probed for vision before being added — handed pages/p003.webp and asked how many lines
+  # of Arabic body text it could see, all four answered 14. A model that cannot see the image is not
+  # a candidate for this task at all (see the GPT-OSS 120B negative result above), and probing costs
+  # one call against twenty wasted ones.
+  - id: W_terra_P2
+    label: "GPT 5.6 Terra · blocks"
+    model: gpt-5.6-terra
+    prompt: P2
+    role: OpenAI's reasoning tier on ordered structure
+    runner: "tools/run_codex.ps1 (codex exec, reasoning=medium)"
+    pricing: {input: 2.0, output: 12.0, source: list}
+    price_note: "OpenAI published rate, after the 2026-07-30 cut; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
+
+  # EVALUATION PAGES FIRST — a deliberate choice, not an abandoned run. These three took 20-30
+  # MINUTES PER PAGE against roughly one for the Gemini arms, so completing all twenty for each
+  # would have cost hours and bought nothing: only the eight gold pages can produce a ranking, and
+  # the other twelve feed the agreement layer, which cannot rank anything. Their runs were therefore
+  # re-pointed at the evaluation set. They appear as PARTIAL in the 20-page agreement tables — that
+  # is the honest consequence, and the ranking they do appear in is complete.
+  # This arm first failed p039 and p052 in a way that read like an output-length limit. It was not:
+  # stale runner processes were holding slots against the shared rate limit, and with the field
+  # cleared both pages completed on the first try. From the outside, "the model could not finish"
+  # and "something else held the slot" are indistinguishable; the runner now sweeps stragglers.
+  #
+  # With all 8 evaluation pages in, the real weakness is the opposite of a capacity limit — it reads
+  # prose well (91.3%) and the APPARATUS badly: on p052 it renumbered the notes `١ ٢ ٣` where the
+  # leaf prints a continuation plus `٤٢`/`٤٣`, and missed the unmarked continuation entirely.
+  # Note identity and anchors both land at 50%. It is ranked, and it fails three gates on merit.
+  - id: X_deepseek_P2
+    label: "DeepSeek V4 Flash Vision · blocks"
+    model: deepseek-v4-flash-vision-exp
+    prompt: P2
+    role: a purpose-built VISION variant — does a vision-specialised model read Arabic script better?
+    runner: "opencode run --model opencode-go/deepseek-v4-flash-vision-exp"
+    pricing: {input: 0.14, output: 0.28, source: list}
+    price_note: "DeepSeek published V4-Flash rate; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
+
+  # 17/20. The three it did not complete — 050, 095, 097 — each exhausted a 15-minute per-page
+  # deadline rather than returning anything malformed, and none of them is an evaluation page, so
+  # the ranking this arm appears in is complete while its agreement-layer row is partial.
+  - id: Y_qwen38_P2
+    label: "Qwen 3.8 Max · blocks"
+    model: qwen3.8-max
+    prompt: P2
+    role: the Qwen family is the strongest open lineage on Arabic OCR benchmarks
+    runner: "opencode run --model opencode-go/qwen3.8-max"
+    pricing: {input: 2.0, output: 6.0, source: list}
+    price_note: "Alibaba published rate for Qwen3.8-Max; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"
+
+  # 16/20, on the same pattern as Qwen: 048, 050, 095, 097 each ran out the per-page deadline, and
+  # none is an evaluation page. Worth noting that the two arms failed an overlapping set (050, 095,
+  # 097) — those are heavy pages, so this looks like a property of the leaves rather than of either
+  # model.
+  - id: Z_kimik3_P2
+    label: "Kimi K3 · blocks"
+    model: kimi-k3
+    prompt: P2
+    role: frontier third-party model on ordered structure
+    runner: "opencode run --model opencode-go/kimi-k3"
+    pricing: {input: 3.0, output: 15.0, source: list}
+    price_note: "Moonshot published rate for Kimi K3; the run itself went through a flat-rate subscription, so this is the public per-token price, not an invoice"

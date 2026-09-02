@@ -1,0 +1,52 @@
+{
+  "_README": [
+    "Adjudicator decisions for pages where the two independent readings disagree on a SCORED field.",
+    "gold_merge.py --write applies these; a disputed page with no entry here is refused, so gold can",
+    "never contain a silent coin-flip. Every entry names which reading is adopted and why, and the",
+    "reasoning is repeated in truth/ADJUDICATION_LOG.md where it can be checked against the leaf."
+  ],
+
+  "p015.json": {
+    "base": "key2",
+    "dispute": "block 1: key1 reads أثبتا, key2 reads أثبتنا (one letter, ن)",
+    "decision": "key2",
+    "why": [
+      "key2 gave a specific letterform count — four teeth between the أ and the final ا, carrying",
+      "ث (3 dots), ب (1 below), ت (2 above), ن (1 above) — and said it had corrected the reading",
+      "deliberately. key1 did not discuss this token at all.",
+      "Grammar agrees: أثبتنا ('whom we have affirmed') parses with مَن as its object, while أثبتا",
+      "is a dual verb with no dual antecedent in the sentence.",
+      "HONEST LIMIT: the adjudicator could not independently resolve the tooth count at the",
+      "resolution available to it. This decision rests on key2's stated count plus grammatical",
+      "agreement, not on an independent glyph reading. One character in a 632-character block."
+    ]
+  },
+
+  "p024.json": {
+    "base": "key1",
+    "dispute": "note 0: key1 prints a space before the colon in `انظر :`, key2 does not",
+    "decision": "key1",
+    "why": [
+      "key1 measured it and stated the basis: the line is short and unjustified, so the gap cannot",
+      "be justification stretch. key2 recorded no space and gave no measurement either way.",
+      "A disagreement backed by a measurement beats one that is silent about the question.",
+      "Everything else in this note is identical after normalisation — the apparent differences are",
+      "harakat, which the scorer folds away and never scores."
+    ]
+  },
+
+  "p030.json": {
+    "base": "key1",
+    "dispute": "note 2: key1 prints `و التي` separated, key2 prints `والتي` joined. Separately, key1 lists `4.1.8` as a Latin foreignRun and key2 excludes it.",
+    "decision": "key1 for the space; key2 for the foreign run",
+    "drop_foreign_runs": ["4.1.8"],
+    "why": [
+      "The space: key1 verified it with a column ink-profile and named the check. key2 did not",
+      "raise it. Same rule as p024 — the measured reading wins.",
+      "The foreign run: `4.1.8` is note 34's entire text and is DIGITS ONLY. The schema asks for an",
+      "embedded Latin or Greek *script* run inside right-to-left prose; a bare dotted numeral is not",
+      "one, and key2 excluded it for exactly that reason. Adopting key2 here does not change any",
+      "score — foreignRuns carries no weight in the composite — but the reference should be right."
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "page": 23,
+  "runningHeader": null,
+  "printedPageNumber": null,
+  "printerMark": null,
+  "blocks": [
+    { "type": "pageTitle", "text": "تَمْهِيدٌ١", "noteRefs": [1] }
+  ],
+  "footnotes": [
+    { "marker": "١", "number": 1, "text": "هذا التمهيد هو مقدمة النسخة الإنجليزية", "continuedFromPreviousPage": false }
+  ],
+  "foreignRuns": [],
+  "uncertain": []
+}

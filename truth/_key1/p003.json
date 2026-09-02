@@ -1,0 +1,83 @@
+{
+  "page": 3,
+  "runningHeader": null,
+  "printedPageNumber": null,
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "الترجمة عن اللغة الإنجليزية",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الأستاذة آمال فؤاد",
+      "noteRefs": []
+    },
+    {
+      "type": "heading",
+      "text": "المراجعات",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "مراجعة الترجمة على النسخة الإنجليزية",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الدكتورة إيريني ثابت جورج",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الأستاذة مريم سعد مينا",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "مراجعة الترجمة على النص اليوناني",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الدكتور جرجس جمال فايز",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "المراجعة اللغوية وتدقيق النص العربي",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الدكتور وجدي رزق غالي",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "المراجعة العامة والفهرس الموضوعي",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الدكتور عماد موريس اسكندر",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "المقدمة والمراجعة النهائية واللاهوتية",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "الدكتور جوزيف موريس فلتس",
+      "noteRefs": []
+    }
+  ],
+  "footnotes": [],
+  "foreignRuns": [],
+  "uncertain": [
+    "Block granularity is the one judgement call: the page holds 14 centred display lines (13 credit lines plus the standalone heading), emitted one block per printed line. The typesetter groups the credit lines into role+name clusters (within-cluster line gaps ~30-46 px, between-cluster gaps ~83-143 px), so a grouped reading is also defensible; per-line was chosen because the third cluster carries one role label followed by two different people, which merging would run together."
+  ]
+}

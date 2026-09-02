@@ -1,0 +1,11 @@
+{
+ "page": 8,
+ "verifiedBy": "human-corrected-from-numbering-progression",
+ "runningHeader": "مقدمة",
+ "pageTitle": "مقدمة",
+ "printedPageNumber": "١١ م",
+ "printerMark": null,
+ "footnoteCount": 2,
+ "notes": "Running head and page title are THE SAME WORD. Footnote 1 contains a nested numbered list mixing Greek, Latin and Arabic scripts with Western and Arabic-Indic digits. Bottom mark is a printer signature, not a page number.",
+ "correction": "Originally recorded as a printer signature. The mark increments 1:1 with the page (8->11, 9->12, 12->15, 15->18, 17->20), which a gathering signature never does. It is a front-matter page number."
+}

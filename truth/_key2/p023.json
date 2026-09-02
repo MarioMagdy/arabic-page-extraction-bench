@@ -1,0 +1,27 @@
+{
+  "page": 23,
+  "runningHeader": null,
+  "printedPageNumber": null,
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "pageTitle",
+      "text": "تمهيد١",
+      "noteRefs": [
+        1
+      ]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "١",
+      "number": 1,
+      "text": "هذا التمهيد هو مقدمة النسخة الإنجليزية",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [],
+  "uncertain": [
+    "The title is set in ornamental jali calligraphy with repeated filler marks (bird/comma/leaf shapes) scattered in the blank spaces, several floating above positions with no letter beneath; read as decoration, not vocalisation, so the title is transcribed unvocalised."
+  ]
+}

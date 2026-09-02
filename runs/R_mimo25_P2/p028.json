@@ -1,0 +1,74 @@
+{
+  "page": 28,
+  "runningHeader": "تمهيد",
+  "printedPageNumber": "٧",
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "اعتقد تيلمونت (Tillemont) ودموم ماران ¹⁸ (Dom Maran) وأما كونه شمّاساً ¹⁹ فهذا هو مجرد تخمّنين، غير أن غالبية المؤرخين يتفقون مع سيلييه (Ceillier) في أن ق. يوستيנוס ظل علَمانياً يتّجه في شباب فيلسوف متحدّثاً مع أناس من كل الأشخاص مطّأَماً ما قاله لرتريفون: \"أنا الآنِ لأبعد أن صرت مسيحياً [فليسوف وأمنتِي أن يُشعر الحكيل بنفسه يشااعري ولا يدررون قد بلّغ الخلاص لأن فيه جلال عظيم بيت الخوف داخل نفوس الذين حادوا عن طريق البر ولكنه أيضًا يبقى عزاءً أبدياً لأولئك الذين يهتمون بذلك، إذا كنت تهتم بهم فيك خيرك وخلاص نفسك إذا كنت تؤمن بالله . لأنّي أعلم أنك لستَ بغرير عن هذا الأمر. فقد تでしょうか لك الفرصة أن تصل إلى معرفة مسيح الرب، وبعد أن تصبح مسيحياً أن تستمتع بحياة سعيدة.\"",
+      "noteRefs": [18, 19]
+    },
+    {
+      "type": "paragraph",
+      "text": "وذهب ق. يوستيנוס إلى روما بعد انتقاله للسيبة بعض الوقت ² ومكث هناك فترة من الزمان. وقد أنشئت مدرسة للفلسفة، وكان تاتيان (Tatian) من أبرز تلاميذه، وكان له كلمًا أتيحت له الفرصة داخل في مناقيشات فكرية ومجادلات دفاعية بحربية وشجاعة. وقد شُجّأت إحدى هذه المناقشات مع كرسكنس الكلبي (Crescens the Cynic) ²² \"الحب للأزواج الباطلة وليس للحكمة\" والذي استخدم عبارة سقرط ² الجديرة بالثاء: \"لا بنفي إكرام إنسان أكثر من الحق\". وعلى الرغم من أن ق. يوستيנוס قد فضح جهل كرسكنس النام بالتعليم المسيحي في مناظرة أمام عامّة معناه:",
+      "noteRefs": [20, 21, 22]
+    },
+    {
+      "type": "paragraph",
+      "text": "\"إنني أتوقع أن أكون ضحية للفوامرة وأن أُعدم حرقًا ... رما باواسطة\"",
+      "noteRefs": [23]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "18",
+      "number": 18,
+      "text": "Migne, P.G. 6.113f.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "19",
+      "number": 19,
+      "text": "A. Butler, loc. cit.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": null,
+      "number": null,
+      "text": "الحوار مع تريفون، فصل ٨.",
+      "continuedFromPreviousPage": true
+    },
+    {
+      "marker": "21",
+      "number": 21,
+      "text": "Cf. Eusebius, Historia ecclesiastica 4.11.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "22",
+      "number": 22,
+      "text": "الدفاع الثاني، فصل ٣.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "23",
+      "number": 23,
+      "text": "Cf. Plato, Republic 10.595C.",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [
+    { "script": "latin", "text": "Tillemont" },
+    { "script": "latin", "text": "Dom Maran" },
+    { "script": "latin", "text": "Ceillier" },
+    { "script": "latin", "text": "Tatian" },
+    { "script": "latin", "text": "Crescens the Cynic" },
+    { "script": "latin", "text": "Migne, P.G." },
+    { "script": "latin", "text": "A. Butler" },
+    { "script": "latin", "text": "loc. cit." },
+    { "script": "latin", "text": "Historia ecclesiastica" },
+    { "script": "latin", "text": "Republic" }
+  ],
+  "uncertain": ["Mapping footnote 20 anchor to text position — anchor not clearly distinguishable in body text; note listed as continuedFromPreviousPage"]
+}

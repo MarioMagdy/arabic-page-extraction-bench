@@ -1,0 +1,89 @@
+{
+  "runningHeader": "مقدمة",
+  "printedPageNumber": "١١",
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "pageTitle",
+      "text": "مقدمةٌ",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "ليTd للقديس يوسّتينوس¹، وهو أول من أنشأ مدرسة اللاهوتية المسيحية، حضور أجداده ومورّثه في الكنيسة. وتتمّت عظمته بالكتابة عنه في نقل تعالج مواريث اللاهوتيّة.",
+      "noteRefs": [1]
+    },
+    {
+      "type": "paragraph",
+      "text": "وقد كان هده هو إيجاد ندوة وحدّيقة وحقيقية من الفلسفة، أي الفلسفة السيّحونين الذين يعنون عن واحدة الحقيقية في العالمين والبالتالي عن واحدة العالم نفسه. ومع أنّه قد سمّى فلسوفًا\"إلا أنّه خصّ mak تختّام من الشّخص الفلّker أو الباحث الفلسفي. فقد كان غريب في أن يكون دأبًا لأمّ لعمّام و مُشرّدًا في الكنيسة. وهذه الصّفة الأصيلة كأن يجب أن يُبيّب. حتّى انّه كان بصفة عامة على تحدّيات عصره والّتي تمثّت في ثلاث مواريث: البهودية وال Tânينية والفلّوسوفية.",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "وإماطلي إمّاضيه الفلسفي قد صبغ لك كّتاباته بلحّيد طريقة فكرية. ومع ذلك نجد أن افتراضات الفلّكّيرة كانت تعبير عن الدّواومة من الكتاب القديس و تعلّي الكنيسة. وفي نصف الوجود بعيدELY كيوسّتينوس هو أولahu في الكنيسة اسّترعم أهمّية وصورة البِنونية التي كأن قدّمهبطربقة الدّرسة الرّقّية.",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "ومن الجدير بالذكر أنّ يوسّتينوس لم يكن فيلسوفًا أصيلًا،",
+      "noteRefs": []
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "١",
+      "number": 1,
+      "text": "قامد. جوزيف موبري لسёт اعدها هذه المقدّمة بالاعتماد على المصادر التّالية:",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": null,
+      "number": null,
+      "text": "1. Στυλιανός Γ.Παπαδόπουλου, Πατρολογία Α .Αθήνα, 1982, p. 233 -244.\n2. Johannes Quasten, Patrology, Vol. I, pp. 196 - 219.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٣",
+      "number": 3,
+      "text": "د. كyrton نصّر نصّر نصّر يحيى الشّيخ عبد الأباما الدّوّون، ثنيّ غرب مشرّورة. المرّك الأرثوذكسيّي.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٢",
+      "number": 2,
+      "text": "سيّم استحخدام الحزام. ق. الدلّ على كلمّة القديس في كلّ الكتب.",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [
+    {
+      "script": "greek",
+      "text": "Στυλιανός Γ.Παπαδόπουλου, Πατρολογία Α .Αθήνα"
+    },
+    {
+      "script": "latin",
+      "text": "Johannes Quasten, Patrology, Vol. I, pp. 196 - 219."
+    }
+  ],
+  "uncertain": [
+    "ليTd for القديس in paragraph 1 - unclear transcription",
+    "السيّحونين unclear in paragraph 2",
+    "سمّى فلسوفًا in paragraph 2",
+    "خصّ mak تختّام in paragraph 2 - unclear",
+    "الفلّker in paragraph 2 - unclear",
+    "أمّ لعمّام و مُشرّدًا in paragraph 2 - unclear",
+    "ال Tânينية in paragraph 2 - possibly Latin foreign word",
+    "الفلّوسوفية in paragraph 2",
+    "إمّاضيه الفلسفي in paragraph 3",
+    "الدّواومة in paragraph 3",
+    "البِنونية in paragraph 3",
+    " بعيدELY كيوسّتينوس in paragraph 3 - unclear",
+    "اسّترعم in paragraph 3",
+    "صورة البِنونية in paragraph 3",
+    "دّرسة الرّقّية in paragraph 3",
+    "Footnote 1 text unclear",
+    "Footnote 3 text unclear",
+    "Footnote 2 text unclear"
+  ],
+  "page": 8
+}

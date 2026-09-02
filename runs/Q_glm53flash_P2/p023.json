@@ -1,0 +1,26 @@
+{
+  "page": 23,
+  "runningHeader": null,
+  "printedPageNumber": null,
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "pageTitle",
+      "text": "التمهيد",
+      "noteRefs": [1]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "١",
+      "number": 1,
+      "text": "هذا التمهيد هو مقدمة النسخة الإنجليزية",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [],
+  "uncertain": [
+    "العنوان المزخرف بالخط العربي في وسط الصفحة لا يمكن قراءته بثبات؛ أقرب قراءة «التمهيد»، وقد يكون «الدفاع الأول» أو غير ذلك",
+    "مرساة الحاشية ١ غير ظاهرة بوضوح؛ الأرجح أنها على العنوان المزخرف لأنه النص الوحيد في الصفحة"
+  ]
+}

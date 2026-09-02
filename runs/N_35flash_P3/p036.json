@@ -1,0 +1,27 @@
+{
+ "runningHeader": null,
+ "printedPageNumber": null,
+ "printerMark": null,
+ "blocks": [
+  {
+   "type": "pageTitle",
+   "text": "الدفاع الأول",
+   "noteRefs": []
+  }
+ ],
+ "footnotes": [],
+ "foreignRuns": [],
+ "references": [
+  {
+   "kind": "work",
+   "text": "الدفاع الأول",
+   "author": null,
+   "title": "الدفاع الأول",
+   "year": null,
+   "locus": null,
+   "where": "body"
+  }
+ ],
+ "uncertain": [],
+ "page": 36
+}

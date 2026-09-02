@@ -1,0 +1,35 @@
+{
+  "page": 28,
+  "runningHeader": "تمهيد",
+  "printedPageNumber": "٧",
+  "printerMark": null,
+  "blocks": [
+    { "type": "paragraph", "text": "اعتقاد تيلمونت (Tillemont) ودوم ماران (Dom Maran)18 وأما كونه شماسا19 فإن هذا هو مجرد تخمين، غير أن غالبية المؤرخين يتفقون مع سيليبيوس (Ceillier) في أن ق. يوستينوس ظل عالميا يتحول في ثياب فيلسوف متحدثا مع أناس من كل الأشكال مطبقا ما قاله لترفون: «أنا الآن أبعد أن صرت مسيحيا؛ فيلسوف وأمنيتي أن يشعر الكلب بنفس مشاعري ولا يزدون قط بكلام المخلص لأن فيه جلال عظيم يبث الخوف داخل نفوس الذين حادوا عن طريق البر ولكنه أيضا يبقى عزاء أبديا لهؤلاء الذين يهتمون به ولذلك، إذا كنت تهتم بهم فيه خيرك وخلاص نفسك وإذا كنت تؤمن بالله. لأني أعلم أنك لست بغريب عن هذا الأمر. فقد تتاح لك الفرصة أن تصل إلى معرفة مسيح الرب، وبعد أن تصير مسيحيا أن تستمع بحياة سعيدة.»٢٠", "noteRefs": [18, 19, 20] },
+    { "type": "paragraph", "text": "وذهب ق. يوستينوس إلى روما بعد اعتناقه المسيحية ببعض الوقت ومكث هناك فترة من الزمن. وقد أنشأ مدرسة الفلسفة، وكان تاتيان (Tatian)21 من أبرز تلاميذه، وكان كلما أتيحت له الفرصة دخل في مناقشات فكرية ومجادلات دفاعية بحرية وشجاعة. وقد سجّلت إحدى هذه المناقشات مع كريسكنس الكلبي (Crescens the Cynic) الذي استخف بعبارة سقراط23 الجديرة بالثناء: «لا ينبغي إكرام إنسان أكثر من الحق». وعلى الرغم من أن ق. يوستينوس قد فضح جهل كريسكنس التام بتعاليم المسيحية في مناظرة عامة معلنا: «إنني أتوقع أن أكون ضحية لمؤامرة وأن أعدم حرقا ... ربما بواسطة...»٢٢", "noteRefs": [21, 23, 22] }
+  ],
+  "footnotes": [
+    { "marker": "18", "number": 18, "text": "Migne, P.G. 6.113f.", "continuedFromPreviousPage": false },
+    { "marker": "19", "number": 19, "text": "A. Butler, loc. cit.", "continuedFromPreviousPage": false },
+    { "marker": "٢٠", "number": 20, "text": "الحوار مع تريفون، فصل ٨.", "continuedFromPreviousPage": false },
+    { "marker": "21", "number": 21, "text": "Cf. Eusebius, Historia ecclesiastica 4.11.", "continuedFromPreviousPage": false },
+    { "marker": "٢٢", "number": 22, "text": "الدفاع الثاني، فصل ٣.", "continuedFromPreviousPage": false },
+    { "marker": "23", "number": 23, "text": "Cf. Plato, Republic 10.595C.", "continuedFromPreviousPage": false }
+  ],
+  "foreignRuns": [
+    { "script": "latin", "text": "(Tillemont)" },
+    { "script": "latin", "text": "(Dom Maran)" },
+    { "script": "latin", "text": "(Ceillier)" },
+    { "script": "latin", "text": "(Tatian)" },
+    { "script": "latin", "text": "(Crescens the Cynic)" },
+    { "script": "latin", "text": "Migne, P.G. 6.113f." },
+    { "script": "latin", "text": "A. Butler, loc. cit." },
+    { "script": "latin", "text": "Cf. Eusebius, Historia ecclesiastica 4.11." },
+    { "script": "latin", "text": "Cf. Plato, Republic 10.595C." }
+  ],
+  "uncertain": [
+    "The reading of «ولا يزدون» is uncertain (possibly «ولا يزدرون»).",
+    "The word «مجادلات/مجالات» in the second paragraph is uncertain.",
+    "Exact anchor position of 23 (after «سقراط» versus after «الحق») is uncertain.",
+    "Whether «وذهب ق. يوستينوس» begins a new printed paragraph is uncertain."
+  ]
+}

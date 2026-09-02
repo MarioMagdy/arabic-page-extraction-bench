@@ -1,0 +1,5 @@
+pyyaml
+python-Levenshtein
+Pillow
+requests
+matplotlib

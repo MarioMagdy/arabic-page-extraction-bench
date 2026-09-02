@@ -1,0 +1,16 @@
+[
+ {
+  "page": 52,
+  "prompt_tokens": 1378,
+  "output_tokens": 65536,
+  "total_tokens": 66914,
+  "chars": 172034
+ },
+ {
+  "page": 93,
+  "prompt_tokens": 1378,
+  "output_tokens": 65536,
+  "total_tokens": 66914,
+  "chars": 196531
+ }
+]

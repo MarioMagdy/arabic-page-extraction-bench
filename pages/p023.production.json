@@ -1,0 +1,94 @@
+{
+ "book": "justin_martyr_apologies_clean",
+ "batch": "primary-1-100",
+ "page": 23,
+ "printedPage": null,
+ "pageLabel": "p. 23",
+ "language": "ar",
+ "image": "p023.webp",
+ "imageBytes": 14940,
+ "imagePx": [
+  1475,
+  2407
+ ],
+ "ocrText": "تَمْهِيدٌ\n\n[FOOTNOTE]١ هذا التمهيد هو مقدمة النسخة الإنجليزية[/FOOTNOTE]",
+ "cleanText": "تَمْهِيدٌ\n\n[FOOTNOTE]١ هذا التمهيد هو مقدمة النسخة الإنجليزية[/FOOTNOTE]",
+ "displayBody": "تَمْهِيدٌ\n\n١ هذا التمهيد هو مقدمة النسخة الإنجليزية",
+ "displayBodyParagraphs": [
+  "تَمْهِيدٌ",
+  "١ هذا التمهيد هو مقدمة النسخة الإنجليزية"
+ ],
+ "displayFootnotes": [],
+ "narrationSpans": [
+  {
+   "spanId": "p23-par1-s1",
+   "text": "تَمْهِيدٌ",
+   "speechText": "تَمْهِيدٌ",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  },
+  {
+   "spanId": "p23-par2-s1",
+   "text": "[FOOTNOTE]١ هذا التمهيد هو مقدمة النسخة الإنجليزية[/FOOTNOTE]",
+   "speechText": "١ هذا التمهيد هو مقدمة النسخة الإنجليزية",
+   "feIsFootnote": true,
+   "feMixedSpan": false
+  }
+ ],
+ "displayParse": {
+  "trusted": false,
+  "failOpen": {
+   "reason": "body-swallowed",
+   "benign": false,
+   "note": "footnotesAreTrustworthy() FAILED OPEN (bodyChars < 40 or < 20% of the page): notes are DISCARDED and the whole page renders as body with [FOOTNOTE] glyphs stripped. An empty displayFootnotes here is the fail-open, not a missing apparatus."
+  },
+  "sourceHasFootnoteTags": true,
+  "allSpansFootnote": false,
+  "bodyChars": 9,
+  "footnoteChars": 61,
+  "parsedNotes": [],
+  "parsedNotesIfTrusted": [
+   {
+    "num": 1,
+    "label": "١",
+    "raw": "هذا التمهيد هو مقدمة النسخة الإنجليزية"
+   }
+  ],
+  "remainder": "",
+  "error": null
+ },
+ "narrationParity": {
+  "gemini/Charon": {
+   "storedRows": 2,
+   "storedNotDerived": [],
+   "derivedNotStored": [],
+   "states": [
+    "done"
+   ]
+  },
+  "google-cloud/ar-XA-Chirp3-HD-Charon": {
+   "storedRows": 2,
+   "storedNotDerived": [],
+   "derivedNotStored": [],
+   "states": [
+    "done"
+   ]
+  }
+ },
+ "segmenterParityFeVsBe": {
+  "spanIdsIdentical": true,
+  "spanTextsIdentical": true,
+  "feSpanCount": 2,
+  "beSpanCount": 2
+ },
+ "source": {
+  "bookId": "justin_martyr_apologies_clean",
+  "pageNumbering": "PDF page (1-based). `printedPage` is the number printed on the leaf.",
+  "image": "RENDERED LOCALLY from data/.r2_cache/justin_martyr_apologies_clean.pdf via PyMuPDF at 300 DPI (= the scan's native resolution), WebP q82. The local PDF is byte-size identical to the production R2 object (111,244,749 B). Nothing uploaded.",
+  "ocrText": "PRODUCTION. `text` field of page_NNNN.json inside the R2 object `justin_martyr_apologies_clean.ocr.zip` (uploaded 2026-08-01T00:46:32Z), i.e. exactly what `GET /books/{bookId}/pages/{n}/ocr` returns after `ensure_text_local`.",
+  "cleanText": "PRODUCTION. `text_clean or text` of page_NNNN.json inside the R2 object `justin_martyr_apologies_clean.clean.zip` (uploaded 2026-08-01T00:46:33Z), i.e. exactly what `GET /books/{bookId}/pages/{n}/clean`.textClean returns and what the reader loads (Patristic-AI-Fe src/room/lib/api.ts fetchPageText).",
+  "displayBody": "DERIVED at FE 3add663 (deployed origin/main). Produced by running the committed audit harness scripts/audit-footnotes.ts `classifyPage()` — the repo's own replica of src/room/reader/TextView.tsx routing, over the real src/room/tts/segmentation.ts + src/room/reader/footnotes.ts. NOT a React render.",
+  "displayFootnotes": "DERIVED at FE 3add663. One entry per parsed note rendered as `label + raw` (TextView room-footnotes-list), with the parseFootnotes().bodyText REMAINDER appended last (room-footnotes-remainder). EMPTY whenever `trusted` is false — see failOpen.",
+  "narrationSpans": "DERIVED at BE 1799de2 (deployed origin/main) by src/lib/audiobook/segmentation.py::segment_page(page, cleanText, language), the same call src/lib/audiobook/pipeline.py::plan_spans makes. The span TEXT is not stored in the production book_audio table (only span_id/page/state), so it is DERIVED, not stored; span-id parity against the stored rows is reported per page in `narrationParity`."
+ }
+}

@@ -1,0 +1,132 @@
+You are transcribing ONE page of a printed Arabic scholarly book (a patristic edition). The page
+image is the only source of truth. Return ONE JSON object and nothing else — no prose, no markdown
+fence, no commentary.
+
+A printed page is not a blob of text, and it is not a set of parallel lists either. It is an ORDERED
+SEQUENCE of blocks running down the page, plus a few pieces of furniture that sit outside that flow.
+Record the sequence in the order it is printed, and say what each block IS.
+
+{
+  "runningHeader":     string | null,
+  "printedPageNumber": string | null,
+  "printerMark":       string | null,
+  "blocks": [
+    { "type": "pageTitle" , "text": string, "noteRefs": [integer] },
+    { "type": "heading"   , "text": string, "noteRefs": [integer] },
+    { "type": "paragraph" , "text": string, "noteRefs": [integer] },
+    { "type": "verse"     , "text": string, "noteRefs": [integer] }
+  ],
+  "footnotes": [ { "marker": string|null, "number": integer|null, "text": string,
+                   "continuedFromPreviousPage": boolean } ],
+  "foreignRuns": [ { "script": "greek"|"latin"|"other", "text": string } ],
+  "references": [ { "kind": "work"|"person"|"place"|"scripture"|"publication",
+                    "text": string, "author": string|null, "title": string|null,
+                    "year": integer|null, "locus": string|null, "where": "body"|"footnote" } ],
+  "uncertain": [string]
+}
+
+## Why blocks, and not separate fields
+
+A chapter heading such as `الفصل السادس والأربعون` sits BETWEEN two paragraphs. Returned in its own
+list it would still be correct text, but its POSITION would be lost, and the page could no longer be
+rebuilt: a reader would show it in the wrong place and a read-aloud voice would speak it at the
+wrong moment. `blocks` keeps the order the typesetter set, so the page is reconstructable from the
+output alone.
+
+## The block types
+
+- **pageTitle** — a title belonging to THIS page, centred and set in larger or heavier type, at the
+  head of the text. There is at most one, and it is not the running header.
+- **heading** — a heading INSIDE the flow, such as a chapter opening part-way down the page. Emit it
+  at the exact position it appears in the sequence, between the paragraphs it separates.
+- **paragraph** — ordinary prose. One block per printed paragraph.
+- **verse** — a block quotation of scripture or poetry set off from the prose. If a page has none,
+  emit none; do not force prose into this type.
+
+## The furniture — outside the flow, never inside `blocks`
+
+- **runningHeader** — the small repeating line at the very top, set apart from the text block. The
+  same on every page of a section. **A running header and a page title can be the same words on the
+  same page**; the small line at the very top is the header, the large centred one is the pageTitle
+  block. Record both, in their two different places.
+- **printedPageNumber** — the number printed on the leaf, exactly as printed. Usually NOT the same
+  as the PDF page. A front-matter series may be suffixed (e.g. `١١ م`) while the body runs plain.
+- **printerMark** — a signature/sheet mark, if and only if one is present. Note that a mark which
+  increments by one on every consecutive page is a page NUMBER, not a signature.
+
+## noteRefs — the anchors, and why they are hard
+
+`noteRefs` lists the footnote numbers ANCHORED IN THAT BLOCK, in the order they appear. An anchor is
+a small raised number attached to a word, pointing down at the note with the same number below the
+rule. Keep the glyph in `text` where it is printed AND list its integer value in `noteRefs`.
+
+**The whole difficulty is telling an anchor from a number that is simply part of the sentence.**
+On one page of this corpus the body contains the anchors 1–6 and also the numerals 100 and 120,
+which are chapter references inside prose (`فصل ١٢٠` — "chapter 120"). Those are NOT anchors and
+must not appear in `noteRefs`. Decide by what the number DOES, not by the fact that it is a number:
+
+- an ANCHOR is raised/superscript, sits tight against the preceding word with no space, is not part
+  of a phrase, and has a matching numbered note below the rule;
+- a NUMBER IN THE TEXT sits on the baseline, is grammatically part of the sentence (a chapter, a
+  year, a verse, a quantity), and has no corresponding note.
+
+A useful self-check before you answer: **the anchors you list should account for the notes you
+found.** If you emit a note numbered 4 but no block anchors 4, or you anchor 120 and there is no
+note 120, re-read the page — one of the two readings is wrong.
+
+Markers are not always in the same digit system on the same page: one real page here carries notes
+marked ١، ٢، 3، ٤، ٥، ٦ — Western `3` among Arabic-Indic. Transcribe each marker as printed and give
+`number` its integer value regardless of script.
+
+## Footnotes
+
+The apparatus below the horizontal rule, **ONE OBJECT PER PRINTED NOTE**, never merged. Two notes
+are two objects even when the typesetting runs them together with no space or punctuation between
+them (`…6.113f.19 A. Butler…` is the end of note 18 followed by note 19). `marker` is the number
+exactly as printed; `number` is its integer value; `text` is the note WITHOUT its leading marker. If
+the first note on the page is the tail of one begun on the previous page — it will carry no marker —
+emit it with `"marker": null, "number": null, "continuedFromPreviousPage": true`.
+
+## references — what the page CITES
+
+Beyond transcribing, identify every bibliographic or historical reference the page names, in the
+body or the apparatus. This is the one part of this task that is interpretation rather than
+transcription, so hold it to a strict rule: **record only what the page actually states, and never
+infer, expand, complete or correct a citation from your own knowledge.** If the page prints only a
+surname, `author` is that surname. If no year is printed, `year` is null.
+
+- **work** — a book or treatise cited as a work: `Adversus Haereses 46`, `Die Apostolischen Väter`,
+  `الحوار مع تريفون`. Put the section/chapter in `locus` (`46`, `فصل ١٢٠`), not in `title`.
+- **person** — a named human: `K. Bihlmeyer`, `F. Cayré`, `يوستينوس`. A person named ONLY as the
+  author of a work in the same reference belongs in that work's `author`, not as a separate entry.
+- **place** — a named location: `Flavia Neapolis`, `Tübingen`. Note that a city appearing in a
+  citation is usually the place of PUBLICATION, not a place the text is about; it still records as
+  `place` only if the page discusses it, otherwise it belongs to the publication entry.
+- **scripture** — a biblical citation: `(مز ١٠٩: ١ - ٣)`. Put book+chapter+verse in `locus` exactly
+  as printed, digits unchanged.
+- **publication** — a full bibliographic entry combining several of the above:
+  `K. Bihlmeyer, Die Apostolischen Väter (Tübingen, 1924) VIIf.` Fill `author`, `title`, `year` and
+  `locus` from the parts that are printed, and leave the rest null.
+
+`where` says whether the reference appears in the body flow or in a footnote.
+
+`text` is always the reference exactly as printed, so the structured fields can be checked against
+it. If you cannot decide what kind a thing is, prefer the plainer classification and keep `text`
+accurate — an accurate string with a debatable `kind` is far more useful than a confident
+misreading.
+
+## Rules that matter for this corpus
+
+1. **Digits.** Transcribe every number in the digit block actually printed. Arabic-Indic
+   (`٠١٢٣٤٥٦٧٨٩`, U+0660) and Extended Arabic-Indic (`۰۱۲۳۴۵۶۷۸۹`, U+06F0) look similar and are
+   different characters — never substitute one for the other, and never convert either to Western
+   digits.
+2. **Scripture citations.** A reference like `(مز ١٠٩: ١ - ٣)` is chapter 109, verses 1–3. Read the
+   chapter, the colon and the verse range as separate quantities and keep the colon where it is
+   printed. A misplaced colon silently produces a real-looking but wrong citation, which is worse
+   than an obvious error. Re-read every citation before emitting it.
+3. **Do not translate, summarise, normalise, correct, or reorder anything.** Transcribe.
+4. Keep an inline footnote marker in place in the text as its printed glyph (e.g. `مقدمة¹`).
+5. Right-to-left prose with an embedded Latin or Greek run keeps the run in its printed position.
+   Greek must be transcribed as Greek letters; a Greek word is NEVER digits.
+6. If an element genuinely is not on the page, use `null` or omit the block. Never invent one.

@@ -1,0 +1,39 @@
+{
+  "page": 45,
+  "runningHeader": "الدفاع الأول",
+  "printedPageNumber": "٢٥",
+  "printerMark": null,
+  "blocks": [
+    { "type": "paragraph", "text": "٢٤. الوثنيون يعبدون الجسد والحبوان.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٢٥. المسيحيون تركوا الوثنية.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٢٦. سيمون الساحر.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٢٧. التخلّي عن الأطفال شرّ عند المسيحيين.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٢٨. العناية الإلهية.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٢٩. العفة المسيحية.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٠. المسيح لم يكن ساحرًا.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣١. الأنبياء اليهود.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٢. موسى تنبّأ بالمسيح.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٣. إشعياء تنبّأ بكيفية ميلاد المسيح.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٤. ميخا تنبّأ بمكان ميلاد المسيح.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٥. نبوة بالصليب.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٦. أشكال متعددة للنبوة.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٧. الله الآب يتكلم.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٨. الله الابن يتكلم.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٣٩. الله الروح القدس يتكلم.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٠. داود تنبّأ بمجيء المسيح.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤١. داود تنبّأ بصلب المسيح.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٢. الأنبياء يتحدّثون عن المستقبل كما أنه حدث في الماضي.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٣. الإنسان مستول عن أعماله.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٤. تعاليم الأنبياء عن حرية إرادة الإنسان.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٥. النبوة بصعود المسيح ومجيده.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٦. المسيح هو اللوغوس المتجسد.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٧. نبوة بسقوط اليهود.", "noteRefs": [] },
+    { "type": "paragraph", "text": "٤٨. نبوة بمجازات المسيح وموته.", "noteRefs": [] }
+  ],
+  "footnotes": [],
+  "foreignRuns": [],
+  "uncertain": [
+    "٤٣: كلمة «مستول» ربما تكون مطبوعة «مسئول»",
+    "٤٨: قراءة «بمجازات» غير مؤكدة تمامًا في الطباعة"
+  ]
+}

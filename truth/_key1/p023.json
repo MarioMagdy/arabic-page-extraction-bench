@@ -1,0 +1,27 @@
+{
+  "page": 23,
+  "runningHeader": null,
+  "printedPageNumber": null,
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "pageTitle",
+      "text": "تمهيد١",
+      "noteRefs": [
+        1
+      ]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "١",
+      "number": 1,
+      "text": "هذا التمهيد هو مقدمة النسخة الإنجليزية",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [],
+  "uncertain": [
+    "The single title word is set in ornamental thuluth display calligraphy. Whether the small v-shaped and comma-like strokes floating above and below it are decorative filler or intended harakat cannot be settled from the image; they are read as filler, so the title is transcribed unvocalised as تمهيد."
+  ]
+}

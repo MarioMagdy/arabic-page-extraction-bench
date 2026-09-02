@@ -1,0 +1,80 @@
+{
+ "book": "justin_martyr_apologies_clean",
+ "batch": "primary-1-100",
+ "page": 36,
+ "printedPage": null,
+ "pageLabel": "p. 36",
+ "language": "ar",
+ "image": "p036.webp",
+ "imageBytes": 15430,
+ "imagePx": [
+  1514,
+  2482
+ ],
+ "ocrText": "الدفاع الأول",
+ "cleanText": "الدفاع الأول",
+ "displayBody": "الدفاع الأول",
+ "displayBodyParagraphs": [
+  "الدفاع الأول"
+ ],
+ "displayFootnotes": [],
+ "narrationSpans": [
+  {
+   "spanId": "p36-par1-s1",
+   "text": "الدفاع الأول",
+   "speechText": "الدفاع الأول",
+   "feIsFootnote": false,
+   "feMixedSpan": false
+  }
+ ],
+ "displayParse": {
+  "trusted": false,
+  "failOpen": {
+   "reason": "no-parsed-note",
+   "benign": true,
+   "note": "No [FOOTNOTE] block on this page at all — nothing to route out, so an empty displayFootnotes is CORRECT."
+  },
+  "sourceHasFootnoteTags": false,
+  "allSpansFootnote": false,
+  "bodyChars": 12,
+  "footnoteChars": 0,
+  "parsedNotes": [],
+  "parsedNotesIfTrusted": [],
+  "remainder": "",
+  "error": null
+ },
+ "narrationParity": {
+  "gemini/Charon": {
+   "storedRows": 1,
+   "storedNotDerived": [],
+   "derivedNotStored": [],
+   "states": [
+    "done"
+   ]
+  },
+  "google-cloud/ar-XA-Chirp3-HD-Charon": {
+   "storedRows": 1,
+   "storedNotDerived": [],
+   "derivedNotStored": [],
+   "states": [
+    "done"
+   ]
+  }
+ },
+ "segmenterParityFeVsBe": {
+  "spanIdsIdentical": true,
+  "spanTextsIdentical": true,
+  "feSpanCount": 1,
+  "beSpanCount": 1
+ },
+ "source": {
+  "bookId": "justin_martyr_apologies_clean",
+  "pageNumbering": "PDF page (1-based). `printedPage` is the number printed on the leaf.",
+  "image": "RENDERED LOCALLY from data/.r2_cache/justin_martyr_apologies_clean.pdf via PyMuPDF at 300 DPI (= the scan's native resolution), WebP q82. The local PDF is byte-size identical to the production R2 object (111,244,749 B). Nothing uploaded.",
+  "ocrText": "PRODUCTION. `text` field of page_NNNN.json inside the R2 object `justin_martyr_apologies_clean.ocr.zip` (uploaded 2026-08-01T00:46:32Z), i.e. exactly what `GET /books/{bookId}/pages/{n}/ocr` returns after `ensure_text_local`.",
+  "cleanText": "PRODUCTION. `text_clean or text` of page_NNNN.json inside the R2 object `justin_martyr_apologies_clean.clean.zip` (uploaded 2026-08-01T00:46:33Z), i.e. exactly what `GET /books/{bookId}/pages/{n}/clean`.textClean returns and what the reader loads (Patristic-AI-Fe src/room/lib/api.ts fetchPageText).",
+  "displayBody": "DERIVED at FE 3add663 (deployed origin/main). Produced by running the committed audit harness scripts/audit-footnotes.ts `classifyPage()` — the repo's own replica of src/room/reader/TextView.tsx routing, over the real src/room/tts/segmentation.ts + src/room/reader/footnotes.ts. NOT a React render.",
+  "displayFootnotes": "DERIVED at FE 3add663. One entry per parsed note rendered as `label + raw` (TextView room-footnotes-list), with the parseFootnotes().bodyText REMAINDER appended last (room-footnotes-remainder). EMPTY whenever `trusted` is false — see failOpen.",
+  "narrationSpans": "DERIVED at BE 1799de2 (deployed origin/main) by src/lib/audiobook/segmentation.py::segment_page(page, cleanText, language), the same call src/lib/audiobook/pipeline.py::plan_spans makes. The span TEXT is not stored in the production book_audio table (only span_id/page/state), so it is DERIVED, not stored; span-id parity against the stored rows is reported per page in `narrationParity`."
+ }
+}

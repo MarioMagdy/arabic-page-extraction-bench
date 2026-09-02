@@ -1,0 +1,70 @@
+{
+  "page": 24,
+  "runningHeader": "تَهد",
+  "printedPageNumber": "٣",
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "يُعتَبَر القَديس يوسْتينوس الشَهيد أبرَز مِدافع عن الإيمان في ال ِالقرن الثاني الميلادي فبينما وجَّه الآباء الرسوليون ١ مِثل ق. كليمندس الروماني وق. إغناطيوس الأنطاكي وق. بوليكارپوس خطاباتهم ووصاياهم إلى جماعات وأفراد من داخل العالم المسيحي فإن ق. يوسْتينوس يُعتَبَر أول مَدافِع بارِز عن الإيمان المسيحي ضَدَّ غير المسيحيين وأعداء الكنيسة.",
+      "noteRefs": [1]
+    },
+    {
+      "type": "paragraph",
+      "text": "وتُعَد كتابات القَديس يوسْتينوس هي المَصدَر الرئيس للمعلومات التاريخية القليلة غير المؤكدة المعروفة لنا عن حياتِه. وهذه الكتابات هي الدفاعان الأول والثاني والحِوار مع تريفون. فقد سجل في الفصول الثمانية الأولى من هذا الحِوار الظروف التي أدت به إلى اعتناق المسيحية. أما الأحداث المتعلقة باستشهاده فقد وردت في كتاب Acta. SS. Justini et Sociorum وهو مصدر موثوق يرجع إلى أواخر القرن الثاني.",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "ويحدد المؤرخون تاريخ ميلاد ق. يوسْتينوس في بدايات القرن الثاني الميلادي (بين أعوام ١٠٠ - ١١٠م) في مدينة فلافيا نيابوليس٢ (Flavia Neapolis) (الآن نابلس) في السامرة. ومع أن القَديس إبيفانيوس٣ يدعوه سامريًّا وهو نفسه يدعو شعبه سامريين٤ إلَّا أنه لم يكن يهوديًّا، لا من جهة الأصل ولا من جهة الديانة٥. فقد كانت عائلته وثنية تنتمي إلى أصول يونانية رومانية٦ وكانوا قد استوطنوا",
+      "noteRefs": [2, 3, 4, 5, 6]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "١",
+      "number": 1,
+      "text": "إن تعبير \"الآباء الرسوليون\" هو اسم جمعي تَمَ استخدامه منذ القرن السابع عشر وهو يشير إلى مجموعة من الكتاب المسيحيين كانوا أو يُعتَقد أنهم كانوا تلاميذاً للرسل انظر: K. Bihlmeyer, Die Apostolischen Väter (Tübingen, 1924) VIIf.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٢",
+      "number": 2,
+      "text": "انظر الدفاع الأول فصل ١. وقد دعيت فلافيا نكريماً لفلافيوس فسبسيان الذي بنى هذه المدينة على أطلال شكيم التي كانت عاصمة السامرة.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "3",
+      "number": 3,
+      "text": "Cf. Adversus Haereses 46.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٤",
+      "number": 4,
+      "text": "انظر الحِوار مع تريفون، فصل ١٢٠.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٥",
+      "number": 5,
+      "text": "طبقاً لما جاء في الحوار مع تريفون فصل ٢٧، نجد أنه لم يكن مختتنًا.",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "٦",
+      "number": 6,
+      "text": "يقول كايريه (F. Cayré) في Patrologie et Histoire de Théologie (الطبعة",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [
+    { "script": "latin", "text": "Acta. SS. Justini et Sociorum" },
+    { "script": "latin", "text": "Flavia Neapolis" },
+    { "script": "latin", "text": "K. Bihlmeyer, Die Apostolischen Väter (Tübingen, 1924) VIIf." },
+    { "script": "latin", "text": "Cf. Adversus Haereses 46." },
+    { "script": "latin", "text": "F. Cayré" },
+    { "script": "latin", "text": "Patrologie et Histoire de Théologie" }
+  ],
+  "uncertain": ["تَهد"]
+}

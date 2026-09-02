@@ -1,0 +1,62 @@
+{
+  "page": 39,
+  "runningHeader": "الدفاع الأول",
+  "printedPageNumber": "١٩",
+  "printerMark": null,
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "إلى سلطان أرضي بل إلى الملكوت السماوي، فهم يطيعون سلطات الدولة في كل الأمور المدنية ويعيشون حياة فاضلة مقدسة. ويصف ق. يوستينوس كل الاتهامات ضد المسيحيين مثل: الكفر وأكل لحوم البشر والفسق، بأنها اتهامات باطلة ولا أساس لها من الصحة. وأما عن إيمانهم بخلود النفس فهو حتى بالنسبة للوثنيين أمر يمكن تصديقه ويتماشى مع العقل.",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "وفي الفصول من ٢١ ـ ٦٠ يظهر ق. يوستينوس تفوق المسيحية على الوثنية، كما يوضح أن الكثير من نبوءات العهد القديم قد تحققت في السيد المسيح شارحًا الفرق بين معجزات يسوع المسيح وخدع السحرة الوثنيين، وأن الأمم وبخاصة الفلاسفة الوثنيين ومن بينهم أفلاطون نفسه قد اقتبسوا من الكتاب المقدس.",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "وفي الفصول من ٦١ ـ ٦٨ يشرح ق. يوستينوس الممارسات المسيحية وخاصة طقس اعتناق المسيحية (سر المعمودية) وسر الإفخارستيا المقدس، وإجتماع المسيحيين يوم الأحد، كما يتعرض لأصوامهم وصلواتهم واهتمامهم بإخوتهم الفقراء.",
+      "noteRefs": []
+    },
+    {
+      "type": "paragraph",
+      "text": "وختامًا، يرفق ق. يوستينوس نسخة من مرسوم هادريان (فصل ٦٩) والذي تمت كتابته لصالح المسيحيين. وقد قام نُسَّاخ آخرون في وقت لاحق بإضافة خطاب أنطونينوس بيوس لمجلس آسيا (فصل ٧٠) وخطاب مرقس أوريليوس لمجلس الشيوخ (فصل ٧١)٨، إلى هذا الدفاع.",
+      "noteRefs": [
+        8
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "ويبدو أن ق. يوستينوس قد كتب هذا الدفاع في روما. وقد وضع المؤرخون تواريخ مختلفة٩ لكتابته تتراوح بين عام ١٢٨م وعام ١٥٦م وذلك بناء على أدلة داخلية في مضمون الدفاع والأحداث التاريخية",
+      "noteRefs": [
+        9
+      ]
+    }
+  ],
+  "footnotes": [
+    {
+      "marker": "٨",
+      "number": 8,
+      "text": "هذان الخطابان أيضًا موجودان في الطبعة اليونانية الأولى (عام ١٥٥١) والترجمة اللاتينية الأولى (عام ١٥٥٤).",
+      "continuedFromPreviousPage": false
+    },
+    {
+      "marker": "9",
+      "number": 9,
+      "text": "Cf. the detailed analysis in W. Smith and H Wace, loc. cit. 3, 563",
+      "continuedFromPreviousPage": false
+    }
+  ],
+  "foreignRuns": [
+    {
+      "script": "latin",
+      "text": "Cf. the detailed analysis in W. Smith and H Wace, loc. cit. 3, 563"
+    }
+  ],
+  "uncertain": [
+    "The range separator in the two chapter spans (٢١ ـ ٦٠ and ٦١ ـ ٦٨) is transcribed as Arabic tatweel U+0640: on line 12 the mark occupies y1161-1165 at ~4px weight, matching that line's Arabic baseline connector strokes (y1159-1165, ~4.3px) exactly, whereas a hyphen-minus would sit about 10px higher on a 26px-tall digit. Near-resolved, but recorded here because the page carries no other hyphen for direct comparison.",
+    "In 'nussakh' (نُسَّاخ, line 17) the damma over the nun and a shadda over the sin are clear; whether a fatha accompanies the shadda cannot be resolved at this resolution - transcribed as shadda+fatha.",
+    "The Latin note prints 'H Wace' with no period after the H; transcribed as printed rather than corrected."
+  ]
+}
