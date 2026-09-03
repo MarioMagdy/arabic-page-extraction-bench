@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -247,6 +248,135 @@ def verdict(arms: dict, meta: dict) -> str:
             f"denominator.</p>")
 
 
+def build_chart_svg(rows: list, is_story: bool = True) -> str:
+    vb_w, vb_h = 1000, 620
+    plot_x0, plot_x1 = 70, 700
+    plot_y0, plot_y1 = 40, 560
+    plot_w = plot_x1 - plot_x0
+    plot_h = plot_y1 - plot_y0
+
+    x_min, x_max = 0.18, 11.5
+    y_min, y_max = 0.10, 1.015
+    log_x_min, log_x_max = math.log10(x_min), math.log10(x_max)
+
+    def x_to_px(x):
+        return plot_x0 + plot_w * (math.log10(x) - log_x_min) / (log_x_max - log_x_min)
+
+    def y_to_px(y):
+        return plot_y1 - plot_h * (y - y_min) / (y_max - y_min)
+
+    passing = [r for r in rows if r["ok"]]
+    px_x_min = min(x_to_px(r["x"]) for r in passing)
+    px_x_max = max(x_to_px(r["x"]) for r in passing)
+    px_y_min = min(y_to_px(r["hi"]) for r in passing)
+    px_y_max = max(y_to_px(r["lo"]) for r in passing)
+
+    zx0 = max(0.0, px_x_min - 45.0)
+    zx1 = min(float(vb_w), px_x_max + 115.0)
+    zy0 = max(0.0, px_y_min - 25.0)
+    zy1 = min(float(plot_y1), px_y_max + 25.0)
+    zoom_target_str = f"{zx0:.1f} {zy0:.1f} {zx1 - zx0:.1f} {zy1 - zy0:.1f}"
+
+    svg_id = "id='storyChartSvg'" if is_story else "class='chart-svg static-chart'"
+    data_attr = f" data-zoom-target='{zoom_target_str}'" if is_story else ""
+
+    nudge = {"Gemini 3.7 Flash": (9, 7), "Gemini 3.5 Flash": (9, -9), "Claude Sonnet 5": (9, 8),
+             "Qwen 3.8 Max": (-9, 8), "GPT 5.6 Terra": (-9, -8), "Kimi K3": (9, -8)}
+
+    lines = [
+        f"<svg {svg_id}{data_attr} viewBox='0 0 {vb_w} {vb_h}' preserveAspectRatio='xMidYMid meet' class='chart-svg'>",
+        "<rect width='1000' height='620' fill='var(--card)' rx='3' ry='3' />",
+        "<g class='chart-axes-grid'>"
+    ]
+
+    for yi in range(10, 101, 2):
+        y_val = yi / 100.0
+        py = y_to_px(y_val)
+        if yi % 10 == 0:
+            lines.append(f"<line x1='{plot_x0}' y1='{py:.1f}' x2='{plot_x1}' y2='{py:.1f}' stroke='var(--rule)' stroke-width='1' />")
+            lines.append(f"<text x='{plot_x0 - 8}' y='{py + 4:.1f}' text-anchor='end' font-family='\"IBM Plex Mono\", monospace' font-size='11' fill='var(--muted)'>{yi}%</text>")
+        else:
+            lines.append(f"<line x1='{plot_x0}' y1='{py:.1f}' x2='{plot_x1}' y2='{py:.1f}' stroke='var(--rule)' stroke-width='0.5' stroke-opacity='0.4' />")
+
+    lines.append(f"<line x1='{plot_x0}' y1='{plot_y1}' x2='{plot_x1}' y2='{plot_y1}' stroke='var(--rule)' stroke-width='1.2' />")
+
+    xticks = [(0.2, "$0.20"), (0.5, "$0.50"), (1.0, "$1"), (2.0, "$2"), (5.0, "$5"), (10.0, "$10")]
+    for x_val, x_lab in xticks:
+        px = x_to_px(x_val)
+        lines.append(f"<line x1='{px:.1f}' y1='{plot_y1}' x2='{px:.1f}' y2='{plot_y1 + 6}' stroke='var(--muted)' stroke-width='1' />")
+        lines.append(f"<text x='{px:.1f}' y='{plot_y1 + 22}' text-anchor='middle' font-family='\"IBM Plex Mono\", monospace' font-size='11' fill='var(--muted)'>{x_lab}</text>")
+
+    lines.append(f"<text x='22' y='{plot_y0 + plot_h/2:.1f}' text-anchor='middle' transform='rotate(-90 22 {plot_y0 + plot_h/2:.1f})' font-family='\"IBM Plex Sans\", sans-serif' font-size='11' fill='var(--muted)'>task score on gold</text>")
+    lines.append(f"<text x='{plot_x0 + plot_w/2:.1f}' y='{vb_h - 12}' text-anchor='middle' font-family='\"IBM Plex Sans\", sans-serif' font-size='11' fill='var(--muted)'>price to read the whole {BOOK_PAGES}-page book, USD (log scale)</text>")
+    lines.append("</g>")
+
+    lines.append("<g class='chart-points'>")
+    for i, r in enumerate(rows):
+        px = x_to_px(r["x"])
+        py = y_to_px(r["y"])
+        py_lo = y_to_px(r["lo"])
+        py_hi = y_to_px(r["hi"])
+        c = r["c"]
+        ok = r["ok"]
+        name = r["name"]
+        cls = "chart-point-group" + (" is-gate-passing" if ok else " is-gate-failing")
+        lines.append(f"<g class='{cls}' data-idx='{i}' data-ok='{1 if ok else 0}' data-name='{name}' style='--pt-c:{c};'>")
+        lines.append(f"<line class='point-whisker' x1='{px:.1f}' y1='{py_lo:.1f}' x2='{px:.1f}' y2='{py_hi:.1f}' stroke='{c}' stroke-width='1.6' stroke-linecap='round' />")
+        lines.append(f"<line class='point-cap point-cap-lo' x1='{px - 3:.1f}' y1='{py_lo:.1f}' x2='{px + 3:.1f}' y2='{py_lo:.1f}' stroke='{c}' stroke-width='1.6' stroke-linecap='round' />")
+        lines.append(f"<line class='point-cap point-cap-hi' x1='{px - 3:.1f}' y1='{py_hi:.1f}' x2='{px + 3:.1f}' y2='{py_hi:.1f}' stroke='{c}' stroke-width='1.6' stroke-linecap='round' />")
+        if ok:
+            lines.append(f"<circle class='point-dot' cx='{px:.1f}' cy='{py:.1f}' r='9' fill='{c}' stroke='{c}' stroke-width='1' />")
+        else:
+            lines.append(f"<circle class='point-dot' cx='{px:.1f}' cy='{py:.1f}' r='9' fill='var(--card)' stroke='{c}' stroke-width='3' />")
+        if name in nudge:
+            dx, dy = nudge[name]
+            anchor = "start" if dx > 0 else "end"
+            lines.append(f"<text class='point-name-label' x='{px + dx:.1f}' y='{py + dy:.1f}' text-anchor='{anchor}' font-family='\"IBM Plex Sans\", sans-serif' font-size='11' font-weight='600' fill='var(--ink)'>{name}</text>")
+        lines.append("</g>")
+    lines.append("</g>")
+
+    lines.append("<g class='chart-legend-desktop' id='chartLegendDesktop'>")
+    lines.append(f"<text x='730' y='55' font-family='\"IBM Plex Sans\", sans-serif' font-size='11' font-weight='600' fill='var(--muted)'>model · task score · $ for book</text>")
+    for i, r in enumerate(rows):
+        y_row = 85 + i * 44
+        color = r["c"]
+        dot_fill = color if r["ok"] else "var(--card)"
+        dot_sw = 1 if r["ok"] else 2.5
+        name = r["name"]
+        score_pct = r["y"] * 100
+        cost_val = r["x"]
+        lines.append(f"<g class='chart-legend-row' data-idx='{i}'>")
+        lines.append(f"<circle cx='738' cy='{y_row - 4}' r='5' fill='{dot_fill}' stroke='{color}' stroke-width='{dot_sw}' />")
+        lines.append(f"<text x='752' y='{y_row}' font-family='\"IBM Plex Sans\", sans-serif' font-size='12' font-weight='500' fill='var(--ink)'>{name}</text>")
+        lines.append(f"<text x='990' y='{y_row}' text-anchor='end' font-family='\"IBM Plex Mono\", monospace' font-size='12' fill='var(--ink)'><tspan>{score_pct:.1f}%</tspan> &nbsp; <tspan fill='var(--muted)'>${cost_val:.2f}</tspan></text>")
+        lines.append("</g>")
+    lines.append("</g>")
+
+    lines.append("<g class='chart-legend-mobile' id='chartLegendMobile'>")
+    lines.append("<text x='70' y='585' font-family='\"IBM Plex Sans\", sans-serif' font-size='10.5' font-weight='600' fill='var(--muted)'>model · task score · $ for book</text>")
+    for i, r in enumerate(rows):
+        col = 0 if i < 6 else 1
+        row_in_col = i if col == 0 else i - 6
+        cx = 70 if col == 0 else 390
+        cright = 370 if col == 0 else 690
+        ry = 605 + row_in_col * 24
+        color = r["c"]
+        dot_fill = color if r["ok"] else "var(--card)"
+        dot_sw = 1 if r["ok"] else 2
+        name = r["name"]
+        score_pct = r["y"] * 100
+        cost_val = r["x"]
+        lines.append(f"<g class='chart-legend-row-mob' data-idx='{i}'>")
+        lines.append(f"<circle cx='{cx + 5}' cy='{ry - 3}' r='4' fill='{dot_fill}' stroke='{color}' stroke-width='{dot_sw}' />")
+        lines.append(f"<text x='{cx + 15}' y='{ry}' font-family='\"IBM Plex Sans\", sans-serif' font-size='10.5' font-weight='500' fill='var(--ink)'>{name}</text>")
+        lines.append(f"<text x='{cright}' y='{ry}' text-anchor='end' font-family='\"IBM Plex Mono\", monospace' font-size='10' fill='var(--ink)'>{score_pct:.1f}% ${cost_val:.2f}</text>")
+        lines.append("</g>")
+    lines.append("</g>")
+
+    lines.append("</svg>")
+    return "\n".join(lines)
+
+
 def main() -> None:
     data = json.loads((ROOT / "results.json").read_text(encoding="utf-8"))
     arms = data["arms"]
@@ -361,27 +491,71 @@ def main() -> None:
 
     prompts = {"P2": (ROOT / "prompts" / "P2_blocks.txt").read_text(encoding="utf-8")}
 
-    # --- Scrollytelling story opening ---
+    # --- Scrollytelling v2 story opening ---
     gold_pages = data.get("_meta", {}).get("gold_pages") or []
-    ranked_arms = sorted(((k, a, a["gold"]) for k, a in arms.items()
-                          if a.get("gold") and a["prompt"] == "P2" and not a.get("derived_from")),
-                         key=lambda t: -(t[2].get("task_score") or 0))
+
+    chart_rows = []
+    for k, a in arms.items():
+        g = a.get("gold")
+        if not g or a["prompt"] != "P2" or a.get("derived_from"):
+            continue
+        chart_rows.append(dict(id=k, name=a["label"].split(" · ")[0],
+                               x=a["summary"]["cost_per_page_usd"] * BOOK_PAGES,
+                               y=g["task_score"], lo=g["ci"][0], hi=g["ci"][1],
+                               ok=not g["gate_failures"], gold=g))
+    chart_rows.sort(key=lambda r: -r["y"])
+    for i, r in enumerate(chart_rows):
+        r["c"] = CHART_COLOURS[i % len(CHART_COLOURS)]
+
+    ranked_arms = [(r["id"], arms[r["id"]], r["gold"]) for r in chart_rows]
     n_story_models = len(ranked_arms)
 
-    chips_html = "".join(
-        f"<div class='story-chip' style='--i:{i};'>"
-        f"<span class='dot' style='background:{CHART_COLOURS[i % len(CHART_COLOURS)]}'></span>"
-        f"<span class='chip-name'>{a['label'].split(' · ')[0]}</span></div>"
-        for i, (k, a, g) in enumerate(ranked_arms)
+    story_chart_svg = build_chart_svg(chart_rows, is_story=True)
+    scatter_chart_svg = build_chart_svg(chart_rows, is_story=False)
+
+    deck_thumbs = {pg: INS.thumb(ROOT / "pages" / f"p{pg:03d}.webp", width=160) for pg in pages}
+    p093_thumb = INS.thumb(ROOT / "pages" / "p093.webp", width=1100)
+
+    deck_cards_html = "".join(
+        f"<div class='deck-card{' is-gold' if pg in gold_pages else ''}' "
+        f"data-idx='{i}' data-page='{pg}'"
+        f"{f' data-gold-idx=\"{gold_pages.index(pg)}\"' if pg in gold_pages else ''}>"
+        f"<img src='{deck_thumbs[pg]}' alt='p{pg:03d}'>"
+        f"<span class='gold-check'>✓</span>"
+        f"<span class='card-num'>p{pg:03d}</span>"
+        f"</div>"
+        for i, pg in enumerate(pages)
     )
 
-    gold_cards_html = "".join(
-        f"<div class='gold-card' style='--i:{i};'>"
-        f"<img src='{INS.thumb(ROOT / 'pages' / f'p{pg:03d}.webp', width=220)}' alt='p{pg}'>"
-        f"<span class='gold-check'>✓</span>"
-        f"<span class='gold-num'>p{pg}</span></div>"
-        for i, pg in enumerate(gold_pages)
+    chips_html = "".join(
+        f"<div class='story-chip' data-chip-idx='{i}' style='--chip-c:{r['c']};'>"
+        f"<span class='dot' style='background:{r['c']}'></span>"
+        f"<span class='chip-name'>{r['name']}</span></div>"
+        for i, r in enumerate(chart_rows)
     )
+
+    PAGE_W, PAGE_H = 1513, 2460
+    box_svg_parts = []
+    for i, b in enumerate(STORY_BOXES):
+        bx = round(b["left"] * PAGE_W / 100, 1)
+        by = round(b["top"] * PAGE_H / 100, 1)
+        bw = round(b["width"] * PAGE_W / 100, 1)
+        bh = round(b["height"] * PAGE_H / 100, 1)
+        perim = round(2 * (bw + bh), 1)
+        tab_w = max(90, len(b["label"]) * 14 + 24)
+        col = b["colour"]
+        lbl = b["label"]
+        box_svg_parts.append(
+            f"<g class='fig-box-g' data-idx='{i}' style='--box-c:{col};'>"
+            f"<rect class='fig-box-rect' x='{bx}' y='{by}' width='{bw}' height='{bh}' rx='6' ry='6' "
+            f"stroke='{col}' stroke-width='6' fill='{col}' fill-opacity='0.12' "
+            f"stroke-dasharray='{perim}' stroke-dashoffset='{perim}' data-perim='{perim}' />"
+            f"<g class='fig-box-tab' transform='translate({bx}, {by})'>"
+            f"<rect class='fig-box-tab-bg' x='0' y='-36' width='{tab_w}' height='36' rx='4' ry='4' fill='{col}' />"
+            f"<text class='fig-box-tab-text' x='10' y='-12' fill='#ffffff' font-family='\"IBM Plex Sans\", sans-serif' font-size='22' font-weight='500'>{lbl}</text>"
+            f"</g></g>"
+        )
+    story_boxes_svg_html = "".join(box_svg_parts)
 
     import gold as GOLD
     passing = [r for r in ranked_arms if not r[2]["gate_failures"]]
@@ -393,51 +567,58 @@ def main() -> None:
 
     shortlist = [top] + tied
     shortlist_costs = [r[1]["summary"]["cost_per_page_usd"] for r in shortlist]
-    price_ratio = f"{round(max(shortlist_costs) / min(shortlist_costs))}×"
+    price_ratio_num = round(max(shortlist_costs) / min(shortlist_costs))
+    price_ratio = f"{price_ratio_num}×"
 
     max_book_cost = max(r[1]["summary"]["cost_per_page_usd"] * BOOK_PAGES for r in passing)
     passing_bars_html = "".join(
-        f"<div class='cost-bar-row'>"
+        f"<div class='cost-bar-row' data-cost='{r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES:.2f}'>"
         f"<span class='cost-bar-label'>{r[1]['label'].split(' · ')[0]}</span>"
         f"<div class='cost-bar-track'>"
         f"<div class='cost-bar-fill' style='width:{(r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES / max_book_cost) * 100:.2f}%;"
-        f"background:{CHART_COLOURS[next(idx for idx, ra in enumerate(ranked_arms) if ra[0] == r[0]) % len(CHART_COLOURS)]};--i:{i};'></div>"
+        f"background:{CHART_COLOURS[next(idx for idx, ra in enumerate(ranked_arms) if ra[0] == r[0]) % len(CHART_COLOURS)]};'></div>"
         f"</div>"
         f"<span class='cost-bar-val'>${r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES:.2f}</span>"
         f"</div>"
-        for i, r in enumerate(passing)
+        for r in passing
     )
 
-    story_boxes_html = "".join(
-        f"<div class='fig-box' data-index='{i}' "
-        f"style='left:{b["left"]}%;top:{b["top"]}%;width:{b["width"]}%;height:{b["height"]}%;"
-        f"--box-color:{b["colour"]};'>"
-        f"<span class='box-label'>{b['label']}</span></div>"
-        for i, b in enumerate(STORY_BOXES)
-    )
-
-    p093_thumb = INS.thumb(ROOT / "pages" / "p093.webp", width=1100)
-    chart_data_uri = ("data:image/png;base64,"
-                      + base64.b64encode((ROOT / "assets" / "accuracy-vs-cost.png").read_bytes()).decode())
+    story_rail_html = """<nav class="story-rail" id="storyRail" aria-label="Story navigation">
+  <button class="rail-dot" data-beat="1" title="One leaf of a 461-page edition" aria-label="Beat 1"></button>
+  <button class="rail-dot" data-beat="2" title="A model has to know what each thing is" aria-label="Beat 2"></button>
+  <button class="rail-dot" data-beat="3" title="Get one of them wrong" aria-label="Beat 3"></button>
+  <button class="rail-dot" data-beat="4" title="So we asked N models the same question" aria-label="Beat 4"></button>
+  <button class="rail-dot" data-beat="5" title="Scored them on 8 pages read twice" aria-label="Beat 5"></button>
+  <button class="rail-dot" data-beat="6" title="The answer" aria-label="Beat 6"></button>
+  <button class="rail-dot" data-beat="7" title="Pick on cost" aria-label="Beat 7"></button>
+  <button class="rail-dot" data-beat="8" title="Turn thinking off" aria-label="Beat 8"></button>
+  <button class="rail-dot" data-beat="9" title="Everything below is the data" aria-label="Beat 9"></button>
+</nav>"""
 
     story_html = f"""<section id="story">
+  {story_rail_html}
   <div class="story-figure-col">
     <div class="story-figure-sticky">
       <div class="story-figure" id="storyFigure" data-beat="0">
-        <!-- Page layer (Beats 0-5) -->
+        <!-- Page layer (Beats 0-3) -->
         <div class="fig-layer fig-page-layer">
           <div class="fig-page-frame" id="figPageFrame">
             <div class="fig-page-wrap">
               <img src="{p093_thumb}" class="fig-page-img" alt="Scanned leaf of Justin Martyr, p093">
-              <div class="fig-boxes" id="figBoxes">
-                {story_boxes_html}
-              </div>
+              <svg viewBox="0 0 1513 2460" class="fig-boxes-svg" id="figBoxesSvg" preserveAspectRatio="none">
+                {story_boxes_svg_html}
+              </svg>
             </div>
+            <p class="fig-page-caption">p093 &middot; 1 of {len(pages)} in this benchmark &middot; 1 of {BOOK_PAGES} in the book</p>
             <div class="fig-defects-strip" id="figDefects">
-              <div class="defect-track">
-                <div class="defect-fill def-struct" style="width: 75.34%;"></div>
-                <div class="defect-fill def-mis" style="width: 21.64%;"></div>
-                <div class="defect-fill def-oth" style="width: 3.02%;"></div>
+              <div class="defect-counter-row">
+                <span class="defect-counter-num" id="defectCounter" data-target="{DEFECTS_TOTAL}">{DEFECTS_TOTAL}</span>
+                <span class="defect-counter-label">defects on 100 production pages</span>
+              </div>
+              <div class="defect-track" id="defectTrack">
+                <div class="defect-fill def-struct" style="width: {(DEFECTS_STRUCTURAL / DEFECTS_TOTAL) * 100:.2f}%;"></div>
+                <div class="defect-fill def-mis" style="width: {(DEFECTS_MISREAD / DEFECTS_TOTAL) * 100:.2f}%;"></div>
+                <div class="defect-fill def-oth" style="width: {(DEFECTS_OTHER / DEFECTS_TOTAL) * 100:.2f}%;"></div>
               </div>
               <div class="defect-legend">
                 <span class="def-seg def-struct"><span class="def-dot" style="background:var(--accent)"></span>structural <b>{DEFECTS_STRUCTURAL}</b></span>
@@ -450,24 +631,22 @@ def main() -> None:
           </div>
         </div>
 
-        <!-- Chips layer (Beats 4, 5) -->
-        <div class="fig-layer fig-chips-layer" id="figChips">
-          <div class="story-chips-grid">
-            {chips_html}
-          </div>
-        </div>
-
-        <!-- Gold grid layer (Beat 5) -->
-        <div class="fig-layer fig-gold-layer" id="figGold">
-          <div class="gold-grid">
-            {gold_cards_html}
+        <!-- Deck layer (Beats 4, 5) -->
+        <div class="fig-layer fig-deck-layer" id="figDeckLayer">
+          <div class="deck-stage">
+            <div class="story-deck-fan" id="storyDeckFan">
+              {deck_cards_html}
+            </div>
+            <div class="story-chips-arc" id="storyChipsArc">
+              {chips_html}
+            </div>
           </div>
         </div>
 
         <!-- Chart layer (Beats 6, 7) -->
         <div class="fig-layer fig-chart-layer" id="figChartLayer">
           <div class="fig-chart-frame">
-            <img src="{chart_data_uri}" class="fig-chart-img" id="figChartImg" alt="Task score against cost">
+            {story_chart_svg}
           </div>
           <div class="fig-cost-bars" id="figCostBars">
             {passing_bars_html}
@@ -480,22 +659,34 @@ def main() -> None:
             <div class="think-row">
               <div class="think-meta">
                 <span class="think-title">thinking on</span>
-                <span class="think-price">${THINKING_ON_BOOK_COST:.2f}</span>
+                <span class="think-price" id="thinkOnPrice" data-target="{THINKING_ON_BOOK_COST:.2f}">${THINKING_ON_BOOK_COST:.2f}</span>
               </div>
               <div class="think-track">
-                <div class="think-fill think-fill-on" style="width: 100%; background: var(--warn);"></div>
+                <div class="think-fill think-fill-on" id="thinkFillOn" style="width: 100%;">
+                  <div class="think-seg-tokens" id="thinkSegTokens" style="width: {THINKING_TOKENS_PCT}%;">
+                    <span class="think-seg-label">thinking tokens</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="think-row" style="margin-top: 14px;">
+            <div class="think-row" style="margin-top: 18px;">
               <div class="think-meta">
                 <span class="think-title">thinking off</span>
-                <span class="think-price">${THINKING_OFF_BOOK_COST:.2f}</span>
+                <span class="think-price" id="thinkOffPrice" data-target="{THINKING_OFF_BOOK_COST:.2f}">${THINKING_OFF_BOOK_COST:.2f}</span>
               </div>
               <div class="think-track">
-                <div class="think-fill think-fill-off" style="width: 38.37%; background: var(--good);"></div>
+                <div class="think-fill think-fill-off" id="thinkFillOff" style="width: {(THINKING_OFF_BOOK_COST / THINKING_ON_BOOK_COST) * 100:.2f}%;"></div>
               </div>
             </div>
-            <p class="fig-thinking-cap">same pages, same prompt</p>
+            <p class="fig-thinking-cap">same pages, same prompt &middot; accuracy {THINKING_ON_ACCURACY*100:.2f}% &rarr; {THINKING_OFF_ACCURACY*100:.2f}%</p>
+          </div>
+        </div>
+
+        <!-- Outro layer (Beat 9) -->
+        <div class="fig-layer fig-outro-layer" id="figOutro">
+          <div class="fig-outro-wrap">
+            <img src="{p093_thumb}" class="fig-outro-img" alt="Scanned leaf of Justin Martyr, p093">
+            <p class="fig-outro-line">{len(pages)} pages &middot; {n_story_models} models &middot; {len(gold_pages)} read twice</p>
           </div>
         </div>
       </div>
@@ -539,7 +730,7 @@ def main() -> None:
     <article class="step" data-step="4">
       <div class="step-content">
         <h2>So we asked {n_story_models} models the same question.</h2>
-        <p class="sub">The same 20 page images, the same instruction: give back the page as an ordered sequence of typed blocks, with the notes anchored where they belong.</p>
+        <p class="sub">The same {len(pages)} page images, the same instruction: give back the page as an ordered sequence of typed blocks, with the notes anchored where they belong.</p>
       </div>
     </article>
 
@@ -562,7 +753,7 @@ def main() -> None:
     <!-- Beat 7 -->
     <article class="step" data-step="7">
       <div class="step-content">
-        <h2>They span {price_ratio} in price. Pick on cost.</h2>
+        <h2>They span <span id="storyPriceRatio" data-target="{price_ratio_num}">1&times;</span> in price. Pick on cost.</h2>
         <p class="sub">For the whole {BOOK_PAGES}-page book.</p>
       </div>
     </article>
@@ -601,10 +792,7 @@ def main() -> None:
             .replace("__TABLE__", "".join(tbl))
             .replace("__VERDICT__", verdict(arms, data.get("_meta", {})))
 
-            .replace("__SCATTER__", "<img src='data:image/png;base64,"
-                     + base64.b64encode((ROOT / "assets" / "accuracy-vs-cost.png").read_bytes()).decode()
-                     + "' alt='task score against price per page, one point per model'"
-                     " style='width:100%;height:auto;display:block'>")
+            .replace("__SCATTER__", scatter_chart_svg)
             .replace("__NGOLD__", str(len(data.get("_meta", {}).get("gold_pages") or [])))
             .replace("__NARMS__", str(len(arms))).replace("__NPAGES__", str(len(pages)))
             .replace("__DATA__", json.dumps(idata, ensure_ascii=False))
@@ -664,8 +852,9 @@ section{margin:0 0 52px;scroll-margin-top:70px}
 .story-figure-sticky{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .story-figure{position:relative;width:100%;max-width:560px;height:82vh;max-height:740px;display:flex;align-items:center;justify-content:center}
 .story-steps-col{width:54%;flex:0 0 54%;padding:0 32px 0 24px;box-sizing:border-box}
-.step{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0;box-sizing:border-box}
-.step-hero{min-height:100vh}
+.step{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0;box-sizing:border-box;opacity:.35;transition:opacity 300ms ease-out}
+.step.active{opacity:1}
+.step-hero{min-height:120vh}
 .step-long{min-height:240vh}
 .step-outro{min-height:75vh}
 .step-content{max-width:40ch;margin:0 auto}
@@ -677,107 +866,154 @@ section{margin:0 0 52px;scroll-margin-top:70px}
 .scroll-arrow{display:inline-block;animation:bob 1.6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 .outro-arrow{margin-top:24px;font-size:24px;color:var(--accent);animation:bob 1.6s ease-in-out infinite}
-.fig-layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 600ms ease-out,transform 600ms ease-out}
-.fig-page-frame{position:relative;display:inline-flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%;transition:transform 600ms ease-out,opacity 600ms ease-out}
+
+/* Progress rail */
+.story-rail{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:40;opacity:1;transition:opacity 300ms ease-out;pointer-events:auto}
+.story-rail.past-story{opacity:0;pointer-events:none}
+.rail-dot{width:9px;height:9px;border-radius:50%;border:none;background:var(--rule);padding:0;cursor:pointer;transition:background 250ms ease-out,transform 250ms ease-out}
+.rail-dot:hover{transform:scale(1.3)}
+.rail-dot.active{background:var(--accent);transform:scale(1.25)}
+
+/* Figure layers */
+.fig-layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 400ms ease-out}
+.story-figure[data-beat="0"] .fig-page-layer,
+.story-figure[data-beat="1"] .fig-page-layer,
+.story-figure[data-beat="2"] .fig-page-layer,
+.story-figure[data-beat="3"] .fig-page-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="4"] .fig-deck-layer,
+.story-figure[data-beat="5"] .fig-deck-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="6"] .fig-chart-layer,
+.story-figure[data-beat="7"] .fig-chart-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="8"] .fig-thinking-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="9"] .fig-outro-layer{opacity:1;pointer-events:auto}
+
+/* Beat 0 & 1 Page frame */
+.fig-page-frame{position:relative;display:inline-flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%}
 .fig-page-wrap{position:relative;display:inline-block;max-width:100%;max-height:100%}
-.fig-page-img{display:block;max-height:72vh;max-width:100%;width:auto;height:auto;border:1px solid var(--rule);border-radius:3px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
-.js .story-figure[data-beat="0"] .fig-page-frame{animation:heroPageReveal 700ms ease-out forwards}
-@keyframes heroPageReveal{0%{opacity:0;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
-.story-figure[data-beat="0"] .fig-page-layer,.story-figure[data-beat="1"] .fig-page-layer,.story-figure[data-beat="2"] .fig-page-layer,.story-figure[data-beat="3"] .fig-page-layer{opacity:1;pointer-events:auto}
-.story-figure[data-beat="4"] .fig-page-layer,.story-figure[data-beat="5"] .fig-page-layer{opacity:1;pointer-events:auto}
-.story-figure[data-beat="4"] .fig-page-frame,.story-figure[data-beat="5"] .fig-page-frame{transform:scale(0.28);transform-origin:top left}
-.story-figure[data-beat="4"] .fig-boxes,.story-figure[data-beat="5"] .fig-boxes,.story-figure[data-beat="4"] .fig-defects-strip,.story-figure[data-beat="5"] .fig-defects-strip{opacity:0;transition:opacity 300ms ease-out}
-.fig-boxes{position:absolute;inset:0;pointer-events:none;transition:opacity 300ms ease-out}
-.fig-box{position:absolute;border:1.5px solid var(--box-color);background:color-mix(in srgb,var(--box-color) 12%,transparent);border-radius:2px;box-sizing:border-box;opacity:0;transform:scale(0.98);transition:opacity 350ms ease-out,transform 350ms ease-out,border-color 500ms ease-out,background 500ms ease-out}
-.fig-box.visible{opacity:1;transform:scale(1)}
-.fig-box .box-label{position:absolute;bottom:100%;left:-1px;background:var(--box-color);color:#fff;font:500 10.5px/1.2 "IBM Plex Sans",sans-serif;padding:1px 4px;border-radius:2px 2px 0 0;white-space:nowrap;opacity:.7;transition:opacity 300ms ease-out,background 500ms ease-out}
-.fig-box.latest .box-label{opacity:1}
-.story-figure[data-beat="3"] .fig-box[data-index="0"]{transform:translateY(202%);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
-.story-figure[data-beat="3"] .fig-box[data-index="0"] .box-label{background:var(--accent);opacity:1}
-.story-figure[data-beat="3"] .fig-box[data-index="7"]{transform:translateY(-1100%);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
-.story-figure[data-beat="3"] .fig-box[data-index="7"] .box-label{background:var(--accent);opacity:1}
-.fig-defects-strip{width:100%;margin-top:8px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity 500ms ease-out 200ms,transform 500ms ease-out 200ms}
-.story-figure[data-beat="3"] .fig-defects-strip{opacity:1;transform:translateY(0);pointer-events:auto}
-.defect-track{display:flex;height:8px;border-radius:2px;overflow:hidden;background:var(--shade);gap:2px}
-.defect-fill{height:100%;transform:scaleX(0);transform-origin:left;transition:transform 700ms ease-out 300ms}
-.story-figure[data-beat="3"] .defect-fill{transform:scaleX(1)}
+.fig-page-img{display:block;max-height:70vh;max-width:100%;width:auto;height:auto;border:1px solid var(--rule);border-radius:3px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.fig-page-caption{font:400 12px/1.4 "IBM Plex Mono",monospace;color:var(--muted);margin-top:10px;text-align:center}
+
+/* Beat 2 & 3 Boxes SVG */
+.fig-boxes-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fig-box-rect{rx:6px;ry:6px;fill-opacity:.12;stroke-width:6px}
+.fig-box-g{transition:opacity 150ms ease-out}
+.fig-box-tab{transition:opacity 150ms ease-out}
+@media(max-width:899px){.js .fig-box-g:not(.latest) .fig-box-tab{display:none !important}}
+
+/* Beat 3 Defects strip */
+.fig-defects-strip{width:100%;margin-top:10px}
+.defect-counter-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;justify-content:center}
+.defect-counter-num{font:500 40px/1 Spectral,Georgia,serif;font-variant-numeric:tabular-nums;color:var(--accent)}
+.defect-counter-label{font:400 13px/1.2 "IBM Plex Sans",sans-serif;color:var(--muted)}
+.defect-track{display:flex;height:9px;border-radius:2px;overflow:hidden;background:var(--shade);gap:2px}
+.defect-fill{height:100%}
 .defect-fill.def-struct{background:var(--accent)}
 .defect-fill.def-mis{background:var(--warn)}
 .defect-fill.def-oth{background:var(--muted)}
-.defect-legend{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:5px;font-size:11.5px;color:var(--muted);font-family:"IBM Plex Sans",sans-serif}
+.defect-legend{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:6px;font-size:11.5px;color:var(--muted);font-family:"IBM Plex Sans",sans-serif}
 .defect-legend b{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink)}
 .def-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:0}
-.story-figure[data-beat="4"] .fig-chips-layer,.story-figure[data-beat="5"] .fig-chips-layer{opacity:1;pointer-events:auto}
-.fig-chips-layer{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding-left:32%;box-sizing:border-box}
-.story-chips-grid{display:flex;flex-direction:column;gap:5px}
-.story-chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:3px 9px;font-size:12px;font-weight:500;color:var(--ink);opacity:0;transform:translateY(10px);transition:transform 500ms ease-out,opacity 500ms ease-out}
-.story-figure[data-beat="4"] .story-chip,.story-figure[data-beat="5"] .story-chip{opacity:1;transform:translateY(0);transition-delay:calc(var(--i) * 55ms)}
-.story-figure[data-beat="5"] .fig-gold-layer{opacity:1;pointer-events:auto;transform:translateY(0)}
-.story-figure[data-beat="5"] .fig-chips-layer{opacity:.18}
-.fig-gold-layer{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;transform:translateY(20px);opacity:0;transition:transform 600ms ease-out,opacity 600ms ease-out}
-.gold-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%}
-.gold-card{position:relative;aspect-ratio:1513/2460;border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--card)}
-.gold-card img{width:100%;height:100%;object-fit:cover;display:block}
-.gold-check{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font:700 10px/16px "IBM Plex Sans",sans-serif;text-align:center;opacity:0;transform:scale(0.4);transition:transform 350ms ease-out,opacity 350ms ease-out}
-.story-figure[data-beat="5"] .gold-check{opacity:1;transform:scale(1);transition-delay:calc(var(--i) * 50ms + 150ms)}
-.gold-num{position:absolute;bottom:2px;left:3px;font:500 9px/1 "IBM Plex Mono",monospace;color:var(--ink);background:var(--card);padding:1px 3px;border-radius:2px}
-.story-figure[data-beat="6"] .fig-chart-layer,.story-figure[data-beat="7"] .fig-chart-layer{opacity:1;pointer-events:auto}
-.fig-chart-frame{position:relative;width:100%;max-width:100%;border-radius:3px;border:1px solid var(--rule);overflow:hidden;background:var(--card)}
-.fig-chart-img{display:block;width:100%;height:auto;clip-path:inset(0 100% 0 0);transition:clip-path 900ms ease-out,transform 900ms ease-out}
-.story-figure[data-beat="6"] .fig-chart-img{clip-path:inset(0 0 0 0);transform:none}
-.story-figure[data-beat="7"] .fig-chart-img{clip-path:inset(0 0 0 0);transform:scale(2.2);transform-origin:14% 12%}
-.fig-cost-bars{width:100%;max-width:100%;margin-top:14px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity 500ms ease-out 250ms,transform 500ms ease-out 250ms}
-.story-figure[data-beat="7"] .fig-cost-bars{opacity:1;transform:translateY(0);pointer-events:auto}
-.cost-bar-row{display:grid;grid-template-columns:135px 1fr 48px;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+
+/* Beat 4 & 5 Deck & chips */
+.fig-deck-layer{width:100%;height:100%}
+.deck-stage{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.story-deck-fan{position:relative;width:80px;height:130px;display:flex;align-items:center;justify-content:center}
+.deck-card{position:absolute;width:72px;aspect-ratio:1513/2460;background:var(--card);border:1px solid var(--rule);border-radius:2px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);transform-origin:center 120%;transition:box-shadow 250ms ease-out,opacity 250ms ease-out}
+.deck-card img{width:100%;height:100%;object-fit:cover;display:block}
+.deck-card .card-num{position:absolute;bottom:2px;left:3px;font:500 8.5px/1 "IBM Plex Mono",monospace;color:var(--ink);background:var(--card);padding:1px 2px;border-radius:2px}
+.gold-check{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font:700 10px/16px "IBM Plex Sans",sans-serif;text-align:center;opacity:0;transition:opacity 200ms ease-out,transform 200ms ease-out}
+.story-chips-arc{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:20;transition:opacity 300ms ease-out}
+.story-chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:3px 8px;font-size:11.5px;font-weight:500;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+
+/* Beat 6 & 7 Chart layer */
+.fig-chart-layer{width:100%;max-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fig-chart-frame{width:100%;max-width:100%;background:var(--card);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.chart-svg{width:100%;height:auto;display:block}
+.chart-point-group{transform-origin:center center}
+.point-whisker{transform-origin:center center}
+.chart-legend-mobile{display:none}
+@media(max-width:899px){
+  .chart-legend-desktop{display:none}
+  .chart-legend-mobile{display:block}
+}
+.fig-cost-bars{width:100%;max-width:100%;margin-top:12px}
+.cost-bar-row{display:grid;grid-template-columns:135px 1fr 50px;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
 .cost-bar-label{font:500 12px/1 "IBM Plex Sans",sans-serif;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cost-bar-track{height:10px;background:var(--shade);border-radius:2px;overflow:hidden}
-.cost-bar-fill{height:100%;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 600ms ease-out}
-.story-figure[data-beat="7"] .cost-bar-fill{transform:scaleX(1);transition-delay:calc(var(--i) * 90ms)}
+.cost-bar-fill{height:100%;border-radius:2px}
 .cost-bar-val{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--muted)}
-.story-figure[data-beat="8"] .fig-thinking-layer,.story-figure[data-beat="9"] .fig-thinking-layer{opacity:1;pointer-events:auto}
+
+/* Beat 8 Thinking */
 .fig-thinking-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:24px 20px;box-sizing:border-box}
 .think-row{margin-bottom:16px}
 .think-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .think-title{font:500 14px/1 "IBM Plex Sans",sans-serif;color:var(--ink)}
 .think-price{font:600 14px/1 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink)}
 .think-track{height:14px;background:var(--shade);border-radius:2px;overflow:hidden}
-.think-fill{height:100%;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 650ms ease-out}
-.story-figure[data-beat="8"] .think-fill-on,.story-figure[data-beat="9"] .think-fill-on{transform:scaleX(1)}
-.story-figure[data-beat="8"] .think-fill-off,.story-figure[data-beat="9"] .think-fill-off{transform:scaleX(1);transition-delay:200ms}
+.think-fill-on{height:100%;background:var(--warn);border-radius:2px;display:flex}
+.think-seg-tokens{height:100%;background:color-mix(in srgb,var(--warn) 70%,#000);border-radius:2px;display:flex;align-items:center;justify-content:center}
+.think-seg-label{font:600 9px/1 "IBM Plex Sans",sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap;overflow:hidden}
+.think-fill-off{height:100%;background:var(--good);border-radius:2px}
 .fig-thinking-cap{font:italic 13px/1 "IBM Plex Sans",sans-serif;color:var(--muted);text-align:center;margin:12px 0 0}
+
+/* Beat 9 Outro */
+.fig-outro-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.fig-outro-img{width:180px;height:auto;border:1px solid var(--rule);border-radius:3px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.fig-outro-line{font:500 13.5px/1.4 "IBM Plex Mono",monospace;color:var(--muted);text-align:center;margin:0}
+
+/* Phone layout (<900px) */
 @media(max-width:899px){
- #story{flex-direction:column}
- .story-figure-col{position:sticky;top:0;width:100%;height:46vh;flex:0 0 46vh;padding:10px 16px;background:var(--paper);border-bottom:1px solid var(--rule);z-index:25}
- .story-figure{height:100%;max-height:100%;max-width:100%}
- .fig-page-img{max-height:38vh}
- .js .fig-box:not(.latest) .box-label{display:none}
- .story-steps-col{width:100%;flex:none;padding:0 20px}
- .step{min-height:85vh;padding:40px 0}
- .step-hero{min-height:54vh}
- .fig-chips-layer{padding-left:28%}
- .story-chips-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
- .story-chip{padding:2px 6px;font-size:10.5px}
- .fig-chart-frame{max-width:320px}
- .fig-cost-bars{max-width:320px;margin-top:8px}
- .cost-bar-row{grid-template-columns:105px 1fr 44px;gap:6px;font-size:11px;margin-bottom:3px}
+  #story{flex-direction:column}
+  .story-figure-col{position:sticky;top:0;width:100%;height:46vh;flex:0 0 46vh;padding:8px 12px;background:var(--paper);border-bottom:1px solid var(--rule);z-index:25}
+  .story-figure{height:100%;max-height:100%;max-width:100%}
+  .fig-page-img{max-height:36vh}
+  .story-steps-col{width:100%;flex:none;padding:0 20px}
+  .step{min-height:85vh;padding:40px 0}
+  .step-hero{min-height:54vh}
+  .deck-card{width:44px}
+  .story-chips-arc{right:4px;gap:3px}
+  .story-chip{padding:2px 5px;font-size:10px}
+  .fig-chart-frame{max-width:100%}
+  .fig-cost-bars{margin-top:6px}
+  .cost-bar-row{grid-template-columns:105px 1fr 44px;gap:6px;font-size:11px;margin-bottom:3px}
 }
+
+/* Fallbacks: no-JS and reduced motion */
 html:not(.js) .fig-layer{position:static;opacity:1;pointer-events:auto;margin-bottom:24px}
 html:not(.js) .story-figure{height:auto;max-height:none;display:block}
 html:not(.js) .story-figure-col{position:static;height:auto}
-html:not(.js) .fig-box{opacity:1;transform:none}
-html:not(.js) .fig-box .box-label{opacity:1}
-html:not(.js) .defect-fill,html:not(.js) .cost-bar-fill,html:not(.js) .think-fill{transform:none}
-html:not(.js) .fig-defects-strip,html:not(.js) .fig-cost-bars{opacity:1;transform:none}
-html:not(.js) .fig-chart-img{clip-path:inset(0 0 0 0)}
-html:not(.js) .story-chip{opacity:1;transform:none}
-html:not(.js) .gold-check{opacity:1;transform:scale(1)}
+html:not(.js) .fig-box-rect{stroke-dashoffset:0 !important}
+html:not(.js) .fig-box-g{opacity:1 !important}
+html:not(.js) .fig-box-tab{opacity:1 !important}
+html:not(.js) .step{opacity:1 !important}
+html:not(.js) .story-rail{display:none !important}
+html:not(.js) .deck-card{transform:none !important;position:relative;display:inline-block;margin:4px}
+html:not(.js) .story-deck-fan{width:100%;height:auto;display:flex;flex-wrap:wrap;gap:4px}
+html:not(.js) .story-chips-arc{position:static;transform:none;display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+html:not(.js) .gold-check{opacity:1 !important}
+html:not(.js) .chart-point-group{opacity:1 !important;transform:none !important}
+html:not(.js) .point-whisker{transform:none !important}
+html:not(.js) .point-cap{opacity:1 !important}
+html:not(.js) .chart-legend-row{opacity:1 !important;transform:none !important}
+html:not(.js) .cost-bar-fill{transform:none !important}
+html:not(.js) .think-fill-on,.html:not(.js) .think-fill-off{transform:none !important}
+html:not(.js) .defect-track{clip-path:none !important}
+
 @media(prefers-reduced-motion:reduce){
- #story *,#story *::before,#story *::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
- .fig-box{opacity:1 !important;transform:none !important}
- .fig-box .box-label{opacity:1 !important}
- .defect-fill,.cost-bar-fill,.think-fill{transform:none !important}
- .fig-chart-img{clip-path:inset(0 0 0 0) !important;transform:none !important}
- .gold-check{opacity:1 !important;transform:scale(1) !important}
+  #story *,#story *::before,#story *::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
+  .step{opacity:1 !important;transition:none !important}
+  .fig-box-rect{stroke-dashoffset:0 !important}
+  .fig-box-g{opacity:1 !important}
+  .fig-box-tab{opacity:1 !important}
+  .deck-card{transform:none !important}
+  .gold-check{opacity:1 !important;transform:none !important}
+  .chart-point-group{opacity:1 !important;transform:none !important}
+  .point-whisker{transform:none !important}
+  .point-cap{opacity:1 !important}
+  .chart-legend-row{opacity:1 !important;transform:none !important}
+  .cost-bar-fill{transform:none !important}
+  .think-fill-on,.think-fill-off{transform:none !important}
+  .defect-track{clip-path:none !important}
 }
 
 /* the task */
