@@ -27,8 +27,9 @@ import gold as GOLD  # noqa: E402
 PAPER, CARD, INK, MUTED, RULE, GOOD = "#f0efe9", "#fbfaf6", "#1a1815", "#6a675e", "#d9d6cc", "#2f6f5e"
 COLOURS = ["#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b",
            "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815"]
-XTICKS = [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02]
-XLABELS = ["$0.0005", "$0.001", "$0.002", "$0.005", "$0.01", "$0.02"]
+BOOK_PAGES = 461            # the edition this corpus comes from; prices are quoted for the whole book
+XTICKS = [0.2, 0.5, 1, 2, 5, 10]
+XLABELS = ["$0.20", "$0.50", "$1", "$2", "$5", "$10"]
 
 
 def load():
@@ -38,7 +39,7 @@ def load():
         g = a.get("gold")
         if not g or a["prompt"] != "P2" or a.get("derived_from"):
             continue
-        rows.append(dict(id=k, name=a["label"].split(" · ")[0], x=a["summary"]["cost_per_page_usd"],
+        rows.append(dict(id=k, name=a["label"].split(" · ")[0], x=a["summary"]["cost_per_page_usd"] * BOOK_PAGES,
                          y=g["task_score"], lo=g["ci"][0], hi=g["ci"][1],
                          ok=not g["gate_failures"], gold=g))
     rows.sort(key=lambda r: -r["y"])
@@ -83,20 +84,20 @@ def main() -> None:
     draw_points(ax, rows, 150)
 
     lo = min(r["lo"] for r in rows)
-    ax.set_xlim(0.0004, 0.025)
+    ax.set_xlim(0.18, 11.5)
     ax.set_ylim(max(0.0, lo - 0.04), 1.015)
     yt = np.arange(0.1, 1.001, 0.1)
     ax.set_yticks(yt)
     ax.set_yticklabels([f"{int(round(t*100))}%" for t in yt])
     ax.yaxis.set_minor_locator(MultipleLocator(0.02))
-    ax.set_xlabel("price per page, USD (log scale; list rate × measured output)", color=MUTED, fontsize=10)
+    ax.set_xlabel(f"price to read the whole {BOOK_PAGES}-page book, USD (log scale; list rate × measured output)", color=MUTED, fontsize=10)
     ax.set_ylabel("task score on the gold pages", color=MUTED, fontsize=10)
 
     # Inset over the empty middle, zoomed on the gate-clearing models.
     ins = ax.inset_axes([0.30, 0.10, 0.42, 0.50])
     style(ins)
     draw_points(ins, passing, 110)
-    ins.set_xlim(0.0004, 0.025)
+    ins.set_xlim(0.18, 11.5)
     ylo = min(r["lo"] for r in passing) - 0.008
     ins.set_ylim(ylo, 1.003)
     yt = np.arange(0.94, 1.001, 0.02)
@@ -106,7 +107,7 @@ def main() -> None:
     ins.tick_params(labelsize=8)
     ins.set_title("the six that clear every gate", fontsize=9, color=MUTED, loc="left", pad=4)
     ins.axhline(band_lo, color=GOOD, lw=1, ls=(0, (2, 3)), zorder=1)
-    ins.text(0.00046, ylo + 0.002, f"dotted line: lowest score not separable from the leader on {len(gpages)} pages",
+    ins.text(0.21, ylo + 0.002, f"dotted line: lowest score not separable from the leader on {len(gpages)} pages",
              color=GOOD, fontsize=7.5, va="bottom", ha="left")
     nudge = {"Gemini 3.7 Flash": (9, 7), "Gemini 3.5 Flash": (9, -9), "Claude Sonnet 5": (9, 8),
              "Qwen 3.8 Max": (-9, 8), "GPT 5.6 Terra": (-9, -8), "Kimi K3": (9, -8)}
@@ -114,17 +115,17 @@ def main() -> None:
         dx, dy = nudge.get(r["name"], (9, 0))
         ins.annotate(r["name"], (r["x"], r["y"]), xytext=(dx, dy), textcoords="offset points",
                      fontsize=8, color=INK, ha="left" if dx > 0 else "right", va="center")
-    ax.add_patch(Rectangle((0.00043, ylo), 0.0245 - 0.00043, 1.003 - ylo, fill=False,
+    ax.add_patch(Rectangle((0.2, ylo), 11.3 - 0.2, 1.003 - ylo, fill=False,
                            ec=MUTED, lw=0.8, ls=(0, (2, 3)), zorder=1))
-    ax.text(0.0025, ylo + 0.004, "magnified in the inset below", color=MUTED, fontsize=7.5, ha="center", va="bottom")
+    ax.text(1.15, ylo + 0.004, "magnified in the inset below", color=MUTED, fontsize=7.5, ha="center", va="bottom")
 
     # Legend, ordered by score, carrying the numbers: a leaderboard beside the plot.
     handles = [Line2D([], [], marker="o", ls="none", ms=9, mew=2, color=r["c"],
                       mfc=r["c"] if r["ok"] else CARD) for r in rows]
-    labels = [f"{r['name']:<24s} {r['y']*100:5.1f}%   ${r['x']:.4f}" for r in rows]
+    labels = [f"{r['name']:<24s} {r['y']*100:5.1f}%  {('$%.2f' % r['x']):>7s}" for r in rows]
     leg = ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(1.01, 1.0), frameon=False,
                     labelspacing=0.9, handletextpad=0.6, alignment="left",
-                    title="model · task score · $/page", title_fontsize=8.5,
+                    title=f"model · task score · $ for the {BOOK_PAGES}-page book", title_fontsize=8.5,
                     prop={"family": "DejaVu Sans Mono", "size": 8.5})
     leg.get_title().set_color(MUTED)
     for t in leg.get_texts():
