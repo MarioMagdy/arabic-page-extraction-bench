@@ -2,21 +2,18 @@
 
 **Which vision model should read a scanned Arabic scholarly book, and at what price?**
 
-I needed an answer for a real pipeline: a reading app over digitised Arabic patristic texts, with
-tap-to-open footnotes and read-aloud narration. Its OCR stage was a vision model reading page
-images, and a 100-page audit of its output found 365 defects, **75% of them structural**: running
-head in the body, page number in the body, footnotes merged, footnote text in the body. Not
-misreadings. So the request was rewritten to ask for the structure explicitly, and this repo is how
-the model behind it was chosen. 11 models, one request, 20 pages, the same images for every arm.
+I build a reading app over digitised Arabic patristic texts. Its OCR stage is a vision model
+reading page images, and an audit of 100 production pages found 365 defects, 75% of them
+structural: running heads and page numbers in the body, footnotes merged. So the request was
+rewritten to ask for the structure explicitly, and this repo is how the model behind it was chosen.
+11 models, one request, 20 pages, the same images for every arm.
 
 ![Task score against price per page, one point per model](assets/accuracy-vs-cost.png)
 
 ## The answer
 
-Measured on **8 pages** against `truth/gold/`, a reference produced outside the ranked set (see
-[How accuracy is measured](#how-accuracy-is-measured)). Full tables and every arm's failure detail
-are in [RESULTS.md](RESULTS.md); the interactive report with every page and every reading is
-[here](https://mariomagdy.github.io/arabic-page-extraction-bench/).
+Scored on 8 pages against an independent reference. Full tables in [RESULTS.md](RESULTS.md), every
+page and every reading in the [interactive report](https://mariomagdy.github.io/arabic-page-extraction-bench/).
 
 | model | task score | 90% band | $/page | 461-page book |
 |---|---:|---:|---:|---:|
@@ -27,96 +24,44 @@ are in [RESULTS.md](RESULTS.md); the interactive report with every page and ever
 | GPT 5.6 Terra | 96.7% | 94.9–98.0 | $0.01100 | $5.07 |
 | Kimi K3 | 96.2% | 93.8–97.9 | $0.01542 | $7.11 |
 
-Five more models (DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna,
-MiMo v2.5) fail one or more gates and are reported but not ranked. Gemini prices count candidate
-tokens only, not thinking tokens; see the third bullet.
+DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna and MiMo v2.5 fail one or
+more gates and are reported but not ranked.
 
-- **The top four cannot be separated on this evidence, and they span 22× in price.** The leader's
-  margin over Sonnet falls to +0.15 points if a single evaluation page is dropped. The decision the
-  data supports is: pick on cost, not on rank.
-- **The rule was fixed before the scores were read.** Gates: all 8 evaluation pages answered, body
-  accuracy ≥ 0.95, footnote F1 ≥ 0.8, anchor F1 ≥ 0.8. Among arms that clear them the ranking is a
-  weighted score over what the product depends on: prose 35%, note text 15%, anchor placement 15%,
-  block order 10%, heading position 10%, fields 10%, marker fidelity 5%.
-- **Turn thinking off.** The benchmark's runners never saw thinking tokens, so its Gemini prices
-  are a floor. A later measured run of the real production call against the same gold pages
-  ([measured_production/FINDINGS.md](measured_production/FINDINGS.md)) found that on Gemini 3.8
-  Flash thinking was 74% of billed output, and switching it off moved body accuracy from 99.85% to
-  99.75% while cutting the price 2.6×, from $0.007184 to $0.002746 per page. On this task the
-  thinking budget buys nothing measurable.
-- **The old production model cannot use the structured request.** The same measured run put
-  Gemini 2.5 Flash at 76.50% body accuracy on it, with the wrong block count on 4 of 7 pages and one
-  page where it emitted far more text than the leaf carries. The fix in production was both the
-  request and the model.
+- **The top four cannot be separated on 8 pages, and they span 22× in price.** Pick on cost.
+- **Turn thinking off.** These Gemini prices exclude thinking tokens. A measured run of the real
+  production call ([measured_production/FINDINGS.md](measured_production/FINDINGS.md)) found
+  thinking was 74% of Gemini 3.8 Flash's billed output; switching it off kept 99.75% body accuracy
+  and cut the price 2.6×, to $0.0027 per page.
+- **The old production model cannot use the structured request.** Gemini 2.5 Flash scores 76.5%
+  on it, with the wrong block count on 4 of 7 pages.
 
-## How accuracy is measured
+## How it is scored
 
-Two layers of truth, and only one of them is accuracy.
+Every arm answers the same instruction, `prompts/P2_blocks.txt`: an ordered sequence of typed
+blocks with footnote anchors, plus running head, page number, and the notes with their markers.
 
-- **`truth/gold/`, 8 pages, the only ranking evidence.** Each page was transcribed twice,
-  independently, by a model that is not an arm here (Claude Opus 5; the ranked Claude arms are
-  Sonnet 5 and Haiku 4.5), from the page image and the instruction alone. The two readings were
-  diffed on every scored field and each disagreement settled against the image, recorded in
-  `truth/ADJUDICATION_LOG.md`. Five pages agreed outright, three needed adjudication, and page 93
-  was also checked by hand. It is independent of the arm pool, which is what makes ranking
-  possible. It is not a scholar's collation: a misreading shared by both readings would survive.
-- **`truth/pNNN.json`, 20 pages, agreement only.** Structural facts adjudicated from where the
-  arms agree, scored leave-one-out so an arm never votes on its own rubric. It finds outliers and
-  never ranks a model.
+The 8 evaluation pages were chosen on printed features before any scoring. Each was transcribed
+twice, independently, by a model outside the ranked set (Claude Opus 5), and every disagreement
+was settled against the page image (`truth/ADJUDICATION_LOG.md`). Gates and weights were fixed
+before the scores were read: all 8 pages answered, body accuracy ≥ 0.95, footnote F1 ≥ 0.8,
+anchor F1 ≥ 0.8, then a weighted score over prose, note text, anchor placement, block order,
+heading position, fields and marker fidelity. The other 12 pages are scored as agreement between
+arms, leave-one-out, and never rank a model.
 
-The 8 pages were chosen on printed features alone, one per axis that makes this corpus hard,
-before any arm was scored. `truth/EVAL_SET.md` records the rule and where its rationale turned out
-to be wrong.
+Costs are list rates on measured output; the constant behind them was calibrated against real
+billing. Subscription-routed runs say so in `arms.yaml`.
 
 ## The corpus
 
-20 pages of a 461-page Arabic scholarly edition of Justin Martyr, *الدفاعان والحوار مع تريفون*
-(the two Apologies and the Dialogue with Trypho): running heads, a dense numbered footnote
-apparatus, printed page numbers in Arabic-Indic digits, printer marks, Greek and Latin quotations
-inside right-to-left prose. Ten pages carry known production defects, five are medium, three light,
-and two are clean controls where an arm that reports problems is inventing structure.
+20 pages of a 461-page Arabic edition of Justin Martyr, *الدفاعان والحوار مع تريفون*: running
+heads, a dense footnote apparatus, Arabic-Indic page numbers, Greek and Latin inside right-to-left
+prose. The ancient text is public domain; the edition's translation and apparatus are modern work,
+included here (4% of the book) for the non-commercial purpose of evaluating extraction tools.
+Credits from its own page 3: translation Amal Fouad; review Irini Thabet George, Mariam Saad Mina,
+Girgis Gamal Fayez, Wagdi Rizk Ghali, Emad Maurice Iskandar; introduction and final review Joseph
+Maurice Faltas. Rights holders who want the pages removed: open an issue.
 
-**Rights.** The ancient text is public domain; this edition's translation, apparatus and
-typesetting are modern work. The 20 page images and their transcriptions, 4% of the book, are
-included for the non-commercial purpose of evaluating extraction tools, with credit to the people
-who made the edition: translation from the English by Amal Fouad; review against the English by
-Dr. Irini Thabet George and Mariam Saad Mina; review against the Greek by Dr. Girgis Gamal Fayez;
-Arabic language review by Dr. Wagdi Rizk Ghali; general review and subject index by Dr. Emad
-Maurice Iskandar; introduction, final and theological review by Dr. Joseph Maurice Faltas. If you
-hold rights in this edition and want the pages removed, open an issue and they will be.
-
-## The request
-
-Every arm gets the same instruction, `prompts/P2_blocks.txt`: return one ordered sequence of typed
-blocks (paragraph, heading, page title, verse) with the footnote numbers anchored in each block,
-plus the running head, the printed page number, the printer mark, and the notes below the rule with
-their markers and text. Order is asked for because 6 of the 20 pages carry a heading between
-paragraphs, and a reader that gets the heading in a separate list cannot put it back.
-
-Two defects the gold readers found in that prompt are left in it on purpose, because every arm ran
-against this exact text: its worked example about page 24 cites numerals that are not what it says
-they are, and it has no way to mark a paragraph that continues across the page break. Both are fixed
-in the production prompt, `measured_production/structured_v1.txt`.
-
-## Repo map
-
-```
-arms.yaml            the arm registry: the only file you edit to add a model
-prompts/             the instruction every arm answers
-pages/               the 20 page images
-runs/<arm>/          one JSON per page, per arm
-truth/gold/          the reference: 8 pages, read twice outside the arm pool, adjudicated
-truth/EVAL_SET.md    which 8 pages, chosen before any scoring, and why
-truth/pNNN.json      structural truth over all 20 pages (agreement layer)
-measured_production/ a later measured run of the real production call: thinking tokens counted,
-                     corrected prompt, raw rows and outputs, FINDINGS.md
-tools/score.py       -> results.json   (gold accuracy + leave-one-out agreement)
-tools/results_md.py  -> RESULTS.md
-tools/build.py       -> index.html     (the report, one self-contained page)
-tools/chart.py       -> assets/accuracy-vs-cost.png
-tools/test_gold.py   12 invariants, each one a bug this scoring once shipped
-tools/run_gemini_api.py, run_opencode.ps1, run_codex.ps1   how the arms were run
-```
+## Run it
 
 ```
 pip install -r requirements.txt
@@ -124,33 +69,12 @@ python tools/score.py && python tools/results_md.py && python tools/chart.py && 
 python tools/test_gold.py
 ```
 
-**Adding a model:** add a block to `arms.yaml`, write its outputs to `runs/<id>/pNNN.json` in the
-schema the prompt specifies, run the line above. It appears in every table and chart.
+To add a model: add a block to `arms.yaml`, write its outputs to `runs/<id>/pNNN.json` in the
+prompt's schema, run the line above.
 
-## Cost
-
-Calibrated, not assumed. Production's `gemini-2.5-flash` OCR of this book cost a measured
-$0.001881/page over 468 billed calls, which fixes characters-per-token for this script; JSON output
-tokenises differently and was measured from the API's own usage metadata. Every arm's cost is
-derived from measured output characters through those constants, or from real token counts where
-the API reported them. Subscription-routed runs are priced at the vendor's published per-token rate
-and say so in `arms.yaml`. Gemini 3.x figures exclude thinking tokens and are therefore a floor;
-`measured_production/` counted them.
-
-## Not yet done
-
-- Gold on the other 12 pages. Three have both readings finished and can be merged with
-  `tools/gold_merge.py`. This is the only thing that could separate the top four.
-- Repeated runs. One sample per page, so the band is a floor on the uncertainty.
-- Open-weight vision models, on a GPU-seconds cost axis.
-
-## The report
-
-`index.html` is self-contained and begins with `<meta charset="utf-8">`. That line is load-bearing:
-a server that sends no charset leaves the browser to guess Windows-1252, and every Arabic character
-becomes mojibake. It only ever happens locally.
+Not done: gold on the other 12 pages (the only thing that could separate the top four), repeated
+runs, open-weight models.
 
 ## License
 
-Code and scoring under [MIT](LICENSE). The page images and transcriptions are the edition's; see
-[Rights](#the-corpus).
+Code under [MIT](LICENSE). The page images and transcriptions are the edition's; see above.
