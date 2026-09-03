@@ -90,7 +90,7 @@
     if (heroContent) heroContent.style.opacity = String(Math.max(0, 1 - p * 1.6));
     if (heroFrame) {
       if (winWidth >= 900) {
-        heroFrame.style.transform = `translateX(${((1 - p) * 26).toFixed(2)}vw) scale(${(1.22 - 0.22 * p).toFixed(3)})`;
+        heroFrame.style.transform = `translateX(${((1 - p) * 9).toFixed(2)}vw) scale(${(1.10 - 0.10 * p).toFixed(3)})`;
       } else {
         heroFrame.style.transform = `scale(${(1.08 - 0.08 * p).toFixed(3)})`;
       }

@@ -1017,6 +1017,7 @@ html:not(.js) .defect-track{clip-path:none !important}
 }
 
 /* story: visibility fixes after browser review */
+.step-hero .step-content{position:relative;z-index:12}
 @media(max-width:899px){#storyRail{display:none !important}}
 @media(max-width:899px){
  .js .fig-box-g:not(.latest) .fig-box-tab{opacity:0 !important}
