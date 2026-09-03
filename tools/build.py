@@ -30,6 +30,47 @@ def num(v, fmt="{:.3f}"):
 import inspector as INS     # noqa: E402  — image embedding + per-page arm data
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The edition this corpus comes from; prices are quoted for the whole book.
+# Source: README.md line 56, arms.yaml
+BOOK_PAGES = 461
+
+# Defect audit counts on 100 production pages.
+# Source: README.md lines 6-7
+DEFECTS_TOTAL = 365
+DEFECTS_STRUCTURAL = 275
+DEFECTS_MISREAD = 79
+DEFECTS_OTHER = 11
+
+# Thinking-tokens findings on Gemini 3.8 Flash.
+# Source: measured_production/FINDINGS.md lines 36-37, 49
+THINKING_ON_COST_PER_PAGE = 0.007184
+THINKING_ON_ACCURACY = 0.9985
+THINKING_OFF_COST_PER_PAGE = 0.002746
+THINKING_OFF_ACCURACY = 0.9975
+THINKING_ON_BOOK_COST = 3.31
+THINKING_OFF_BOOK_COST = 1.27
+THINKING_TOKENS_PCT = 74
+
+# Colours for the ranked models, in task_score descending order.
+# keep in sync with tools/chart.py line 28
+CHART_COLOURS = [
+    "#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b",
+    "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815"
+]
+
+# Hand-placed annotation boxes for p093.webp (1513 x 2460 px).
+# Source: BUILD_BRIEF_scrollytelling.md lines 75-82
+STORY_BOXES = [
+    {"label": "running head",             "colour": "#2f6f5e", "left": 9.58,  "top": 2.44,  "width": 10.58, "height": 2.11},
+    {"label": "body paragraph",           "colour": "#3b5b8f", "left": 9.91,  "top": 6.71,  "width": 81.63, "height": 37.40},
+    {"label": "chapter heading, in flow", "colour": "#a8452f", "left": 32.39, "top": 45.12, "width": 36.35, "height": 3.98},
+    {"label": "body paragraph",           "colour": "#3b5b8f", "left": 9.91,  "top": 50.81, "width": 81.63, "height": 22.76},
+    {"label": "footnote anchor ١٣٨",      "colour": "#b8860b", "left": 15.33, "top": 53.98, "width": 3.70,  "height": 2.11},
+    {"label": "footnote anchor ١٣٩",      "colour": "#b8860b", "left": 72.57, "top": 66.99, "width": 4.23,  "height": 2.20},
+    {"label": "footnote apparatus",       "colour": "#7a4a9a", "left": 11.24, "top": 78.86, "width": 81.30, "height": 13.62},
+    {"label": "printed page number",      "colour": "#2f6f5e", "left": 45.94, "top": 95.93, "width": 4.96,  "height": 2.03}
+]
 # The annotated page. p8 is the right teaching example: its running head and its page title are the
 # same word, its apparatus holds a nested list in three scripts, and its bottom mark is a page
 # number in a separate front-matter series. Every hard thing about the corpus on one leaf.
@@ -320,6 +361,232 @@ def main() -> None:
 
     prompts = {"P2": (ROOT / "prompts" / "P2_blocks.txt").read_text(encoding="utf-8")}
 
+    # --- Scrollytelling story opening ---
+    gold_pages = data.get("_meta", {}).get("gold_pages") or []
+    ranked_arms = sorted(((k, a, a["gold"]) for k, a in arms.items()
+                          if a.get("gold") and a["prompt"] == "P2" and not a.get("derived_from")),
+                         key=lambda t: -(t[2].get("task_score") or 0))
+    n_story_models = len(ranked_arms)
+
+    chips_html = "".join(
+        f"<div class='story-chip' style='--i:{i};'>"
+        f"<span class='dot' style='background:{CHART_COLOURS[i % len(CHART_COLOURS)]}'></span>"
+        f"<span class='chip-name'>{a['label'].split(' · ')[0]}</span></div>"
+        for i, (k, a, g) in enumerate(ranked_arms)
+    )
+
+    gold_cards_html = "".join(
+        f"<div class='gold-card' style='--i:{i};'>"
+        f"<img src='{INS.thumb(ROOT / 'pages' / f'p{pg:03d}.webp', width=220)}' alt='p{pg}'>"
+        f"<span class='gold-check'>✓</span>"
+        f"<span class='gold-num'>p{pg}</span></div>"
+        for i, pg in enumerate(gold_pages)
+    )
+
+    import gold as GOLD
+    passing = [r for r in ranked_arms if not r[2]["gate_failures"]]
+    top = passing[0]
+    tied = [r for r in passing[1:] if not GOLD.separated(top[2], r[2])]
+    leader_name = top[1]["label"].split(" · ")[0]
+    tied_names = ", ".join(r[1]["label"].split(" · ")[0] for r in tied)
+    beat6_sub = f"{leader_name} scores highest. On {len(gold_pages)} pages the evidence cannot separate it from {tied_names}."
+
+    shortlist = [top] + tied
+    shortlist_costs = [r[1]["summary"]["cost_per_page_usd"] for r in shortlist]
+    price_ratio = f"{round(max(shortlist_costs) / min(shortlist_costs))}×"
+
+    max_book_cost = max(r[1]["summary"]["cost_per_page_usd"] * BOOK_PAGES for r in passing)
+    passing_bars_html = "".join(
+        f"<div class='cost-bar-row'>"
+        f"<span class='cost-bar-label'>{r[1]['label'].split(' · ')[0]}</span>"
+        f"<div class='cost-bar-track'>"
+        f"<div class='cost-bar-fill' style='width:{(r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES / max_book_cost) * 100:.2f}%;"
+        f"background:{CHART_COLOURS[next(idx for idx, ra in enumerate(ranked_arms) if ra[0] == r[0]) % len(CHART_COLOURS)]};--i:{i};'></div>"
+        f"</div>"
+        f"<span class='cost-bar-val'>${r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES:.2f}</span>"
+        f"</div>"
+        for i, r in enumerate(passing)
+    )
+
+    story_boxes_html = "".join(
+        f"<div class='fig-box' data-index='{i}' "
+        f"style='left:{b["left"]}%;top:{b["top"]}%;width:{b["width"]}%;height:{b["height"]}%;"
+        f"--box-color:{b["colour"]};'>"
+        f"<span class='box-label'>{b['label']}</span></div>"
+        for i, b in enumerate(STORY_BOXES)
+    )
+
+    p093_thumb = INS.thumb(ROOT / "pages" / "p093.webp", width=1100)
+    chart_data_uri = ("data:image/png;base64,"
+                      + base64.b64encode((ROOT / "assets" / "accuracy-vs-cost.png").read_bytes()).decode())
+
+    story_html = f"""<section id="story">
+  <div class="story-figure-col">
+    <div class="story-figure-sticky">
+      <div class="story-figure" id="storyFigure" data-beat="0">
+        <!-- Page layer (Beats 0-5) -->
+        <div class="fig-layer fig-page-layer">
+          <div class="fig-page-frame" id="figPageFrame">
+            <div class="fig-page-wrap">
+              <img src="{p093_thumb}" class="fig-page-img" alt="Scanned leaf of Justin Martyr, p093">
+              <div class="fig-boxes" id="figBoxes">
+                {story_boxes_html}
+              </div>
+            </div>
+            <div class="fig-defects-strip" id="figDefects">
+              <div class="defect-track">
+                <div class="defect-fill def-struct" style="width: 75.34%;"></div>
+                <div class="defect-fill def-mis" style="width: 21.64%;"></div>
+                <div class="defect-fill def-oth" style="width: 3.02%;"></div>
+              </div>
+              <div class="defect-legend">
+                <span class="def-seg def-struct"><span class="def-dot" style="background:var(--accent)"></span>structural <b>{DEFECTS_STRUCTURAL}</b></span>
+                &middot;
+                <span class="def-seg def-mis"><span class="def-dot" style="background:var(--warn)"></span>misread <b>{DEFECTS_MISREAD}</b></span>
+                &middot;
+                <span class="def-seg def-oth"><span class="def-dot" style="background:var(--muted)"></span>other <b>{DEFECTS_OTHER}</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chips layer (Beats 4, 5) -->
+        <div class="fig-layer fig-chips-layer" id="figChips">
+          <div class="story-chips-grid">
+            {chips_html}
+          </div>
+        </div>
+
+        <!-- Gold grid layer (Beat 5) -->
+        <div class="fig-layer fig-gold-layer" id="figGold">
+          <div class="gold-grid">
+            {gold_cards_html}
+          </div>
+        </div>
+
+        <!-- Chart layer (Beats 6, 7) -->
+        <div class="fig-layer fig-chart-layer" id="figChartLayer">
+          <div class="fig-chart-frame">
+            <img src="{chart_data_uri}" class="fig-chart-img" id="figChartImg" alt="Task score against cost">
+          </div>
+          <div class="fig-cost-bars" id="figCostBars">
+            {passing_bars_html}
+          </div>
+        </div>
+
+        <!-- Thinking layer (Beat 8) -->
+        <div class="fig-layer fig-thinking-layer" id="figThinking">
+          <div class="fig-thinking-card">
+            <div class="think-row">
+              <div class="think-meta">
+                <span class="think-title">thinking on</span>
+                <span class="think-price">${THINKING_ON_BOOK_COST:.2f}</span>
+              </div>
+              <div class="think-track">
+                <div class="think-fill think-fill-on" style="width: 100%; background: var(--warn);"></div>
+              </div>
+            </div>
+            <div class="think-row" style="margin-top: 14px;">
+              <div class="think-meta">
+                <span class="think-title">thinking off</span>
+                <span class="think-price">${THINKING_OFF_BOOK_COST:.2f}</span>
+              </div>
+              <div class="think-track">
+                <div class="think-fill think-fill-off" style="width: 38.37%; background: var(--good);"></div>
+              </div>
+            </div>
+            <p class="fig-thinking-cap">same pages, same prompt</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-steps-col" id="storySteps">
+    <!-- Beat 0: Hero -->
+    <article class="step step-hero" data-step="0">
+      <div class="step-content">
+        <p class="eyebrow">Benchmark &middot; {n_story_models} models &middot; {len(pages)} pages</p>
+        <h1>Which model can read this page?</h1>
+        <div class="scroll-hint">scroll <span class="scroll-arrow">&darr;</span></div>
+      </div>
+    </article>
+
+    <!-- Beat 1 -->
+    <article class="step" data-step="1">
+      <div class="step-content">
+        <h2>One leaf of a {BOOK_PAGES}-page Arabic scholarly edition.</h2>
+        <p class="sub">Running head, body, a chapter heading, footnote anchors, the apparatus, a page number. Each is a different kind of thing.</p>
+      </div>
+    </article>
+
+    <!-- Beat 2 -->
+    <article class="step step-long" data-step="2">
+      <div class="step-content">
+        <h2>A model has to know what each thing is.</h2>
+      </div>
+    </article>
+
+    <!-- Beat 3 -->
+    <article class="step" data-step="3">
+      <div class="step-content">
+        <h2>Get one of them wrong and the app reads the running head aloud on every page.</h2>
+        <p class="sub">An audit of 100 production pages found {DEFECTS_TOTAL} defects. {DEFECTS_STRUCTURAL} were structural: running head in the body, page number in the body, footnotes merged. {DEFECTS_MISREAD} were misreadings.</p>
+      </div>
+    </article>
+
+    <!-- Beat 4 -->
+    <article class="step" data-step="4">
+      <div class="step-content">
+        <h2>So we asked {n_story_models} models the same question.</h2>
+        <p class="sub">The same 20 page images, the same instruction: give back the page as an ordered sequence of typed blocks, with the notes anchored where they belong.</p>
+      </div>
+    </article>
+
+    <!-- Beat 5 -->
+    <article class="step" data-step="5">
+      <div class="step-content">
+        <h2>&hellip;and scored them on {len(gold_pages)} pages that were read twice, independently.</h2>
+        <p class="sub">The reader is a model outside the ranked set. Every disagreement between its two readings was settled against the page image. No model in the ranking helped write the reference.</p>
+      </div>
+    </article>
+
+    <!-- Beat 6 -->
+    <article class="step" data-step="6">
+      <div class="step-content">
+        <h2>The answer.</h2>
+        <p class="sub">{beat6_sub}</p>
+      </div>
+    </article>
+
+    <!-- Beat 7 -->
+    <article class="step" data-step="7">
+      <div class="step-content">
+        <h2>They span {price_ratio} in price. Pick on cost.</h2>
+        <p class="sub">For the whole {BOOK_PAGES}-page book.</p>
+      </div>
+    </article>
+
+    <!-- Beat 8 -->
+    <article class="step" data-step="8">
+      <div class="step-content">
+        <h2>Turn thinking off.</h2>
+        <p class="sub">On Gemini 3.8 Flash, thinking tokens were {THINKING_TOKENS_PCT}% of what was billed. Off, the book costs ${THINKING_OFF_BOOK_COST:.2f} instead of ${THINKING_ON_BOOK_COST:.2f} and accuracy holds at {THINKING_OFF_ACCURACY*100:.2f}%.</p>
+      </div>
+    </article>
+
+    <!-- Beat 9: Outro -->
+    <article class="step step-outro" data-step="9">
+      <div class="step-content">
+        <h2>Everything below is the data.</h2>
+        <p class="sub">Every page, every reading, every number, and where each one came from.</p>
+        <div class="outro-arrow">&darr;</div>
+      </div>
+    </article>
+  </div>
+</section>
+"""
+
     teach = INS.thumb(ROOT / "pages" / f"p{TEACH_PAGE:03d}.webp", width=520)
     marks = "".join(
         f"<div class='mk' style='top:{y}%'><span class='mkn'>{i+1}</span></div>"
@@ -330,6 +597,7 @@ def main() -> None:
 
     html = (TEMPLATE
             .replace("__TEACHIMG__", teach).replace("__MARKS__", marks).replace("__LEGEND__", legend)
+            .replace("__STORY__", story_html)
             .replace("__TABLE__", "".join(tbl))
             .replace("__VERDICT__", verdict(arms, data.get("_meta", {})))
 
@@ -343,6 +611,7 @@ def main() -> None:
             .replace("__META__", json.dumps(meta, ensure_ascii=False))
             .replace("__PROMPTS__", json.dumps(prompts, ensure_ascii=False))
             .replace("__SUMMARY__", json.dumps(summary, ensure_ascii=False))
+            .replace("__STORYJS__", (ROOT / "tools" / "story.js").read_text(encoding="utf-8"))
             .replace("__APPJS__", (ROOT / "tools" / "app.js").read_text(encoding="utf-8")))
     (ROOT / "index.html").write_text(html, encoding="utf-8")
     print(f"index.html written - {len(arms)} arms, {len(pages)} pages, "
@@ -388,6 +657,127 @@ section{margin:0 0 52px;scroll-margin-top:70px}
  color:var(--muted);cursor:pointer}
 .modes button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .modes button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* story */
+#story{display:flex;flex-direction:row;width:100%;max-width:1280px;margin:0 auto;position:relative;box-sizing:border-box}
+.story-figure-col{width:46%;flex:0 0 46%;position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;z-index:10}
+.story-figure-sticky{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.story-figure{position:relative;width:100%;max-width:460px;height:82vh;max-height:740px;display:flex;align-items:center;justify-content:center}
+.story-steps-col{width:54%;flex:0 0 54%;padding:0 32px 0 24px;box-sizing:border-box}
+.step{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0;box-sizing:border-box}
+.step-hero{min-height:100vh}
+.step-long{min-height:240vh}
+.step-outro{min-height:75vh}
+.step-content{max-width:40ch;margin:0 auto}
+.step-content h1{font:500 38px/1.15 Spectral,Georgia,serif;letter-spacing:-.015em;margin:0 0 16px;text-wrap:balance;color:var(--ink)}
+.step-content h2{font:500 27px/1.22 Spectral,Georgia,serif;letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance;color:var(--ink)}
+.step-content .eyebrow{font:600 12px/1 "IBM Plex Sans",sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin:0 0 16px}
+.step-content .sub{font:400 15.5px/1.6 "IBM Plex Sans",sans-serif;color:var(--muted);margin:0}
+.scroll-hint{margin-top:32px;font:500 12.5px/1 "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);display:inline-flex;align-items:center;gap:6px;opacity:1;transition:opacity 300ms ease-out}
+.scroll-arrow{display:inline-block;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.outro-arrow{margin-top:24px;font-size:24px;color:var(--accent);animation:bob 1.6s ease-in-out infinite}
+.fig-layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 600ms ease-out,transform 600ms ease-out}
+.fig-page-frame{position:relative;display:inline-flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%;transition:transform 600ms ease-out,opacity 600ms ease-out}
+.fig-page-wrap{position:relative;display:inline-block;max-width:100%;max-height:100%}
+.fig-page-img{display:block;max-height:72vh;max-width:100%;width:auto;height:auto;border:1px solid var(--rule);border-radius:3px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.js .story-figure[data-beat="0"] .fig-page-frame{animation:heroPageReveal 700ms ease-out forwards}
+@keyframes heroPageReveal{0%{opacity:0;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+.story-figure[data-beat="0"] .fig-page-layer,.story-figure[data-beat="1"] .fig-page-layer,.story-figure[data-beat="2"] .fig-page-layer,.story-figure[data-beat="3"] .fig-page-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="4"] .fig-page-layer,.story-figure[data-beat="5"] .fig-page-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="4"] .fig-page-frame,.story-figure[data-beat="5"] .fig-page-frame{transform:scale(0.28);transform-origin:top left}
+.story-figure[data-beat="4"] .fig-boxes,.story-figure[data-beat="5"] .fig-boxes,.story-figure[data-beat="4"] .fig-defects-strip,.story-figure[data-beat="5"] .fig-defects-strip{opacity:0;transition:opacity 300ms ease-out}
+.fig-boxes{position:absolute;inset:0;pointer-events:none;transition:opacity 300ms ease-out}
+.fig-box{position:absolute;border:1.5px solid var(--box-color);background:color-mix(in srgb,var(--box-color) 12%,transparent);border-radius:2px;box-sizing:border-box;opacity:0;transform:scale(0.98);transition:opacity 350ms ease-out,transform 350ms ease-out,border-color 500ms ease-out,background 500ms ease-out}
+.fig-box.visible{opacity:1;transform:scale(1)}
+.fig-box .box-label{position:absolute;bottom:100%;left:-1px;background:var(--box-color);color:#fff;font:500 10.5px/1.2 "IBM Plex Sans",sans-serif;padding:1px 4px;border-radius:2px 2px 0 0;white-space:nowrap;opacity:.7;transition:opacity 300ms ease-out,background 500ms ease-out}
+.fig-box.latest .box-label{opacity:1}
+.story-figure[data-beat="3"] .fig-box[data-index="0"]{transform:translateY(202%);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.story-figure[data-beat="3"] .fig-box[data-index="0"] .box-label{background:var(--accent);opacity:1}
+.story-figure[data-beat="3"] .fig-box[data-index="7"]{transform:translateY(-1100%);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.story-figure[data-beat="3"] .fig-box[data-index="7"] .box-label{background:var(--accent);opacity:1}
+.fig-defects-strip{width:100%;margin-top:8px;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity 500ms ease-out 200ms,transform 500ms ease-out 200ms}
+.story-figure[data-beat="3"] .fig-defects-strip{opacity:1;transform:translateY(0);pointer-events:auto}
+.defect-track{display:flex;height:8px;border-radius:2px;overflow:hidden;background:var(--shade);gap:2px}
+.defect-fill{height:100%;transform:scaleX(0);transform-origin:left;transition:transform 700ms ease-out 300ms}
+.story-figure[data-beat="3"] .defect-fill{transform:scaleX(1)}
+.defect-fill.def-struct{background:var(--accent)}
+.defect-fill.def-mis{background:var(--warn)}
+.defect-fill.def-oth{background:var(--muted)}
+.defect-legend{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:5px;font-size:11.5px;color:var(--muted);font-family:"IBM Plex Sans",sans-serif}
+.defect-legend b{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink)}
+.def-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:0}
+.story-figure[data-beat="4"] .fig-chips-layer,.story-figure[data-beat="5"] .fig-chips-layer{opacity:1;pointer-events:auto}
+.fig-chips-layer{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding-left:32%;box-sizing:border-box}
+.story-chips-grid{display:flex;flex-direction:column;gap:5px}
+.story-chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:3px 9px;font-size:12px;font-weight:500;color:var(--ink);opacity:0;transform:translateY(10px);transition:transform 500ms ease-out,opacity 500ms ease-out}
+.story-figure[data-beat="4"] .story-chip,.story-figure[data-beat="5"] .story-chip{opacity:1;transform:translateY(0);transition-delay:calc(var(--i) * 55ms)}
+.story-figure[data-beat="5"] .fig-gold-layer{opacity:1;pointer-events:auto;transform:translateY(0)}
+.fig-gold-layer{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;transform:translateY(20px);opacity:0;transition:transform 600ms ease-out,opacity 600ms ease-out}
+.gold-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%}
+.gold-card{position:relative;aspect-ratio:1513/2460;border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--card)}
+.gold-card img{width:100%;height:100%;object-fit:cover;display:block}
+.gold-check{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font:700 10px/16px "IBM Plex Sans",sans-serif;text-align:center;opacity:0;transform:scale(0.4);transition:transform 350ms ease-out,opacity 350ms ease-out}
+.story-figure[data-beat="5"] .gold-check{opacity:1;transform:scale(1);transition-delay:calc(var(--i) * 50ms + 150ms)}
+.gold-num{position:absolute;bottom:2px;left:3px;font:500 9px/1 "IBM Plex Mono",monospace;color:var(--ink);background:rgba(255,255,255,.85);padding:1px 3px;border-radius:2px}
+.story-figure[data-beat="6"] .fig-chart-layer,.story-figure[data-beat="7"] .fig-chart-layer{opacity:1;pointer-events:auto}
+.fig-chart-frame{position:relative;width:100%;max-width:440px;border-radius:3px;border:1px solid var(--rule);overflow:hidden;background:var(--card)}
+.fig-chart-img{display:block;width:100%;height:auto;clip-path:inset(0 100% 0 0);transition:clip-path 900ms ease-out,transform 900ms ease-out}
+.story-figure[data-beat="6"] .fig-chart-img{clip-path:inset(0 0 0 0);transform:none}
+.story-figure[data-beat="7"] .fig-chart-img{clip-path:inset(0 0 0 0);transform:scale(2.2);transform-origin:14% 12%}
+.fig-cost-bars{width:100%;max-width:440px;margin-top:14px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity 500ms ease-out 250ms,transform 500ms ease-out 250ms}
+.story-figure[data-beat="7"] .fig-cost-bars{opacity:1;transform:translateY(0);pointer-events:auto}
+.cost-bar-row{display:grid;grid-template-columns:135px 1fr 48px;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+.cost-bar-label{font:500 12px/1 "IBM Plex Sans",sans-serif;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cost-bar-track{height:10px;background:var(--shade);border-radius:2px;overflow:hidden}
+.cost-bar-fill{height:100%;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 600ms ease-out}
+.story-figure[data-beat="7"] .cost-bar-fill{transform:scaleX(1);transition-delay:calc(var(--i) * 90ms)}
+.cost-bar-val{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.story-figure[data-beat="8"] .fig-thinking-layer,.story-figure[data-beat="9"] .fig-thinking-layer{opacity:1;pointer-events:auto}
+.fig-thinking-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:24px 20px;box-sizing:border-box}
+.think-row{margin-bottom:16px}
+.think-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.think-title{font:500 14px/1 "IBM Plex Sans",sans-serif;color:var(--ink)}
+.think-price{font:600 14px/1 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink)}
+.think-track{height:14px;background:var(--shade);border-radius:2px;overflow:hidden}
+.think-fill{height:100%;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 650ms ease-out}
+.story-figure[data-beat="8"] .think-fill-on,.story-figure[data-beat="9"] .think-fill-on{transform:scaleX(1)}
+.story-figure[data-beat="8"] .think-fill-off,.story-figure[data-beat="9"] .think-fill-off{transform:scaleX(1);transition-delay:200ms}
+.fig-thinking-cap{font:italic 13px/1 "IBM Plex Sans",sans-serif;color:var(--muted);text-align:center;margin:12px 0 0}
+@media(max-width:899px){
+ #story{flex-direction:column}
+ .story-figure-col{position:sticky;top:0;width:100%;height:46vh;padding:10px 16px;background:var(--paper);border-bottom:1px solid var(--rule);z-index:25}
+ .story-figure{height:100%;max-height:100%;max-width:100%}
+ .fig-page-img{max-height:38vh}
+ .story-steps-col{width:100%;padding:0 20px}
+ .step{min-height:85vh;padding:40px 0}
+ .step-hero{min-height:54vh}
+ .fig-chips-layer{padding-left:28%}
+ .story-chips-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+ .story-chip{padding:2px 6px;font-size:10.5px}
+ .fig-chart-frame{max-width:320px}
+ .fig-cost-bars{max-width:320px;margin-top:8px}
+ .cost-bar-row{grid-template-columns:105px 1fr 44px;gap:6px;font-size:11px;margin-bottom:3px}
+}
+html:not(.js) .fig-layer{position:static;opacity:1;pointer-events:auto;margin-bottom:24px}
+html:not(.js) .story-figure{height:auto;max-height:none;display:block}
+html:not(.js) .story-figure-col{position:static;height:auto}
+html:not(.js) .fig-box{opacity:1;transform:none}
+html:not(.js) .fig-box .box-label{opacity:1}
+html:not(.js) .defect-fill,html:not(.js) .cost-bar-fill,html:not(.js) .think-fill{transform:none}
+html:not(.js) .fig-defects-strip,html:not(.js) .fig-cost-bars{opacity:1;transform:none}
+html:not(.js) .fig-chart-img{clip-path:inset(0 0 0 0)}
+html:not(.js) .story-chip{opacity:1;transform:none}
+html:not(.js) .gold-check{opacity:1;transform:scale(1)}
+@media(prefers-reduced-motion:reduce){
+ #story *,#story *::before,#story *::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
+ .fig-box{opacity:1 !important;transform:none !important}
+ .fig-box .box-label{opacity:1 !important}
+ .defect-fill,.cost-bar-fill,.think-fill{transform:none !important}
+ .fig-chart-img{clip-path:inset(0 0 0 0) !important;transform:none !important}
+ .gold-check{opacity:1 !important;transform:scale(1) !important}
+}
+
 /* the task */
 .teach{display:grid;grid-template-columns:minmax(210px,300px) 1fr;gap:30px;align-items:start}
 .teachimg{position:relative}
@@ -517,13 +907,11 @@ pre.raw{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;
  .mk{left:-11px}
 }
 </style>
+__STORY__
 <div class="wrap">
 
-<p class="eyebrow">Benchmark &middot; __NARMS__ arms &middot; __NPAGES__ pages</p>
-<h1>Reading the Apparatus</h1>
-<p class="lede">Which vision model reads a scanned page of an Arabic scholarly book correctly,
-and at what price? Every model here answered the same request and is scored against the same
-fixed reference.</p>
+<h2>The data</h2>
+<p class="sub">Everything the story summarised, in full.</p>
 
 <div class="nav">
   <a href="#task">The task</a><a href="#verdict">The answer</a><a href="#results">Results</a><a href="#compare">Side by side</a><a href="#method">Method</a>
@@ -646,6 +1034,7 @@ was read once per arm, so run-to-run variation inside a model is not in the band
 <script id="m" type="application/json">__META__</script>
 <script id="pr" type="application/json">__PROMPTS__</script>
 <script id="sm" type="application/json">__SUMMARY__</script>
+<script>__STORYJS__</script>
 <script>__APPJS__</script>
 """
 
