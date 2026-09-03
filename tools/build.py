@@ -158,6 +158,7 @@ def verdict(arms: dict, meta: dict) -> str:
 
     rows = ["<table class='verdict'><thead><tr><th>model</th><th class='num'>task score</th>"
             "<th class='num' title='90% interval from resampling the evaluation pages'>90% CI</th>"
+            "<th class='num' title='list rate on measured output; Gemini excludes thinking tokens'>$/page</th>"
             + "".join(f"<th class='num' title='{d}'>{lab}</th>" for _, lab, d in GOLD_COLS)
             + "<th>gate</th></tr></thead><tbody>"]
     for k, a, g in ranked:
@@ -181,6 +182,7 @@ def verdict(arms: dict, meta: dict) -> str:
         rows.append(f"<tr{cls}><td>{names[k]}</td>"
                     f"<td class='num'><b>{fmt_pc(ts)}</b> {cover}</td>"
                     f"<td class='num ci'>{ci_txt}</td>"
+                    f"<td class='num'>${a['summary']['cost_per_page_usd']:.5f}</td>"
                     + "".join(cells) + f"<td class='gate'>{gate}</td></tr>")
     rows.append("</tbody></table>")
 
@@ -537,15 +539,8 @@ and at what price? Every model here answered the same request and is scored agai
 fixed reference.</p>
 
 <div class="nav">
-  <a href="#verdict">The answer</a><a href="#task">The task</a><a href="#results">Results</a><a href="#compare">Side by side</a><a href="#method">Method</a>
+  <a href="#task">The task</a><a href="#verdict">The answer</a><a href="#results">Results</a><a href="#compare">Side by side</a><a href="#method">Method</a>
 </div>
-
-<section id="verdict">
-<h2>Which model reads this page correctly?</h2>
-<p class="sub">Every model answering the same request, scored against a fixed reference that no
-model in this table helped write.</p>
-__VERDICT__
-</section>
 
 <section id="task">
 <h2>The task</h2>
@@ -558,6 +553,13 @@ and still return a page that is wrong, by putting them in the wrong bucket.</p>
 <p class="note">The reason this matters downstream: whatever lands in <em>body</em> is what a
 read-aloud reader speaks. A running head filed as body is read out on every page; a page number
 filed as body is read out as a number in the middle of a sentence.</p>
+</section>
+
+<section id="verdict">
+<h2>Which model reads this page correctly?</h2>
+<p class="sub">Every model answering the same request, scored against a fixed reference that no
+model in this table helped write.</p>
+__VERDICT__
 </section>
 
 <section id="results">
