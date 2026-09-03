@@ -120,7 +120,7 @@ tools/run_gemini_api.py, run_opencode.ps1, run_codex.ps1   how the arms were run
 
 ```
 pip install -r requirements.txt
-python tools/score.py && python tools/results_md.py && python tools/build.py && python tools/chart.py
+python tools/score.py && python tools/results_md.py && python tools/chart.py && python tools/build.py
 python tools/test_gold.py
 ```
 

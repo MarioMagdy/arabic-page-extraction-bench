@@ -1,6 +1,6 @@
 # Arm registry. To add a model: add a block here, write its outputs to runs/<id>/pNNN.json in
-# the schema prompts/P2_blocks.txt specifies, then run tools/score.py, build.py, results_md.py,
-# chart.py. Every arm answers the same prompt (P2). pricing is USD per million tokens; source is
+# the schema prompts/P2_blocks.txt specifies, then run tools/score.py, results_md.py, chart.py,
+# build.py. Every arm answers the same prompt (P2). pricing is USD per million tokens; source is
 # `measured` (real billing), `list` (published rate) or `proxy` (a comparable model's rate).
 
 cost_model:

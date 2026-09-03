@@ -12,6 +12,7 @@ Regenerate after adding an arm:  python tools/score.py && python tools/build.py
 """
 from __future__ import annotations
 
+import base64
 import json
 import sys
 from pathlib import Path
@@ -19,7 +20,13 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-import report as R          # noqa: E402  — chart primitives
+PALETTE = ["#8c6a3f", "#b08d57", "#5f7d6b", "#6a7fa0", "#8a6a8a", "#a06a5f",
+           "#5f8a8a", "#9a8a4f", "#7a6aa0", "#6a9a6a"]
+
+
+def num(v, fmt="{:.3f}"):
+    """An unmeasured metric renders as an em dash. It must never render as zero."""
+    return "&mdash;" if v is None else fmt.format(v)
 import inspector as INS     # noqa: E402  — image embedding + per-page arm data
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -219,7 +226,7 @@ def main() -> None:
     data = json.loads((ROOT / "results.json").read_text(encoding="utf-8"))
     arms = data["arms"]
     cfg = yaml.safe_load((ROOT / "arms.yaml").read_text(encoding="utf-8"))
-    colours = {k: R.PALETTE[i % len(R.PALETTE)] for i, k in enumerate(arms)}
+    colours = {k: PALETTE[i % len(PALETTE)] for i, k in enumerate(arms)}
     pages = sorted({x["page"] for a in arms.values() for x in a["pages"]})
 
     def rows(metric, lower=True):
@@ -241,10 +248,10 @@ def main() -> None:
             f"<tr data-arm='{k}'>"
             f"<td><span class='dot' style='background:{colours[k]}'></span>{a['label']}"
             f"<div class='muted small'>{a['role']}</div></td>"
-            f"<td class='num'>{R.num(s.get('transcript_accuracy'), '{:.2%}')}</td>"
+            f"<td class='num'>{num(s.get('transcript_accuracy'), '{:.2%}')}</td>"
             f"<td class='num'>{(s['field_accuracy'] or 0)*100:.0f}%</td>"
-            f"<td class='num'>{R.num(s['footnote_exact_rate'], '{:.0%}')}</td>"
-            f"<td class='num'>{R.num(s.get('anchor_consistency'), '{:.0%}')}</td>"
+            f"<td class='num'>{num(s['footnote_exact_rate'], '{:.0%}')}</td>"
+            f"<td class='num'>{num(s.get('anchor_consistency'), '{:.0%}')}</td>"
             f"<td class='num'>{s.get('references_total') if s.get('references_total') else '&mdash;'}</td>"
             f"<td class='num'>{('<b>' + str(s.get('output_failures')) + '</b>') if s.get('output_failures') else '0'}</td>"
             f"<td class='num'>${s['cost_per_page_usd']:.5f}"
@@ -342,14 +349,10 @@ def main() -> None:
             .replace("__TABLE__", "".join(tbl))
             .replace("__VERDICT__", verdict(arms, data.get("_meta", {})))
 
-            .replace("__SCATTER__", R.scatter(
-                [(short_labels(arms)[k], a["summary"]["cost_per_page_usd"],
-                  (a.get("gold") or {}).get("task_score"), colours[k])
-                 for k, a in arms.items()
-                 if a["price_source"] in ("measured", "list")
-                 and (a["prompt"] == "P2" or a.get("control"))
-                 and (a.get("gold") or {}).get("task_score") is not None],
-                w=760, h=460, ylab="task score on gold"))
+            .replace("__SCATTER__", "<img src='data:image/png;base64,"
+                     + base64.b64encode((ROOT / "assets" / "accuracy-vs-cost.png").read_bytes()).decode()
+                     + "' alt='task score against price per page, one point per model'"
+                     " style='width:100%;height:auto;display:block'>")
             .replace("__NGOLD__", str(len(data.get("_meta", {}).get("gold_pages") or [])))
             .replace("__NARMS__", str(len(arms))).replace("__NPAGES__", str(len(pages)))
             .replace("__DATA__", json.dumps(idata, ensure_ascii=False))
@@ -583,9 +586,9 @@ intervals at the top settle it.</p>
 <div class="card" id="modelChart"></div>
 
 <h3 style="margin-top:30px">Cost against task score</h3>
-<p class="sub">Every model, priced per page, against its task score on gold. Hover a point for
-its numbers. Subscription-routed runs are priced at the vendor&rsquo;s published per-token rate on
-measured token volume.</p>
+<p class="sub">Every model, priced per page, against its task score on gold. Subscription-routed
+runs are priced at the vendor&rsquo;s published per-token rate on measured token volume; the six
+that clear every gate are magnified in the inset.</p>
 <div class="card">__SCATTER__</div>
 
 <h3 style="margin-top:30px">Where each arm fails <span class="muted small">&mdash; per page</span></h3>
