@@ -159,43 +159,6 @@ def body_purity(body_text: str, contaminants: list[str]) -> float:
     return max(0.0, 1.0 - leaked / len(body_n))
 
 
-# ---------------------------------------------------------------- P0 recovery
-
-_FN_BLOCK = re.compile(r"\[FOOTNOTE\](.*?)\[/FOOTNOTE\]", re.S | re.I)
-_TRAILING_NUM = re.compile(r"^\s*[\u0660-\u0669\u06F0-\u06F9\d\u0645\s]{1,6}\s*$")
-
-
-def recover_structure_p0(raw: str) -> dict:
-    """Reconstruct structure from flat P0 output the way the production parser must.
-
-    This is what makes the comparison fair: production does not consume flat text directly, it runs
-    a parser over it. Scoring P0 as if it produced nothing would flatter the schema arms; scoring it
-    through the same heuristics production uses measures the real architecture — a model that was
-    never asked what anything IS, plus a parser guessing afterwards.
-    """
-    notes = [{"marker": None, "number": None, "text": m.strip(),
-              "continuedFromPreviousPage": False} for m in _FN_BLOCK.findall(raw)]
-    body_src = _FN_BLOCK.sub("", raw)
-    lines = [ln.strip() for ln in body_src.split("\n") if ln.strip()]
-    header = lines[0] if lines else None          # the parser's only header signal: it is line 1
-    rest = lines[1:] if lines else []
-    page_no = None
-    if rest and _TRAILING_NUM.match(rest[-1]):
-        page_no = rest[-1]
-        rest = rest[:-1]
-    return {
-        "runningHeader": header,
-        "pageTitle": None,          # flat text carries no way to know
-        "sectionHeading": [],
-        "body": rest,
-        "footnotes": notes,
-        "printedPageNumber": page_no,
-        "printerMark": None,
-        "foreignRuns": [],
-        "uncertain": re.findall(r"\[\?([^\]]+)\]", raw),
-    }
-
-
 def flatten(rec: dict) -> str:
     """Everything the arm believes is on the page, in reading order — the CER reference shape."""
     parts: list[str] = []
@@ -214,7 +177,7 @@ def flatten(rec: dict) -> str:
 
 
 def from_blocks(rec: dict) -> dict:
-    """Map a block-sequence record (P2/P3) onto the common shape the metrics already use.
+    """Map a block-sequence record onto the common shape the metrics already use.
 
     The point of P2 is that `blocks` keeps ORDER, which parallel lists cannot. Flattening it here
     lets every existing metric keep working unchanged, while `_blocks`, `_anchors` and
@@ -270,18 +233,10 @@ def anchor_consistency(rec: dict, truth_note_count: int | None = None) -> float 
 
 
 def load_arm(rec_path: Path) -> dict:
-    """Load one arm's page output, normalising P0 (raw_text) into the common shape."""
+    """Load one arm's page output into the common shape."""
     rec = json.loads(rec_path.read_text(encoding="utf-8"))
     if "blocks" in rec and isinstance(rec.get("blocks"), list):
         return from_blocks(rec)
-    if "raw_text" in rec and "body" not in rec:
-        out = recover_structure_p0(rec["raw_text"])
-        out["page"] = rec.get("page")
-        out["_raw"] = rec["raw_text"]
-        # A model that was asked for JSON and returned something unparseable has FAILED this page.
-        # Carrying the flag through means it is reported, not silently smoothed into an average.
-        out["_json_parse_failed"] = bool(rec.get("_json_parse_failed"))
-        return out
     rec.setdefault("_raw", flatten(rec))
     return rec
 

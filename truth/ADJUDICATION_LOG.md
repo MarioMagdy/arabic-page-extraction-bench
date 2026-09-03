@@ -127,11 +127,11 @@ selection rationale was corrected.
 
 ## p093 — read by the adjudicator before either key landed
 
-Checked against `pages/p093.webp`, as the page the whole P2 argument rests on:
+Checked against `pages/p093.webp`, as the page the ordered-blocks argument rests on:
 
 - Running header `الدفاع الأول`; printed page number **`٧٣`** at the foot.
 - **A centred chapter heading — `الفصل السادس والأربعون` — sits BETWEEN two paragraphs**, roughly
-  mid-leaf. This is the only in-flow heading in the evaluation set and the direct evidence for P2.
+  mid-leaf. This is the only in-flow heading in the evaluation set and the direct evidence that block order must be asked for.
 - Two footnotes below the rule, markers `١٣٨` and `١٣٩`, anchored in the second paragraph.
 - The numerals `١٠٩: ١ - ٣` (a psalm citation), `١٤٧`, `١٤٨`, `١٥٤`, `٢٩` are in-sentence, not
   anchors — and `١٣٨`/`١٣٩` are three-digit anchors, which is what makes this page hard.
@@ -139,6 +139,4 @@ Checked against `pages/p093.webp`, as the page the whole P2 argument rests on:
 
 Consequences confirmed directly from the arm outputs for this page:
 `MiMo v2.5` printed `٧٢` where the leaf prints `٧٣`; `GLM 5.3 Flash` anchored `148, 149` against
-notes `138, 139`; `Claude Haiku 4.5` found both notes and anchored neither; every P1 arm returned
-the heading in a parallel list, losing its position; both P0 arms returned it as undifferentiated
-body text.
+notes `138, 139`; `Claude Haiku 4.5` found both notes and anchored neither.

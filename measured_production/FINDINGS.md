@@ -65,7 +65,7 @@ For budgeting book-scale ingests (such as this 461-page edition), thinking-off y
 
 ### 3. The never-tested cell is now filled, and it reverses a caution this repo issued
 
-The original `arms.yaml` never tested `gemini-2.5-flash` on the `P2` ordered-blocks prompt. The consuming project's earlier findings document cautioned that the benchmark's evidence did not justify calling 2.5 Flash a worse reader: the only isolated model comparison holding the prompt fixed was on the flat `P0` prompt, where 2.5 Flash was slightly ahead of 3.7 Flash (72.2% vs 70.0% agreement).
+The benchmark never ran `gemini-2.5-flash` on the ordered-blocks prompt. The consuming project's earlier findings document cautioned that the benchmark's evidence did not justify calling 2.5 Flash a worse reader: the only model-isolated comparison then available, both models on production's flat prompt, had 2.5 Flash slightly ahead of 3.7 Flash (72.2% vs 70.0% agreement).
 
 That caution was entirely valid as an assessment of missing evidence. Now that the cell is filled, the empirical results directly overturn it:
 - On the structured ordered-blocks prompt, Gemini 2.5 Flash collapses to an average of **76.50% body accuracy**.

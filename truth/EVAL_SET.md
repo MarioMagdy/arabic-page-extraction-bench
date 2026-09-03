@@ -19,7 +19,7 @@ One page per axis that makes this corpus hard, taking the most extreme page on e
 
 | page | axis it covers |
 |------|----------------|
-| p093 | a **chapter heading between paragraphs** — the one printed feature P2 exists to capture |
+| p093 | a **chapter heading between paragraphs** — the one printed feature ordered blocks exist to capture |
 | p030 | **heaviest apparatus** — 7 notes, the largest footnote block in the corpus |
 | p024 | **dense citation apparatus** — 6 notes carrying names, works and publication data |
 | p052 | **densest page** — the largest image in the set (268 KB at fixed DPI) |
@@ -77,17 +77,17 @@ If a page is missing when the benchmark is finalised, the row above is struck ra
 substituted, and the axis it covered is reported as **unmeasured** — a nearby page is not a
 replacement, because the axes are what the selection was for. One consequence deserves naming in
 advance: **p093 is the only page in the corpus carrying a heading inside the flow.** Without it,
-`heading_placement` is unmeasurable and the strongest argument for P2 loses its direct evidence,
+`heading_placement` is unmeasurable and the strongest argument for ordered blocks loses its direct evidence,
 which the report must say in place of the number rather than falling back on the other seven pages.
 
 ## How gold was made
 
 Each page was read **twice, independently**, by a model that is not an arm in this benchmark
 (Claude Opus 5 — the arms are Sonnet 5 and Haiku 4.5). Each reader saw only the page image and the
-P2 instruction, never another arm's output and never the other reader's. The two readings were then
+extraction instruction, never another arm's output and never the other reader's. The two readings were then
 diffed **exactly, on every scored field**, and each disagreement was settled by the adjudicator and
 recorded in `truth/_resolutions.json` and `truth/ADJUDICATION_LOG.md`. The result is in
-`truth/gold/pNNN.json`, in exactly the P2 schema, so gold and arm output are directly comparable
+`truth/gold/pNNN.json`, in exactly the schema the arms return, so gold and arm output are directly comparable
 element for element.
 
 As it stands: **5 pages agreed outright and

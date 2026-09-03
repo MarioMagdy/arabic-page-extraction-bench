@@ -40,7 +40,7 @@ def main() -> None:
         s = a["summary"]
         cost = ("—" if declared.get(k, {}).get("pricing", {}).get("source") in ("plan", "local")
                 else f"${s['cost_per_page_usd']:.5f}")
-        return (f"| {a['label']} | {a['prompt']} | {s['pages']} | {pct(s.get('transcript_accuracy'), 2)} "
+        return (f"| {a['label']} | {s['pages']} | {pct(s.get('transcript_accuracy'), 2)} "
                 f"| {pct(s.get('field_accuracy'), 0)} | {pct(s.get('footnote_exact_rate'), 0)} "
                 f"| {pct(s.get('anchor_consistency'), 0)} | {s.get('output_failures', 0)} | {cost} |")
 
@@ -59,7 +59,7 @@ def main() -> None:
     gpages = meta.get("gold_pages") or []
     if gpages:
         gates, band = meta["gates"], meta["noise_band"]
-        # `derived_from` arms are excluded exactly as in the HTML report: the second-pass arm's
+        # `derived_from` arms are excluded exactly as in the HTML report: a derived arm's
         # transcription IS arm K's, so listing it here would enter one reading twice.
         ranked = sorted(((k, a, a["gold"]) for k, a in arms.items()
                          if a.get("gold") and a["prompt"] == "P2" and not a.get("derived_from")),
@@ -149,17 +149,17 @@ def main() -> None:
       "picking a winner: the reference moves when the field changes, correlated arms can define "
       "it, and an error every model makes passes unseen. Read it as diagnosis, not as a score.")
     A("")
-    A("| arm | prompt | pages | body agreement | fields | footnotes | anchor self-consistency "
+    A("| arm | pages | body agreement | fields | footnotes | anchor self-consistency "
       "| fails | $/page |")
-    A("|---|---|---:|---:|---:|---:|---:|---:|---:|")
+    A("|---|---:|---:|---:|---:|---:|---:|---:|")
     for k, a in sorted(full.items(), key=lambda kv: -(kv[1]["summary"].get("transcript_accuracy") or 0)):
         A(row(k, a))
     if partial:
         A("")
         A("**Partial runs** — reported, never ranked:")
         A("")
-        A("| arm | prompt | pages | transcript | fields | footnotes | anchors | fails | $/page |")
-        A("|---|---|---:|---:|---:|---:|---:|---:|---:|")
+        A("| arm | pages | transcript | fields | footnotes | anchors | fails | $/page |")
+        A("|---|---:|---:|---:|---:|---:|---:|---:|")
         for k, a in sorted(partial.items(), key=lambda kv: -kv[1]["summary"]["pages"]):
             A(row(k, a))
     if not_run:
@@ -167,49 +167,6 @@ def main() -> None:
         A("**Declared but not run:** " + ", ".join(a["label"] for a in not_run) +
           ". See `arms.yaml` for why each is empty — every one records its reason rather than "
           "being quietly deleted.")
-
-    # ---- the prompt-family comparisons, computed rather than asserted ------------------------
-    A("")
-    A("## What each prompt bought")
-    A("")
-    fams = {}
-    for k, a in full.items():
-        fams.setdefault(a["prompt"], []).append((k, a))
-    for p in sorted(fams):
-        n = len(fams[p])
-        t = [a["summary"]["transcript_accuracy"] for _, a in fams[p]
-             if a["summary"].get("transcript_accuracy") is not None]
-        f = [a["summary"]["footnote_exact_rate"] for _, a in fams[p]
-             if a["summary"].get("footnote_exact_rate") is not None]
-        A(f"- **{p}** — {n} arm(s). Mean transcript accuracy "
-          f"{pct(sum(t)/len(t), 2) if t else '—'}, mean footnote-exact "
-          f"{pct(sum(f)/len(f), 0) if f else '—'}.")
-
-    # same model across prompts is the only clean read on what a prompt costs
-    A("")
-    A("### Same model, different prompt")
-    A("")
-    by_model = {}
-    for k, a in arms.items():
-        by_model.setdefault(a["model"], []).append((k, a))
-    shown = False
-    for model, entries in sorted(by_model.items()):
-        prompts = {a["prompt"]: a for _, a in entries if a["summary"]["pages"] >= MIN_PAGES}
-        if len(prompts) < 2:
-            continue
-        shown = True
-        A(f"**{model}**")
-        A("")
-        A("| prompt | transcript | footnotes | anchors | pages |")
-        A("|---|---:|---:|---:|---:|")
-        for p in sorted(prompts):
-            s = prompts[p]["summary"]
-            A(f"| {p} | {pct(s.get('transcript_accuracy'), 2)} | {pct(s.get('footnote_exact_rate'), 0)} "
-              f"| {pct(s.get('anchor_consistency'), 0)} | {s['pages']} |")
-        A("")
-    if not shown:
-        A("_Not enough complete arms sharing a model to compare prompts directly yet._")
-        A("")
 
     k, v = by("transcript_accuracy")
     if k:
@@ -230,16 +187,15 @@ def main() -> None:
     A("  text as body is a real error, but `fields` and `body purity` are the instruments for it.")
     A("- **fields** — running head, page title, section heading, printed page number, printer mark,")
     A("  each in its own place. Leave-one-out against the other arms; three hand-read pages are fixed.")
-    A("- **footnotes** — share of pages with exactly the right number of notes. The flat prompt gives")
-    A("  the model one `[FOOTNOTE]` container, so an apparatus of twelve notes comes back as one.")
+    A("- **footnotes** — share of pages with exactly the right number of notes.")
     A("- **anchor self-consistency** — do the inline footnote references in the text account for the")
     A("  notes below the rule? This is self-consistency, not correctness: a model that invents a note")
     A("  and an anchor for it agrees with itself perfectly. Anchors are scored for real against gold")
-    A("  in the section above; this column is a diagnostic only. Block-schema arms only.")
+    A("  in the section above; this column is a diagnostic only.")
     A("- **fails** — pages where the model returned nothing usable. Counted, never averaged away.")
     A("- **$/page** — measured token counts where the API reported them, otherwise derived from")
-    A("  measured output characters through a calibrated constant. Arms on a flat-rate plan show")
-    A("  `—`: no per-page price exists to quote, which is not the same as free.")
+    A("  measured output characters through a calibrated constant. Subscription-routed arms are")
+    A("  priced at the vendor's published rate on measured volume. Gemini figures exclude thinking tokens.")
     (ROOT / "RESULTS.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"RESULTS.md written — {len(full)} ranked, {len(partial)} partial, {len(not_run)} not run")
 

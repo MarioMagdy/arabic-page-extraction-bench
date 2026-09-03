@@ -368,7 +368,7 @@ def fields(arm: dict, gold: dict) -> dict:
         detail[f] = ok
         hit += ok
         miss += not ok
-    # pageTitle lives in the block sequence for P2 and in its own field for P1.
+    # pageTitle lives in the block sequence.
     gt = gold.get("pageTitle")
     at = arm.get("pageTitle")
     ok = (not gt and not at) or (bool(gt) and bool(at) and _sim(str(gt), str(at)) >= 0.85)

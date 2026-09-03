@@ -4,7 +4,7 @@ Unlike the CLI-driven arms, this path returns `usageMetadata`, so the cost for a
 MEASURED from real token counts rather than derived from the calibrated characters-per-token
 constant. That also makes this the arm that validates the constant.
 
-    python tools/run_gemini_api.py --model gemini-2.5-flash-lite --prompt P1 --arm I_flashlite_P1
+    python tools/run_gemini_api.py --model gemini-3.7-flash --prompt P2 --arm L_37flash_P2
 """
 from __future__ import annotations
 
@@ -108,16 +108,13 @@ def main() -> None:
         usage_log.append({"page": int(pg), "prompt_tokens": um.get("promptTokenCount"),
                           "output_tokens": um.get("candidatesTokenCount"),
                           "total_tokens": um.get("totalTokenCount"), "chars": len(text)})
-        if a.prompt != "P0":
-            t = text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-            try:
-                rec = json.loads(t)
-            except json.JSONDecodeError:
-                # An arm that cannot return valid JSON when asked is a RESULT, not a crash.
-                rec = {"_json_parse_failed": True, "raw_text": text}
-            rec["page"] = int(pg)
-        else:
-            rec = {"page": int(pg), "arm": a.arm, "raw_text": text}
+        t = text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+        try:
+            rec = json.loads(t)
+        except json.JSONDecodeError:
+            # An arm that cannot return valid JSON when asked is a RESULT, not a crash.
+            rec = {"_json_parse_failed": True, "raw_text": text}
+        rec["page"] = int(pg)
         dest.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"p{pg} ok  out_tokens={um.get('candidatesTokenCount')} chars={len(text)}")
         time.sleep(0.4)

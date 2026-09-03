@@ -1,6 +1,6 @@
 # Results
 
-22 arms scored across 20 pages of a printed Arabic patristic edition. Generated from `results.json` — do not edit by hand.
+11 arms scored across 20 pages of a printed Arabic patristic edition. Generated from `results.json` — do not edit by hand.
 
 ## The answer — which model performs the task
 
@@ -32,77 +32,26 @@ Measured on **8 pages** (p15, p24, p25, p30, p36, p39, p52, p93) against `truth/
 
 Everything below compares an arm to the *other arms*, over all 20 pages. It answers "how conventional is this reading?", which is useful for spotting an outlier and useless for picking a winner: the reference moves when the field changes, correlated arms can define it, and an error every model makes passes unseen. Read it as diagnosis, not as a score.
 
-| arm | prompt | pages | body agreement | fields | footnotes | anchor self-consistency | fails | $/page |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| Claude Sonnet 5 · schema prompt | P1 | 20 | 99.51% | 100% | 100% | — | 0 | $0.01097 |
-| Gemini 3.5 Flash · blocks | P2 | 20 | 99.47% | 97% | 100% | 92% | 0 | $0.00069 |
-| Gemini 3.5 Flash · blocks + second-pass refs | P2 | 20 | 99.47% | 97% | 100% | 92% | 0 | $0.00113 |
-| Gemini 3.5 Flash · schema prompt | P1 | 20 | 99.46% | 84% | 100% | — | 0 | $0.00048 |
-| Gemini 3.5 Flash · schema · direct API | P1 | 20 | 99.44% | 83% | 100% | — | 0 | $0.00054 |
-| Qwen 3.8 Max · blocks | P2 | 20 | 99.36% | 100% | 100% | 92% | 0 | $0.00826 |
-| Gemini 3.7 Flash · schema prompt | P1 | 20 | 99.32% | 84% | 100% | — | 0 | $0.00048 |
-| Gemini 3.7 Flash · blocks | P2 | 20 | 99.22% | 100% | 100% | 92% | 0 | $0.00070 |
-| Claude Sonnet 5 · blocks | P2 | 20 | 99.10% | 100% | 100% | 92% | 0 | $0.01517 |
-| Gemini 3.7 Flash · flat prompt | P0 | 20 | 99.09% | 92% | 75% | — | 0 | $0.00045 |
-| Kimi K3 · blocks | P2 | 20 | 98.04% | 95% | 92% | 85% | 0 | $0.01542 |
-| GPT 5.6 Luna · blocks | P2 | 20 | 97.98% | 98% | 75% | 43% | 0 | $0.00096 |
-| Gemini 3.5 Flash · blocks + references | P3 | 20 | 97.03% | 97% | 100% | 92% | 0 | $0.00076 |
-| Gemini 3.5 Flash Lite · schema prompt | P1 | 20 | 96.07% | 88% | 100% | — | 0 | $0.00051 |
-| GPT 5.6 Terra · blocks | P2 | 20 | 95.81% | 98% | 92% | 87% | 0 | $0.01100 |
-| Claude Haiku 4.5 · schema prompt | P1 | 20 | 95.76% | 86% | 75% | — | 0 | $0.00365 |
-| DeepSeek V4 Flash Vision · blocks | P2 | 20 | 93.49% | 88% | 83% | 86% | 0 | $0.00051 |
-| Claude Haiku 4.5 · blocks | P2 | 20 | 91.78% | 84% | 92% | 17% | 0 | $0.00507 |
-| Gemini 2.5 Flash · flat prompt | P0 | 20 | 90.35% | 86% | 77% | — | 0 | $0.00178 |
-| GLM 5.3 Flash · blocks | P2 | 20 | 89.89% | 94% | 75% | 70% | 1 | $0.00062 |
-| Gemini 2.5 Flash Lite · schema prompt | P1 | 20 | 80.44% | 79% | 67% | — | 2 | $0.00293 |
+| arm | pages | body agreement | fields | footnotes | anchor self-consistency | fails | $/page |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Qwen 3.8 Max · blocks | 20 | 99.09% | 100% | 100% | 92% | 0 | $0.00826 |
+| Gemini 3.5 Flash · blocks | 20 | 99.05% | 97% | 100% | 92% | 0 | $0.00069 |
+| Claude Sonnet 5 · blocks | 20 | 98.98% | 100% | 100% | 92% | 0 | $0.01517 |
+| Gemini 3.7 Flash · blocks | 20 | 98.87% | 100% | 100% | 92% | 0 | $0.00070 |
+| Kimi K3 · blocks | 20 | 98.28% | 92% | 94% | 85% | 0 | $0.01542 |
+| GPT 5.6 Luna · blocks | 20 | 97.97% | 97% | 76% | 43% | 0 | $0.00096 |
+| GPT 5.6 Terra · blocks | 20 | 95.51% | 97% | 94% | 87% | 0 | $0.01100 |
+| DeepSeek V4 Flash Vision · blocks | 20 | 93.75% | 88% | 88% | 86% | 0 | $0.00051 |
+| Claude Haiku 4.5 · blocks | 20 | 91.55% | 86% | 94% | 17% | 0 | $0.00507 |
+| GLM 5.3 Flash · blocks | 20 | 89.89% | 94% | 81% | 70% | 1 | $0.00062 |
 
 **Partial runs** — reported, never ranked:
 
-| arm | prompt | pages | transcript | fields | footnotes | anchors | fails | $/page |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| MiMo v2.5 · blocks | P2 | 14 | 78.60% | 80% | 73% | 48% | 0 | $0.00049 |
-
-## What each prompt bought
-
-- **P0** — 2 arm(s). Mean transcript accuracy 94.72%, mean footnote-exact 76%.
-- **P1** — 7 arm(s). Mean transcript accuracy 95.71%, mean footnote-exact 92%.
-- **P2** — 11 arm(s). Mean transcript accuracy 96.69%, mean footnote-exact 92%.
-- **P3** — 1 arm(s). Mean transcript accuracy 97.03%, mean footnote-exact 100%.
-
-### Same model, different prompt
-
-**claude-haiku-4.5**
-
-| prompt | transcript | footnotes | anchors | pages |
-|---|---:|---:|---:|---:|
-| P1 | 95.76% | 75% | — | 20 |
-| P2 | 91.78% | 92% | 17% | 20 |
-
-**claude-sonnet-5**
-
-| prompt | transcript | footnotes | anchors | pages |
-|---|---:|---:|---:|---:|
-| P1 | 99.51% | 100% | — | 20 |
-| P2 | 99.10% | 100% | 92% | 20 |
-
-**gemini-3.5-flash**
-
-| prompt | transcript | footnotes | anchors | pages |
-|---|---:|---:|---:|---:|
-| P1 | 99.44% | 100% | — | 20 |
-| P2 | 99.47% | 100% | 92% | 20 |
-| P3 | 97.03% | 100% | 92% | 20 |
-
-**gemini-3.7-flash**
-
-| prompt | transcript | footnotes | anchors | pages |
-|---|---:|---:|---:|---:|
-| P0 | 99.09% | 75% | — | 20 |
-| P1 | 99.32% | 100% | — | 20 |
-| P2 | 99.22% | 100% | 92% | 20 |
-
-**Best transcript accuracy:** Claude Sonnet 5 · schema prompt at 99.51%.
-**Cheapest priced arm:** Gemini 3.7 Flash · flat prompt at $0.00045 per page.
+| arm | pages | transcript | fields | footnotes | anchors | fails | $/page |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| MiMo v2.5 · blocks | 14 | 79.01% | 81% | 79% | 36% | 0 | $0.00049 |
+**Best transcript accuracy:** Qwen 3.8 Max · blocks at 99.09%.
+**Cheapest priced arm:** DeepSeek V4 Flash Vision · blocks at $0.00051 per page.
 
 ## How to read these numbers
 
@@ -114,13 +63,12 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
   text as body is a real error, but `fields` and `body purity` are the instruments for it.
 - **fields** — running head, page title, section heading, printed page number, printer mark,
   each in its own place. Leave-one-out against the other arms; three hand-read pages are fixed.
-- **footnotes** — share of pages with exactly the right number of notes. The flat prompt gives
-  the model one `[FOOTNOTE]` container, so an apparatus of twelve notes comes back as one.
+- **footnotes** — share of pages with exactly the right number of notes.
 - **anchor self-consistency** — do the inline footnote references in the text account for the
   notes below the rule? This is self-consistency, not correctness: a model that invents a note
   and an anchor for it agrees with itself perfectly. Anchors are scored for real against gold
-  in the section above; this column is a diagnostic only. Block-schema arms only.
+  in the section above; this column is a diagnostic only.
 - **fails** — pages where the model returned nothing usable. Counted, never averaged away.
 - **$/page** — measured token counts where the API reported them, otherwise derived from
-  measured output characters through a calibrated constant. Arms on a flat-rate plan show
-  `—`: no per-page price exists to quote, which is not the same as free.
+  measured output characters through a calibrated constant. Subscription-routed arms are
+  priced at the vendor's published rate on measured volume. Gemini figures exclude thinking tokens.

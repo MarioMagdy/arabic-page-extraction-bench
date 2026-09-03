@@ -52,11 +52,6 @@ def main() -> None:
                 rec = json.loads(f.read_text(encoding="utf-8"))
             except Exception:
                 continue
-            if "raw_text" in rec and "body" not in rec:
-                import sys
-                sys.path.insert(0, str(Path(__file__).parent))
-                import metrics as M
-                rec = {**M.recover_structure_p0(rec["raw_text"]), "_flat": True}
             rows[a["id"]] = {
                 "runningHeader": rec.get("runningHeader"),
                 "pageTitle": rec.get("pageTitle"),

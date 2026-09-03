@@ -86,108 +86,6 @@ def short_labels(arms: dict) -> dict:
     return out
 
 
-def _p3_delta(arms: dict) -> tuple[str, str]:
-    """What semantic extraction cost the SAME model, measured, not asserted.
-
-    K and N are Gemini 3.5 Flash on P2 and P3 — one model, two requests, so the difference is
-    attributable. Both figures are agreement, not accuracy, and the sentence says so.
-    """
-    k, n = arms.get("K_35flash_P2"), arms.get("N_35flash_P3")
-    if not k or not n:
-        return ("worse", "some")
-    a = k["summary"].get("transcript_accuracy")
-    b = n["summary"].get("transcript_accuracy")
-    refs = n["summary"].get("references_total")
-    delta = ("a measurable amount of reading accuracy" if a is None or b is None
-             else f"{(a - b) * 100:.2f} points of body agreement")
-    return (delta, str(refs) if refs else "the")
-
-
-def _secondpass_sentence(arms: dict) -> str:
-    """The P2+P4 result, measured. Stated as a comparison of three arms that actually ran."""
-    k, n, v = (arms.get("K_35flash_P2"), arms.get("N_35flash_P3"),
-               arms.get("V_secondpass_P2"))
-    if not (k and n and v):
-        return "the decoupled run is not scored yet."
-    ka = k["summary"].get("transcript_accuracy")
-    na = n["summary"].get("transcript_accuracy")
-    nr = n["summary"].get("references_total")
-    vr = v["summary"].get("references_total")
-    same = (" the identical set, character for character after normalisation"
-            if nr == vr else "")
-    kc = k["summary"].get("cost_per_page_usd") or 0
-    vc = v["summary"].get("cost_per_page_usd") or 0
-    nc = n["summary"].get("cost_per_page_usd") or 0
-    # Two things this sentence must NOT claim, both of which an earlier draft did.
-    # (1) "the right references" — there is no gold for references, so agreement with P3 is
-    #     agreement, not correctness. Both could be wrong together.
-    # (2) "free" — the second pass is a SECOND API CALL. Its cost is in `vc`, and it is real.
-    return (f"the same model returned <b>{vr} references</b> against P3&rsquo;s {nr}&mdash;{same}. "
-            f"The reading it keeps is P2&rsquo;s ({ka*100:.2f}% body agreement) rather than "
-            f"P3&rsquo;s ({na*100:.2f}%). It is not free: two calls cost "
-            f"<b>${vc:.5f}</b> a page against ${nc:.5f} for P3&rsquo;s one, "
-            f"<b>{vc/nc:.0%}</b> of the single-call price. And &ldquo;the same references&rdquo; "
-            f"means the same as P3 found, not the same as the page prints &mdash; there is no gold "
-            f"for references, so the two could be wrong together.")
-
-
-def _coverage_sentence(arms: dict) -> str:
-    """How much of the task each prompt family can even be MEASURED on.
-
-    The sharpest argument for P2 is not that it scores higher — it is that a flat or parallel-list
-    answer cannot be scored on block order, heading position or anchors at all, because its shape
-    cannot express them. That is not a model failing; it is the request foreclosing the answer.
-    """
-    by_prompt: dict[str, float] = {}
-    missing: dict[str, list[str]] = {}
-    for a in arms.values():
-        g = a.get("gold")
-        if not g or g.get("weight_covered") is None:
-            continue
-        p = a["prompt"]
-        by_prompt[p] = max(by_prompt.get(p, 0.0), g["weight_covered"])
-        if p not in missing:
-            missing[p] = [n.replace("_", " ") for n, e in g["scores"].items()
-                          if e.get("v") is None]
-    if not by_prompt:
-        return ""
-    parts = []
-    for p in sorted(by_prompt):
-        parts.append(f"<b>{p} {by_prompt[p]*100:.0f}%</b>")
-    lost = ", ".join(missing.get("P1", [])[:4]) or "the ordered structure"
-    return (f"<p class='note'><strong>The strongest argument for P2 is not its score.</strong> "
-            f"It is that the other prompts cannot be <em>measured</em> on most of the task: of the "
-            f"weight this benchmark assigns to what the reader needs, the prompt families cover "
-            + " &middot; ".join(parts) + f". A flat blob and a set of parallel lists are not "
-            f"scored badly on {lost} &mdash; they are unscorable, because the shape of the answer "
-            f"cannot express them. That is the request foreclosing the answer, not the model "
-            f"failing to give it.</p>")
-
-
-def _heading_note(ranked: list) -> str:
-    """Say plainly when a metric did not discriminate, instead of leaving a column of 100%s.
-
-    A column where every arm scores the same is easy to read as a filler metric. Here it is a
-    result: asked for ordered blocks, every model put the chapter heading in the right place. The
-    thing that separates prompts is not doing it WELL, it is being able to say it at all.
-    """
-    vals = [g["scores"]["heading_placement"].get("v") for _, _, g in ranked]
-    vals = [v for v in vals if v is not None]
-    if not vals:
-        return ("<p class='note'><b>Heading position is not measured here.</b> No page in the "
-                "evaluation set carries a heading inside the flow, so the one printed feature P2 "
-                "exists to capture has no evidence in this run.</p>")
-    if min(vals) < 0.999:
-        return ""
-    return (f"<p class='note'><b>One column does not discriminate, and that is the finding.</b> "
-            f"Every one of these {len(vals)} models placed the chapter heading correctly &mdash; "
-            f"between the paragraphs it actually separates, not hoisted to the top. Asked for an "
-            f"ordered sequence of blocks, they all deliver the position. The difference between "
-            f"prompts is not that P2 does this <em>better</em>; it is that a flat blob and a set of "
-            f"parallel lists cannot express it at all, so the position is lost before any model "
-            f"gets a chance to be right or wrong about it.</p>")
-
-
 def verdict(arms: dict, meta: dict) -> str:
     """The answer: which model performs the task, decided by a rule fixed before the scores.
 
@@ -303,7 +201,6 @@ def verdict(arms: dict, meta: dict) -> str:
             f"Denominators are on every cell — hover it. This is the only part of this report that "
             f"is accuracy; everything below is agreement between arms, which describes how "
             f"conventional a reading is and cannot rank a model.</p>"
-            + _heading_note(ranked)
             + f"<p class='note'><b>What the band is, and what it is not.</b> It comes from resampling "
             f"these {len(gp)} pages, so it measures how much of a result depends on which pages "
             f"happen to be in the set. <b>It is not a confidence interval for the book.</b> The "
@@ -330,7 +227,7 @@ def main() -> None:
         return sorted(r, key=lambda t: t[1], reverse=not lower)
 
     # summary table
-    tbl = ["<table><thead><tr><th>arm</th><th class='col-prompt'>prompt</th>"
+    tbl = ["<table><thead><tr><th>arm</th>"
            "<th class='num'>transcript</th><th class='num'>fields</th>"
            "<th class='num'>footnotes</th><th class='num'>anchors</th>"
            "<th class='num'>refs</th><th class='num'>failures</th>"
@@ -339,11 +236,9 @@ def main() -> None:
                        key=lambda kv: -(kv[1]["summary"].get("transcript_accuracy") or 0)):
         s = a["summary"]
         tbl.append(
-            f"<tr data-arm='{k}' data-prompt='{a['prompt']}' "
-            f"data-control='{'1' if a.get('control') else '0'}'>"
+            f"<tr data-arm='{k}'>"
             f"<td><span class='dot' style='background:{colours[k]}'></span>{a['label']}"
             f"<div class='muted small'>{a['role']}</div></td>"
-            f"<td class='mono col-prompt'>{a['prompt']}</td>"
             f"<td class='num'>{R.num(s.get('transcript_accuracy'), '{:.2%}')}</td>"
             f"<td class='num'>{(s['field_accuracy'] or 0)*100:.0f}%</td>"
             f"<td class='num'>{R.num(s['footnote_exact_rate'], '{:.0%}')}</td>"
@@ -370,7 +265,7 @@ def main() -> None:
             try:
                 # ONE loader for every shape. Hand-rolling a second one here is how P2 arms ended up
                 # in the inspector with an empty body and no blocks: this file knew about flat text
-                # and the P1 schema, and silently produced nothing for a block record.
+                # and the field-per-element schema, and silently produced nothing for a block record.
                 rec = M.load_arm(f)
             except Exception:
                 continue
@@ -430,8 +325,7 @@ def main() -> None:
                 } for x in a["pages"]}}
                for k, a in arms.items()]
 
-    prompts = {"P0": (ROOT / "prompts" / "P0_baseline.txt").read_text(encoding="utf-8"),
-               "P1": (ROOT / "prompts" / "P1_schema.txt").read_text(encoding="utf-8")}
+    prompts = {"P2": (ROOT / "prompts" / "P2_blocks.txt").read_text(encoding="utf-8")}
 
     teach = INS.thumb(ROOT / "pages" / f"p{TEACH_PAGE:03d}.webp", width=520)
     marks = "".join(
@@ -446,12 +340,6 @@ def main() -> None:
             .replace("__TABLE__", "".join(tbl))
             .replace("__VERDICT__", verdict(arms, data.get("_meta", {})))
 
-            # Only arms with a REAL per-page price and a gold score can appear on a cost/accuracy
-            # plot. Every arm now has a real per-page price — the subscription-routed ones at their
-            # vendor's published per-token rate — so the filter here is about COMPARABILITY, not
-            # about missing data: an arm answering a different prompt cannot be read against these
-            # on cost. Showing a dash for the subscription arms, as an earlier version did, emptied
-            # the cost column for most of the shortlist and made the chart answer nothing.
             .replace("__SCATTER__", R.scatter(
                 [(short_labels(arms)[k], a["summary"]["cost_per_page_usd"],
                   (a.get("gold") or {}).get("task_score"), colours[k])
@@ -460,15 +348,7 @@ def main() -> None:
                  and (a["prompt"] == "P2" or a.get("control"))
                  and (a.get("gold") or {}).get("task_score") is not None],
                 w=760, h=460, ylab="task score on gold"))
-            # The P2-vs-P3 price, computed rather than typed: a number written into prose is a
-            # number that goes stale the next time the field changes, and this one already had.
-            .replace("__P3COST__", _p3_delta(arms)[0]).replace("__P3REFS__", _p3_delta(arms)[1])
-            .replace("__SECONDPASS__", _secondpass_sentence(arms))
-            .replace("__COVERAGE__", _coverage_sentence(arms))
             .replace("__NGOLD__", str(len(data.get("_meta", {}).get("gold_pages") or [])))
-            .replace("__UNPRICED__", ", ".join(
-                sorted(short_labels(arms)[k] for k, a in arms.items()
-                       if a["price_source"] not in ("measured", "list"))) or "none")
             .replace("__NARMS__", str(len(arms))).replace("__NPAGES__", str(len(pages)))
             .replace("__DATA__", json.dumps(idata, ensure_ascii=False))
             .replace("__META__", json.dumps(meta, ensure_ascii=False))
@@ -652,23 +532,18 @@ pre.raw{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;
 
 <p class="eyebrow">Benchmark &middot; __NARMS__ arms &middot; __NPAGES__ pages</p>
 <h1>Reading the Apparatus</h1>
-<p class="lede">What does a vision model actually get wrong on a scanned page of an Arabic
-scholarly book &mdash; and how much of it is the model, rather than the question we asked?</p>
+<p class="lede">Which vision model reads a scanned page of an Arabic scholarly book correctly,
+and at what price? Every model here answered the same request and is scored against the same
+fixed reference.</p>
 
 <div class="nav">
   <a href="#verdict">The answer</a><a href="#task">The task</a><a href="#results">Results</a><a href="#compare">Side by side</a><a href="#method">Method</a>
-  <div class="modes" role="group" aria-label="Which prompt families to show">
-    <button data-p="P0" aria-pressed="false">P0 flat</button>
-    <button data-p="P1" aria-pressed="true">P1 schema</button>
-    <button data-p="P2" aria-pressed="true">P2 blocks</button>
-    <button data-p="P3" aria-pressed="true">P3 + refs</button>
-  </div>
 </div>
 
 <section id="verdict">
 <h2>Which model reads this page correctly?</h2>
-<p class="sub">Every model answering the <em>same</em> request (P2, the recommended prompt), scored
-against a fixed reference that no model in this table helped write.</p>
+<p class="sub">Every model answering the same request, scored against a fixed reference that no
+model in this table helped write.</p>
 __VERDICT__
 </section>
 
@@ -686,99 +561,36 @@ filed as body is read out as a number in the middle of a sentence.</p>
 </section>
 
 <section id="results">
-<h2>Which prompt should you use?</h2>
-<p class="sub">The four are not versions of each other. P2 is the recommendation; P3 is an option
-with a measured price attached.</p>
-<div class="card">
-<table class="prompts"><thead><tr><th>prompt</th><th>asks for</th><th>use it when</th></tr></thead>
-<tbody>
-<tr><td><b>P0</b> <span class="tag">control</span></td>
-    <td>flat text, one <span class="mono">[FOOTNOTE]</span> marker</td>
-    <td>Never. It is what production runs today, kept as the thing to beat.</td></tr>
-<tr><td><b>P1</b></td><td>a field per printed element</td>
-    <td>Superseded by P2 at no cost. Kept because it isolates what naming the parts alone buys.</td></tr>
-<tr class="rec"><td><b>P2</b> <span class="tag rec-tag">recommended</span></td>
-    <td>one ordered sequence of typed blocks, plus inline footnote anchors</td>
-    <td><b>This is the one to read.</b> Everything P1 gets, plus heading position and
-        anchor&ndash;note linkage, for no measurable loss in reading accuracy.</td></tr>
-<tr><td><b>P3</b></td><td>P2 plus references, people, works and dates</td>
-    <td>Never, now. Asking one call to transcribe <em>and</em> annotate cost it __P3COST__, and
-        the second pass below gets the references without paying it.</td></tr>
-<tr class="rec"><td><b>P2 + P4</b> <span class="tag rec-tag">if you want citations</span></td>
-    <td>P2, then a second <em>text-only</em> call over the finished transcription</td>
-    <td><b>Buys the reading back, for money rather than for nothing.</b> The transcription is
-        finished and fixed before anything is interpreted, so it cannot be paid for twice &mdash;
-        but it is a second call, and the price below is the price of both.</td></tr>
-</tbody></table>
-</div>
-__COVERAGE__
-<p class="note"><strong>The P3 penalty is an artifact of the request, not the work.</strong> P3 asks
-for a superset, so it looks like the next step &mdash; but one call has to transcribe and interpret
-at once, and the reading is what gives way. Running the annotation as a separate pass over P2's
-finished text recovered <em>all</em> of it: __SECONDPASS__ This is the clearest single result in the
-benchmark, and it costs one extra cheap text-only call per page.</p>
-
-<h2 style="margin-top:52px">Results</h2>
-<p class="sub" id="modeNote"></p>
+<h2>Results</h2>
 <div class="card scroll">__TABLE__</div>
-<p class="note small" style="margin-bottom:18px"><strong>About the prices.</strong> Every figure
-carries where it came from. <span class="tag">measured</span> means real billing &mdash; this
-model's actual invoiced cost on this book. <span class="tag">list</span> means the vendor's
-published public rate. <span class="tag">proxy</span> means no public rate exists for that model
-yet, so a comparable model's rate is borrowed &mdash; treat those as indicative, not quotable.
-Token counts behind every figure are measured either way; only the price per token varies in how
-firmly it is known.</p>
-<p class="note"><strong>This table is agreement, and it is scored leave-one-out.</strong> Most of the
-20-page truth is adjudicated from agreement between arms, so each arm is scored against the
-agreement of the <em>others</em> &mdash; otherwise the majority would score 100% by construction.
-Nine of the twenty pages are held fixed for everyone instead: three read from the page images, five
-corrected from the printed page-number progression, one hand-adjudicated. Genuinely ambiguous fields
-are left unscored rather than settled by a coin-flip. <b>None of this ranks a model</b> &mdash; for
-that, see the verdict at the top of the page.</p>
+<p class="note small"><strong>Prices.</strong> <span class="tag">measured</span> is real billing,
+<span class="tag">list</span> the vendor&rsquo;s published rate, <span class="tag">proxy</span> a
+comparable model&rsquo;s rate borrowed because none is published. Token counts are measured either
+way. Gemini figures count candidate tokens only, not thinking tokens.</p>
+<p class="note"><strong>This table is agreement, scored leave-one-out.</strong> Each arm is scored
+against the agreement of the <em>others</em> over all 20 pages, so it finds outliers and cannot
+rank a model. For that, see the answer at the top.</p>
 
-<h3 style="margin-top:34px">Which model? <span class="muted small">&mdash; one prompt held fixed</span></h3>
-<p class="sub">Every model answering the <em>same</em> request &mdash; so a difference here is
-attributable to the model in a way that a difference across prompts never is.</p>
-<p class="note small"><strong>Strictly, these are model-plus-runner systems.</strong> The arms
-reached their answers by different routes &mdash; direct API, agent CLI, subagent, an inference
-marketplace &mdash; and each route carries its own wrapper and defaults. Where two arms differ by a
-few tenths of a point, the runner is as likely an explanation as the model, and the confidence
-intervals in the verdict are what should settle it.</p>
+<h3 style="margin-top:34px">Which model?</h3>
+<p class="sub">Strictly these are model-plus-runner systems: the arms reached their answers by
+different routes (direct API, agent CLI), so a few tenths of a point may be the runner. The
+intervals at the top settle it.</p>
 <div class="pickrow">
-  <label class="fld"><span>Prompt</span><select id="mcPrompt"></select></label>
   <label class="fld"><span>Measure</span><select id="mcMetric"></select></label>
 </div>
 <div class="card" id="modelChart"></div>
 
-<h3 style="margin-top:34px">Which prompt? <span class="muted small">&mdash; one model held fixed</span></h3>
-<p class="sub">One model answering every request it was given. This is the comparison that says what
-a richer request buys, and what it costs; nothing here varies except the prompt.</p>
-<div class="pickrow">
-  <label class="fld"><span>Model</span><select id="pcModel"></select></label>
-</div>
-<div class="card" id="promptChart"></div>
-
 <h3 style="margin-top:30px">Cost against task score</h3>
-<p class="sub">The arms that are actually comparable: same prompt, real per-page price, scored on
-gold. Plus the production baseline, for the distance. Hover any point for its numbers.</p>
+<p class="sub">Every model, priced per page, against its task score on gold. Hover a point for
+its numbers. Subscription-routed runs are priced at the vendor&rsquo;s published per-token rate on
+measured token volume.</p>
 <div class="card">__SCATTER__</div>
-<p class="note small"><strong>Why an arm may not be on this chart.</strong> It answers a
-<em>different</em> request &mdash; a point differing in both model and prompt cannot be read as a
-cost difference, so only the fixed-prompt field is plotted.
-<b>Every arm is priced.</b> An earlier version of this page showed a dash for the models reached
-through a flat-rate subscription, on the reasoning that a subscription yields no invoice. That was
-a bad call: it blanked the cost column for most of the shortlist, which is precisely where the
-decision lives. Those arms now carry their vendor&rsquo;s <em>published per-token rate</em> &mdash;
-the same basis already used for Gemini, Sonnet and Haiku &mdash; applied to token volumes that were
-measured all along. Each such row records that the run went through a subscription, so the number
-is a public price rather than a bill.</p>
 
 <h3 style="margin-top:30px">Where each arm fails <span class="muted small">&mdash; per page</span></h3>
 <p class="sub">Pick which kind of failure to look at. The four measures fail on <em>different</em>
 pages, so any one of them alone is not &ldquo;where it fails&rdquo;.</p>
 <div class="pickrow">
   <label class="fld"><span>Failure type</span><select id="heatMetric"></select></label>
-  <label class="fld"><span>Prompt</span><select id="heatPrompt"></select></label>
 </div>
 <div class="card scroll" id="heatHost"></div>
 </section>
@@ -814,15 +626,9 @@ the wrong place. A tinted row is one where the two models simply disagree.</p>
 <li><strong>Same input everywhere.</strong> One 300&nbsp;DPI page image per call. There is no OCR
 step and no text layer &mdash; the production pipeline is already a vision model, so this compares
 like with like.</li>
-<li><strong>Five prompts.</strong> P0 is the production prompt verbatim &mdash; eight lines of free
-text with a single <span class="mono">[FOOTNOTE]</span> marker. P1 asks for a field per printed
-element; P2 for one ordered sequence of typed blocks with inline anchors; P3 for P2 plus references;
-P4 pulls references out of text that has <em>already</em> been transcribed.</li>
-<li><strong>The flat-prompt arms are controls, not contenders.</strong> P0 does not measure whether
-a model can read a page; it measures whether it can guess what we wanted. A new model is always
-added on a schema prompt, so it is never blamed for our under-specification.</li>
-<li><strong>The baseline is scored through a parser</strong> &mdash; the same heuristics production
-uses &mdash; not as though it produced no structure at all.</li>
+<li><strong>One request.</strong> Every arm is asked for the same thing: one ordered sequence of
+typed blocks with inline footnote anchors, plus the running head, page number and the notes with
+their markers (<span class="mono">prompts/P2_blocks.txt</span>).</li>
 <li><strong>Accuracy comes from gold, and only from gold.</strong> __NGOLD__ pages, picked on
 printed features before any scoring, each read twice by a reader outside this field of arms, with
 every disagreement settled against the image. Same reference for every arm; it does not move when
@@ -843,11 +649,8 @@ Token volumes are measured for every arm either way; only the rate per token var
 it is known, and a subscription-routed run is priced at list with that fact recorded.</li>
 </ul>
 <p class="note"><strong>What this still cannot tell you.</strong> Gold is a careful independent
-reading, not a scholar's collation of the printed book: it is independent <em>of the arms</em>,
-which is what makes ranking possible, but a misreading both readers shared would survive it. Each
-page was read once per arm, so run-to-run variation inside a model is not in the published interval.
-And the arms reached their answers through different runners &mdash; direct API, agent CLI,
-subagent &mdash; so strictly this compares model-plus-runner systems, not models in a vacuum.</p>
+reading, not a scholar's collation, so a misreading both readers shared would survive it. Each page
+was read once per arm, so run-to-run variation inside a model is not in the band.</p>
 </section>
 </div>
 <script id="d" type="application/json">__DATA__</script>
