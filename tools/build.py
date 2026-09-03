@@ -271,8 +271,8 @@ def build_chart_svg(rows: list, is_story: bool = True) -> str:
     px_y_min = min(y_to_px(r["hi"]) for r in passing)
     px_y_max = max(y_to_px(r["lo"]) for r in passing)
 
-    zx0 = max(0.0, px_x_min - 45.0)
-    zx1 = min(float(vb_w), px_x_max + 115.0)
+    zx0 = max(0.0, px_x_min - 30.0)
+    zx1 = min(float(vb_w), px_x_max + 40.0)
     zy0 = max(0.0, px_y_min - 25.0)
     zy1 = min(float(plot_y1), px_y_max + 25.0)
     zoom_target_str = f"{zx0:.1f} {zy0:.1f} {zx1 - zx0:.1f} {zy1 - zy0:.1f}"
@@ -542,7 +542,7 @@ def main() -> None:
         bw = round(b["width"] * PAGE_W / 100, 1)
         bh = round(b["height"] * PAGE_H / 100, 1)
         perim = round(2 * (bw + bh), 1)
-        tab_w = max(90, len(b["label"]) * 14 + 24)
+        tab_w = max(190, len(b["label"]) * 30 + 40)
         col = b["colour"]
         lbl = b["label"]
         box_svg_parts.append(
@@ -551,8 +551,8 @@ def main() -> None:
             f"stroke='{col}' stroke-width='6' fill='{col}' fill-opacity='0.12' "
             f"stroke-dasharray='{perim}' stroke-dashoffset='{perim}' data-perim='{perim}' />"
             f"<g class='fig-box-tab' transform='translate({bx}, {by})'>"
-            f"<rect class='fig-box-tab-bg' x='0' y='-36' width='{tab_w}' height='36' rx='4' ry='4' fill='{col}' />"
-            f"<text class='fig-box-tab-text' x='10' y='-12' fill='#ffffff' font-family='\"IBM Plex Sans\", sans-serif' font-size='22' font-weight='500'>{lbl}</text>"
+            f"<rect class='fig-box-tab-bg' x='0' y='-78' width='{tab_w}' height='78' rx='8' ry='8' fill='{col}' />"
+            f"<text class='fig-box-tab-text' x='20' y='-24' fill='#ffffff' font-family='\"IBM Plex Sans\", sans-serif' font-size='50' font-weight='500'>{lbl}</text>"
             f"</g></g>"
         )
     story_boxes_svg_html = "".join(box_svg_parts)
@@ -1015,6 +1015,21 @@ html:not(.js) .defect-track{clip-path:none !important}
   .think-fill-on,.think-fill-off{transform:none !important}
   .defect-track{clip-path:none !important}
 }
+
+/* story: visibility fixes after browser review */
+@media(max-width:899px){#storyRail{display:none !important}}
+@media(max-width:899px){
+ .js .fig-box-g:not(.latest) .fig-box-tab{opacity:0 !important}
+ .js .fig-box-g.latest .fig-box-tab-bg,.js .fig-box-g.latest .fig-box-tab-text{transform:scale(1.8);transform-box:fill-box;transform-origin:left bottom}
+}
+.js .fig-defects-strip{opacity:0;transition:opacity .4s ease-out}
+.js .story-figure[data-beat="3"] .fig-defects-strip{opacity:1}
+.js .fig-page-caption{opacity:0;transition:opacity .4s ease-out}
+.js .story-figure[data-beat="1"] .fig-page-caption,.js .story-figure[data-beat="2"] .fig-page-caption,.js .story-figure[data-beat="3"] .fig-page-caption{opacity:1}
+@media(prefers-reduced-motion:reduce){.js .fig-defects-strip,.js .fig-page-caption{opacity:1 !important}}
+.js .fig-cost-bars{opacity:0;transition:opacity .4s ease-out}
+.js .story-figure[data-beat="7"] .fig-cost-bars,.js .story-figure[data-beat="8"] .fig-cost-bars,.js .story-figure[data-beat="9"] .fig-cost-bars{opacity:1}
+@media(prefers-reduced-motion:reduce){.js .fig-cost-bars{opacity:1 !important}}
 
 /* the task */
 .teach{display:grid;grid-template-columns:minmax(210px,300px) 1fr;gap:30px;align-items:start}

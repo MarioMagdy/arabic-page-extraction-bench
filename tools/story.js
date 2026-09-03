@@ -206,15 +206,29 @@
     if (chartLegendDesktop) chartLegendDesktop.style.opacity = '1';
   }
 
+  function fitAspect(vb, base) {
+    // Expand the target box to the base viewBox's aspect ratio, centred, so the zoom is a true
+    // magnification: a box of the wrong shape gets letterboxed by preserveAspectRatio="meet".
+    const ar = base[2] / base[3];
+    let [x, y, w, h] = vb;
+    if (w / h > ar) { const nh = w / ar; y -= (nh - h) / 2; h = nh; }
+    else { const nw = h * ar; x -= (nw - w) / 2; w = nw; }
+    // never look past the chart's left or right edge; vertical overshoot is fine (card background)
+    x = Math.max(base[0], Math.min(x, base[0] + base[2] - w));
+    return [x, y, w, h];
+  }
+
   function updateBeat7(p) {
     if (!chartSvg) return;
     const baseVb = getBaseVb(), pZoom = Math.min(1, p / 0.5), e = ease(pZoom);
-    const vx = baseVb[0] + e * (targetZoomVb[0] - baseVb[0]);
-    const vy = baseVb[1] + e * (targetZoomVb[1] - baseVb[1]);
-    const vw = baseVb[2] + e * (targetZoomVb[2] - baseVb[2]);
-    const vh = baseVb[3] + e * (targetZoomVb[3] - baseVb[3]);
+    const tz = fitAspect(targetZoomVb, baseVb);
+    const vx = baseVb[0] + e * (tz[0] - baseVb[0]);
+    const vy = baseVb[1] + e * (tz[1] - baseVb[1]);
+    const vw = baseVb[2] + e * (tz[2] - baseVb[2]);
+    const vh = baseVb[3] + e * (tz[3] - baseVb[3]);
     chartSvg.setAttribute('viewBox', `${vx.toFixed(1)} ${vy.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
-    chartLabels.forEach(l => l.style.opacity = e.toFixed(2));
+    // the bars under the chart name the six in colour; point labels only collide at this zoom
+    chartLabels.forEach(l => l.style.opacity = '0');
     chartPoints.forEach(pt => {
       if (pt.getAttribute('data-ok') === '0') {
         pt.style.opacity = (1 - e).toFixed(2);
