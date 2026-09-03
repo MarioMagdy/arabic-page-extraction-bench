@@ -197,29 +197,13 @@ def verdict(arms: dict, meta: dict) -> str:
                          else f"all {len(gp)} evaluation pages answered"
                          for k, v in gates.items())
     return ("".join(head) + "<div class='card scroll'>" + "".join(rows) + "</div>"
-            + f"<p class='note'><b>The rule, fixed before the scores were read.</b> An arm must "
-            f"clear every gate ({gate_txt}) to be recommendable at all. Among those that do, the "
-            f"ranking is a weighted score over what the product actually depends on — the prose "
-            f"most, then note text and anchor placement, then order, heading position, furniture "
-            f"and marker fidelity. Differences under {band*100:.0f} point are not evidence.</p>"
-            f"<p class='note'><b>Measured on {len(gp)} pages ("
-            + ", ".join(f"p{p}" for p in gp)
-            + f"), against a reference that is not "
-            f"another model's opinion.</b> Each page was read twice, independently, by a reader "
-            f"outside this field of arms, and every disagreement was settled against the image. "
-            f"Denominators are on every cell — hover it. This is the only part of this report that "
-            f"is accuracy; everything below is agreement between arms, which describes how "
-            f"conventional a reading is and cannot rank a model.</p>"
-            + f"<p class='note'><b>What the band is, and what it is not.</b> It comes from resampling "
-            f"these {len(gp)} pages, so it measures how much of a result depends on which pages "
-            f"happen to be in the set. <b>It is not a confidence interval for the book.</b> The "
-            f"pages were chosen on purpose, one per difficulty axis, so they are not a random "
-            f"draw from anything and a bootstrap over them cannot be read as sampling the corpus. "
-            f"Two further sources of uncertainty are missing entirely: each page was read once, "
-            f"so run-to-run variation inside a model is absent, and the reference itself is a "
-            f"careful reading rather than a collation. Separation claims use the <em>paired</em> "
-            f"difference between two arms on the same pages, which cancels page difficulty; the "
-            f"per-arm band is shown for stability, not for inference.</p>")
+            + f"<p class='note'><b>How to read this.</b> Scored on {len(gp)} pages, each read twice "
+            f"by a reader outside this field of arms, with every disagreement settled against the "
+            f"image. An arm must clear every gate ({gate_txt}); among those that do, the score "
+            f"weights the prose first, then note text, anchor placement, block order, heading "
+            f"position, fields and markers. The band comes from resampling the {len(gp)} pages, and "
+            f"differences under {band*100:.0f} point are not evidence. Hover a cell for its "
+            f"denominator.</p>")
 
 
 def main() -> None:
