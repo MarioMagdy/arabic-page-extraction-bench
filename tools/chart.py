@@ -26,7 +26,7 @@ import gold as GOLD  # noqa: E402
 
 PAPER, CARD, INK, MUTED, RULE, GOOD = "#f0efe9", "#fbfaf6", "#1a1815", "#6a675e", "#d9d6cc", "#2f6f5e"
 COLOURS = ["#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b",
-           "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815"]
+           "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815", "#5b3a8e", "#00796b", "#b5651d"]
 BOOK_PAGES = 461            # the edition this corpus comes from; prices are quoted for the whole book
 XTICKS = [0.2, 0.5, 1, 2, 5, 10]
 XLABELS = ["$0.20", "$0.50", "$1", "$2", "$5", "$10"]
@@ -105,11 +105,14 @@ def main() -> None:
     ins.set_yticklabels([f"{t*100:.0f}%" for t in yt])
     ins.yaxis.set_minor_locator(MultipleLocator(0.01))
     ins.tick_params(labelsize=8)
-    ins.set_title("the six that clear every gate", fontsize=9, color=MUTED, loc="left", pad=4)
+    _n = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight",
+          9: "nine", 10: "ten"}.get(len(passing), str(len(passing)))
+    ins.set_title(f"the {_n} that clear every gate", fontsize=9, color=MUTED, loc="left", pad=4)
     ins.axhline(band_lo, color=GOOD, lw=1, ls=(0, (2, 3)), zorder=1)
     ins.text(0.21, ylo + 0.002, f"dotted line: lowest score not separable from the leader on {len(gpages)} pages",
              color=GOOD, fontsize=7.5, va="bottom", ha="left")
-    nudge = {"Gemini 3.7 Flash": (9, 7), "Gemini 3.5 Flash": (9, -9), "Claude Sonnet 5": (9, 8),
+    nudge = {"Gemini 3.8 Flash": (9, 9), "Gemini 3.8 Flash, thinking off": (-9, -9),
+             "Gemini 3.7 Flash": (9, 7), "Gemini 3.5 Flash": (9, -9), "Claude Sonnet 5": (9, 8),
              "Qwen 3.8 Max": (-9, 8), "GPT 5.6 Terra": (-9, -8), "Kimi K3": (9, -8)}
     for r in passing:
         dx, dy = nudge.get(r["name"], (9, 0))
@@ -122,10 +125,11 @@ def main() -> None:
     # Legend, ordered by score, carrying the numbers: a leaderboard beside the plot.
     handles = [Line2D([], [], marker="o", ls="none", ms=9, mew=2, color=r["c"],
                       mfc=r["c"] if r["ok"] else CARD) for r in rows]
-    labels = [f"{r['name']:<24s} {r['y']*100:5.1f}%  {('$%.2f' % r['x']):>7s}" for r in rows]
+    _w = max(len(r['name']) for r in rows) + 1
+    labels = [f"{r['name']:<{_w}s} {r['y']*100:5.1f}%  {('$%.2f' % r['x']):>7s}" for r in rows]
     leg = ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(1.01, 1.0), frameon=False,
                     labelspacing=0.9, handletextpad=0.6, alignment="left",
-                    title=f"model · task score · $ for the {BOOK_PAGES}-page book", title_fontsize=8.5,
+                    title=f"arm · task score · $ for the {BOOK_PAGES}-page book", title_fontsize=8.5,
                     prop={"family": "DejaVu Sans Mono", "size": 8.5})
     leg.get_title().set_color(MUTED)
     for t in leg.get_texts():
@@ -133,7 +137,7 @@ def main() -> None:
 
     fig.suptitle("Which model reads a scanned Arabic scholarly page correctly, and at what price",
                  x=0.045, ha="left", fontsize=13, color=INK, fontweight="semibold")
-    ax.set_title(f"{len(rows)} models · same prompt · same {len(gpages)} pages, verified independently"
+    ax.set_title(f"{len(rows)} arms · same prompt · same {len(gpages)} pages, verified independently"
                  " · filled = clears every gate, hollow = fails one · whiskers = 90% band",
                  loc="left", fontsize=9, color=MUTED, pad=8)
 

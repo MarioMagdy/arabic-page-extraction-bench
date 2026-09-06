@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -30,6 +31,65 @@ def num(v, fmt="{:.3f}"):
 import inspector as INS     # noqa: E402  — image embedding + per-page arm data
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The edition this corpus comes from; prices are quoted for the whole book.
+# Source: README.md line 56, arms.yaml
+BOOK_PAGES = 461
+
+# Defect audit counts on 100 production pages.
+# Source: README.md lines 6-7
+DEFECTS_TOTAL = 365
+DEFECTS_STRUCTURAL = 275
+DEFECTS_MISREAD = 79
+DEFECTS_OTHER = 11
+
+def _thinking_facts(on_id="B_38flash_P2", off_id="C_38nothink_P2"):
+    """What deliberation costs, measured from this benchmark's own paired arms.
+
+    These were hardcoded from measured_production, which ran a different call on 7 pages and
+    priced it at the pipeline's discounted tier — so the story quoted numbers the README
+    contradicted. Derived here from the two arms that differ only in thinkingBudget, they cannot
+    drift again. Unlike the cost table, this bills thinking tokens: that is the whole point.
+    """
+    reg = {a["id"]: a for a in yaml.safe_load((ROOT / "arms.yaml").read_text(encoding="utf-8"))["arms"]}
+    res = json.loads((ROOT / "results.json").read_text(encoding="utf-8"))["arms"]
+
+    def billed(arm_id):
+        pr = reg[arm_id]["pricing"]
+        rows = [r for r in json.loads((ROOT / "runs" / arm_id / "_usage.json").read_text(encoding="utf-8"))
+                if r.get("output_tokens")]
+        inp = sum(r["prompt_tokens"] for r in rows)
+        cand = sum(r["output_tokens"] for r in rows)
+        tho = sum(r.get("thoughts_tokens") or 0 for r in rows)
+        per_page = (inp * pr["input"] + (cand + tho) * pr["output"]) / 1e6 / len(rows)
+        return per_page, tho / (cand + tho) if (cand + tho) else 0.0
+
+    on_pp, share = billed(on_id)
+    off_pp, _ = billed(off_id)
+    return {"on_page": on_pp, "off_page": off_pp,
+            "on_book": on_pp * BOOK_PAGES, "off_book": off_pp * BOOK_PAGES,
+            "pct": round(share * 100),
+            "on_acc": res[on_id]["gold"]["task_score"], "off_acc": res[off_id]["gold"]["task_score"]}
+
+# Colours for the ranked models, in task_score descending order.
+# keep in sync with tools/chart.py line 28
+CHART_COLOURS = [
+    "#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b",
+    "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815", "#5b3a8e", "#00796b", "#b5651d"
+]
+
+# Hand-placed annotation boxes for p093.webp (1513 x 2460 px).
+# Source: BUILD_BRIEF_scrollytelling.md lines 75-82
+STORY_BOXES = [
+    {"label": "running head",             "colour": "#2f6f5e", "left": 9.58,  "top": 2.44,  "width": 10.58, "height": 2.11},
+    {"label": "body paragraph",           "colour": "#3b5b8f", "left": 9.91,  "top": 6.71,  "width": 81.63, "height": 37.40},
+    {"label": "chapter heading, in flow", "colour": "#a8452f", "left": 32.39, "top": 45.12, "width": 36.35, "height": 3.98},
+    {"label": "body paragraph",           "colour": "#3b5b8f", "left": 9.91,  "top": 50.81, "width": 81.63, "height": 22.76},
+    {"label": "footnote anchor ١٣٨",      "colour": "#b8860b", "left": 15.33, "top": 53.98, "width": 3.70,  "height": 2.11},
+    {"label": "footnote anchor ١٣٩",      "colour": "#b8860b", "left": 72.57, "top": 66.99, "width": 4.23,  "height": 2.20},
+    {"label": "footnote apparatus",       "colour": "#7a4a9a", "left": 11.24, "top": 78.86, "width": 81.30, "height": 13.62},
+    {"label": "printed page number",      "colour": "#2f6f5e", "left": 45.94, "top": 95.93, "width": 4.96,  "height": 2.03}
+]
 # The annotated page. p8 is the right teaching example: its running head and its page title are the
 # same word, its apparatus holds a nested list in three scripts, and its bottom mark is a page
 # number in a separate front-matter series. Every hard thing about the corpus on one leaf.
@@ -144,17 +204,21 @@ def verdict(arms: dict, meta: dict) -> str:
             clean = [r for r in below
                      if all(GOLD.separated(s[2], r[2]) for s in short)]
             murky = [r for r in below if r not in clean]
+            # The shortlist size is data, not a constant: it was four when this was written and
+            # became five the moment an arm was added. Spelling it out kept the prose wrong.
+            n_short = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six",
+                       7: "seven", 8: "eight", 9: "nine"}.get(len(short), str(len(short)))
             txt = (f"<p class='vlede'><b>{name}</b> has the highest score, and on {len(gp)} pages "
                    f"this evidence <b>cannot distinguish it from {tied_names}</b>. Any of those "
-                   f"four performs the task; the ordering between them is not a result, so choose "
+                   f"{n_short} performs the task; the ordering between them is not a result, so choose "
                    f"on cost and on the specific failure each one still has.</p>")
             if clean:
-                txt += (f"<p class='note'>All four are separated from "
+                txt += (f"<p class='note'>All {n_short} are separated from "
                         + ", ".join(names[r[0]] for r in clean) + " and everything below it.</p>")
             if murky:
                 txt += (f"<p class='note'><b>And a limit worth stating.</b> "
                         + ", ".join(names[r[0]] for r in murky)
-                        + f" score lower than all four, but the gap does not survive removing a "
+                        + f" score lower than all {n_short}, but the gap does not survive removing a "
                         f"single evaluation page for every member of the shortlist. On this "
                         f"evidence they are behind, not beaten.</p>")
             head.append(txt)
@@ -204,6 +268,139 @@ def verdict(arms: dict, meta: dict) -> str:
             f"position, fields and markers. The band comes from resampling the {len(gp)} pages, and "
             f"differences under {band*100:.0f} point are not evidence. Hover a cell for its "
             f"denominator.</p>")
+
+
+def build_chart_svg(rows: list, is_story: bool = True) -> str:
+    # Gutters are sized for the LARGEST type this chart ever renders at: phones bump the SVG text
+    # to 30 user units (see the max-width:899px block) because the chart is only ~350px wide there.
+    # A 70-unit left gutter fits "100%" at 11 units and nothing else, which is how the axis labels
+    # ended up sitting on top of the plot.
+    vb_w, vb_h = 1000, 720
+    plot_x0, plot_x1 = 118, (960 if is_story else 700)
+    plot_y0, plot_y1 = 46, 560
+    plot_w = plot_x1 - plot_x0
+    plot_h = plot_y1 - plot_y0
+
+    x_min, x_max = 0.18, 11.5
+    y_min, y_max = 0.10, 1.015
+    log_x_min, log_x_max = math.log10(x_min), math.log10(x_max)
+
+    def x_to_px(x):
+        return plot_x0 + plot_w * (math.log10(x) - log_x_min) / (log_x_max - log_x_min)
+
+    def y_to_px(y):
+        return plot_y1 - plot_h * (y - y_min) / (y_max - y_min)
+
+    passing = [r for r in rows if r["ok"]]
+    px_x_min = min(x_to_px(r["x"]) for r in passing)
+    px_x_max = max(x_to_px(r["x"]) for r in passing)
+    px_y_min = min(y_to_px(r["hi"]) for r in passing)
+    px_y_max = max(y_to_px(r["lo"]) for r in passing)
+
+    zx0 = max(0.0, px_x_min - 30.0)
+    zx1 = min(float(vb_w), px_x_max + 40.0)
+    zy0 = max(0.0, px_y_min - 25.0)
+    zy1 = min(float(plot_y1), px_y_max + 25.0)
+    zoom_target_str = f"{zx0:.1f} {zy0:.1f} {zx1 - zx0:.1f} {zy1 - zy0:.1f}"
+
+    svg_id = "id='storyChartSvg'" if is_story else "class='chart-svg static-chart'"
+    data_attr = f" data-zoom-target='{zoom_target_str}'" if is_story else ""
+
+    nudge = {"Gemini 3.7 Flash": (9, 7), "Gemini 3.5 Flash": (9, -9), "Claude Sonnet 5": (9, 8),
+             "Qwen 3.8 Max": (-9, 8), "GPT 5.6 Terra": (-9, -8), "Kimi K3": (9, -8)}
+
+    lines = [
+        f"<svg {svg_id}{data_attr} viewBox='0 0 {vb_w} {vb_h}' preserveAspectRatio='xMidYMid meet' class='chart-svg'>",
+        "<rect width='1000' height='620' fill='var(--card)' rx='3' ry='3' />",
+        "<g class='chart-axes-grid'>"
+    ]
+
+    for yi in range(10, 101, 2):
+        y_val = yi / 100.0
+        py = y_to_px(y_val)
+        if yi % 10 == 0:
+            lines.append(f"<line x1='{plot_x0}' y1='{py:.1f}' x2='{plot_x1}' y2='{py:.1f}' stroke='var(--rule)' stroke-width='1' />")
+            lines.append(f"<text x='{plot_x0 - 12}' y='{py + 4:.1f}' text-anchor='end' font-family='\"IBM Plex Mono\", monospace' font-size='21' fill='var(--muted)'>{yi}%</text>")
+        else:
+            lines.append(f"<line x1='{plot_x0}' y1='{py:.1f}' x2='{plot_x1}' y2='{py:.1f}' stroke='var(--rule)' stroke-width='0.5' stroke-opacity='0.4' />")
+
+    lines.append(f"<line x1='{plot_x0}' y1='{plot_y1}' x2='{plot_x1}' y2='{plot_y1}' stroke='var(--rule)' stroke-width='1.2' />")
+
+    xticks = [(0.2, "$0.20"), (0.5, "$0.50"), (1.0, "$1"), (2.0, "$2"), (5.0, "$5"), (10.0, "$10")]
+    for x_val, x_lab in xticks:
+        px = x_to_px(x_val)
+        lines.append(f"<line x1='{px:.1f}' y1='{plot_y1}' x2='{px:.1f}' y2='{plot_y1 + 6}' stroke='var(--muted)' stroke-width='1' />")
+        lines.append(f"<text x='{px:.1f}' y='{plot_y1 + 42}' text-anchor='middle' font-family='\"IBM Plex Mono\", monospace' font-size='21' fill='var(--muted)'>{x_lab}</text>")
+
+    lines.append(f"<text x='34' y='{plot_y0 + plot_h/2:.1f}' text-anchor='middle' transform='rotate(-90 34 {plot_y0 + plot_h/2:.1f})' font-family='\"IBM Plex Sans\", sans-serif' font-size='21' fill='var(--muted)'>task score on gold</text>")
+    lines.append(f"<text class='axis-title-x' x='{plot_x0 + plot_w/2:.1f}' y='{vb_h - 22}' text-anchor='middle' font-family='\"IBM Plex Sans\", sans-serif' font-size='21' fill='var(--muted)'>price to read the whole {BOOK_PAGES}-page book, USD (log scale)</text>")
+    lines.append("</g>")
+
+    lines.append("<g class='chart-points'>")
+    for i, r in enumerate(rows):
+        px = x_to_px(r["x"])
+        py = y_to_px(r["y"])
+        py_lo = y_to_px(r["lo"])
+        py_hi = y_to_px(r["hi"])
+        c = r["c"]
+        ok = r["ok"]
+        name = r["name"]
+        cls = "chart-point-group" + (" is-gate-passing" if ok else " is-gate-failing")
+        lines.append(f"<g class='{cls}' data-idx='{i}' data-ok='{1 if ok else 0}' data-name='{name}' style='--pt-c:{c};'>")
+        lines.append(f"<line class='point-whisker' x1='{px:.1f}' y1='{py_lo:.1f}' x2='{px:.1f}' y2='{py_hi:.1f}' stroke='{c}' stroke-width='1.6' stroke-linecap='round' />")
+        lines.append(f"<line class='point-cap point-cap-lo' x1='{px - 3:.1f}' y1='{py_lo:.1f}' x2='{px + 3:.1f}' y2='{py_lo:.1f}' stroke='{c}' stroke-width='1.6' stroke-linecap='round' />")
+        lines.append(f"<line class='point-cap point-cap-hi' x1='{px - 3:.1f}' y1='{py_hi:.1f}' x2='{px + 3:.1f}' y2='{py_hi:.1f}' stroke='{c}' stroke-width='1.6' stroke-linecap='round' />")
+        if ok:
+            lines.append(f"<circle class='point-dot' cx='{px:.1f}' cy='{py:.1f}' r='9' fill='{c}' stroke='{c}' stroke-width='1' />")
+        else:
+            lines.append(f"<circle class='point-dot' cx='{px:.1f}' cy='{py:.1f}' r='9' fill='var(--card)' stroke='{c}' stroke-width='3' />")
+        if name in nudge:
+            dx, dy = nudge[name]
+            anchor = "start" if dx > 0 else "end"
+            lines.append(f"<text class='point-name-label' x='{px + dx:.1f}' y='{py + dy:.1f}' text-anchor='{anchor}' font-family='\"IBM Plex Sans\", sans-serif' font-size='21' font-weight='600' fill='var(--ink)'>{name}</text>")
+        lines.append("</g>")
+    lines.append("</g>")
+
+    lines.append("<g class='chart-legend-desktop' id='chartLegendDesktop'>")
+    lines.append(f"<text x='730' y='55' font-family='\"IBM Plex Sans\", sans-serif' font-size='12' font-weight='600' fill='var(--muted)'>model · task score · $ for book</text>")
+    for i, r in enumerate(rows):
+        y_row = 85 + i * 44
+        color = r["c"]
+        dot_fill = color if r["ok"] else "var(--card)"
+        dot_sw = 1 if r["ok"] else 2.5
+        name = r["name"]
+        score_pct = r["y"] * 100
+        cost_val = r["x"]
+        lines.append(f"<g class='chart-legend-row' data-idx='{i}'>")
+        lines.append(f"<circle cx='700' cy='{y_row - 4}' r='5' fill='{dot_fill}' stroke='{color}' stroke-width='{dot_sw}' />")
+        lines.append(f"<text x='716' y='{y_row}' font-family='\"IBM Plex Sans\", sans-serif' font-size='11' font-weight='500' fill='var(--ink)'>{name}</text>")
+        lines.append(f"<text x='990' y='{y_row}' text-anchor='end' font-family='\"IBM Plex Mono\", monospace' font-size='12' fill='var(--ink)'><tspan>{score_pct:.1f}%</tspan> &nbsp; <tspan fill='var(--muted)'>${cost_val:.2f}</tspan></text>")
+        lines.append("</g>")
+    lines.append("</g>")
+
+    lines.append("<g class='chart-legend-mobile' id='chartLegendMobile'>")
+    lines.append("<text x='70' y='585' font-family='\"IBM Plex Sans\", sans-serif' font-size='20' font-weight='600' fill='var(--muted)'>model · task score · $ for book</text>")
+    for i, r in enumerate(rows):
+        col = 0 if i < 6 else 1
+        row_in_col = i if col == 0 else i - 6
+        cx = 70 if col == 0 else 390
+        cright = 370 if col == 0 else 690
+        ry = 605 + row_in_col * 24
+        color = r["c"]
+        dot_fill = color if r["ok"] else "var(--card)"
+        dot_sw = 1 if r["ok"] else 2
+        name = r["name"]
+        score_pct = r["y"] * 100
+        cost_val = r["x"]
+        lines.append(f"<g class='chart-legend-row-mob' data-idx='{i}'>")
+        lines.append(f"<circle cx='{cx + 5}' cy='{ry - 3}' r='4' fill='{dot_fill}' stroke='{color}' stroke-width='{dot_sw}' />")
+        lines.append(f"<text x='{cx + 15}' y='{ry}' font-family='\"IBM Plex Sans\", sans-serif' font-size='20' font-weight='500' fill='var(--ink)'>{name}</text>")
+        lines.append(f"<text x='{cright}' y='{ry}' text-anchor='end' font-family='\"IBM Plex Mono\", monospace' font-size='19' fill='var(--ink)'>{score_pct:.1f}% ${cost_val:.2f}</text>")
+        lines.append("</g>")
+    lines.append("</g>")
+
+    lines.append("</svg>")
+    return "\n".join(lines)
 
 
 def main() -> None:
@@ -320,6 +517,296 @@ def main() -> None:
 
     prompts = {"P2": (ROOT / "prompts" / "P2_blocks.txt").read_text(encoding="utf-8")}
 
+    # --- Scrollytelling v2 story opening ---
+    gold_pages = data.get("_meta", {}).get("gold_pages") or []
+
+    chart_rows = []
+    for k, a in arms.items():
+        g = a.get("gold")
+        if not g or a["prompt"] != "P2" or a.get("derived_from"):
+            continue
+        chart_rows.append(dict(id=k, name=a["label"].split(" · ")[0],
+                               x=a["summary"]["cost_per_page_usd"] * BOOK_PAGES,
+                               y=g["task_score"], lo=g["ci"][0], hi=g["ci"][1],
+                               ok=not g["gate_failures"], gold=g))
+    chart_rows.sort(key=lambda r: -r["y"])
+    for i, r in enumerate(chart_rows):
+        r["c"] = CHART_COLOURS[i % len(CHART_COLOURS)]
+
+    ranked_arms = [(r["id"], arms[r["id"]], r["gold"]) for r in chart_rows]
+    # Arms, not models: two of these are the same model at different thinking settings.
+    n_story_arms = len(ranked_arms)
+    n_story_models = len({a["model"] for _, a, _ in ranked_arms})
+    TF = _thinking_facts()
+
+    story_chart_svg = build_chart_svg(chart_rows, is_story=True)
+    scatter_chart_svg = build_chart_svg(chart_rows, is_story=False)
+
+    deck_thumbs = {pg: INS.thumb(ROOT / "pages" / f"p{pg:03d}.webp", width=160) for pg in pages}
+    p093_thumb = INS.thumb(ROOT / "pages" / "p093.webp", width=1100)
+
+    deck_cards_html = "".join(
+        f"<div class='deck-card{' is-gold' if pg in gold_pages else ''}' "
+        f"data-idx='{i}' data-page='{pg}'"
+        f"{f' data-gold-idx=\"{gold_pages.index(pg)}\"' if pg in gold_pages else ''}>"
+        f"<img src='{deck_thumbs[pg]}' alt='p{pg:03d}'>"
+        f"<span class='gold-check'>✓</span>"
+        f"<span class='card-num'>p{pg:03d}</span>"
+        f"</div>"
+        for i, pg in enumerate(pages)
+    )
+
+    chips_html = "".join(
+        f"<div class='story-chip' data-chip-idx='{i}' style='--chip-c:{r['c']};'>"
+        f"<span class='dot' style='background:{r['c']}'></span>"
+        f"<span class='chip-name'>{r['name']}</span></div>"
+        for i, r in enumerate(chart_rows)
+    )
+
+    PAGE_W, PAGE_H = 1513, 2460
+    box_svg_parts = []
+    for i, b in enumerate(STORY_BOXES):
+        bx = round(b["left"] * PAGE_W / 100, 1)
+        by = round(b["top"] * PAGE_H / 100, 1)
+        bw = round(b["width"] * PAGE_W / 100, 1)
+        bh = round(b["height"] * PAGE_H / 100, 1)
+        perim = round(2 * (bw + bh), 1)
+        tab_w = max(190, len(b["label"]) * 30 + 40)
+        col = b["colour"]
+        lbl = b["label"]
+        box_svg_parts.append(
+            f"<g class='fig-box-g' data-idx='{i}' style='--box-c:{col};'>"
+            f"<rect class='fig-box-rect' x='{bx}' y='{by}' width='{bw}' height='{bh}' rx='6' ry='6' "
+            f"stroke='{col}' stroke-width='6' fill='{col}' fill-opacity='0.12' "
+            f"stroke-dasharray='{perim}' stroke-dashoffset='{perim}' data-perim='{perim}' />"
+            f"<g class='fig-box-tab' transform='translate({bx}, {by})'>"
+            f"<rect class='fig-box-tab-bg' x='0' y='-78' width='{tab_w}' height='78' rx='8' ry='8' fill='{col}' />"
+            f"<text class='fig-box-tab-text' x='20' y='-24' fill='#ffffff' font-family='\"IBM Plex Sans\", sans-serif' font-size='50' font-weight='500'>{lbl}</text>"
+            f"</g></g>"
+        )
+    story_boxes_svg_html = "".join(box_svg_parts)
+
+    import gold as GOLD
+    passing = [r for r in ranked_arms if not r[2]["gate_failures"]]
+    top = passing[0]
+    tied = [r for r in passing[1:] if not GOLD.separated(top[2], r[2])]
+    leader_name = top[1]["label"].split(" · ")[0]
+    tied_names = ", ".join(r[1]["label"].split(" · ")[0] for r in tied)
+    beat6_sub = f"{leader_name} scores highest. On {len(gold_pages)} pages the evidence cannot separate it from {tied_names}."
+
+    shortlist = [top] + tied
+    shortlist_costs = [r[1]["summary"]["cost_per_page_usd"] for r in shortlist]
+    price_ratio_num = round(max(shortlist_costs) / min(shortlist_costs))
+    price_ratio = f"{price_ratio_num}×"
+
+    max_book_cost = max(r[1]["summary"]["cost_per_page_usd"] * BOOK_PAGES for r in passing)
+    passing_bars_html = "".join(
+        f"<div class='cost-bar-row' data-cost='{r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES:.2f}'>"
+        f"<span class='cost-bar-label'>{r[1]['label'].split(' · ')[0]}</span>"
+        f"<div class='cost-bar-track'>"
+        f"<div class='cost-bar-fill' style='width:{(r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES / max_book_cost) * 100:.2f}%;"
+        f"background:{CHART_COLOURS[next(idx for idx, ra in enumerate(ranked_arms) if ra[0] == r[0]) % len(CHART_COLOURS)]};'></div>"
+        f"</div>"
+        f"<span class='cost-bar-val'>${r[1]['summary']['cost_per_page_usd'] * BOOK_PAGES:.2f}</span>"
+        f"</div>"
+        for r in passing
+    )
+
+    story_rail_html = """<nav class="story-rail" id="storyRail" aria-label="Story navigation">
+  <button class="rail-dot" data-beat="1" title="One leaf of a 461-page edition" aria-label="Beat 1"></button>
+  <button class="rail-dot" data-beat="2" title="A model has to know what each thing is" aria-label="Beat 2"></button>
+  <button class="rail-dot" data-beat="3" title="Get one of them wrong" aria-label="Beat 3"></button>
+  <button class="rail-dot" data-beat="4" title="So we asked N models the same question" aria-label="Beat 4"></button>
+  <button class="rail-dot" data-beat="5" title="Scored them on 8 pages read twice" aria-label="Beat 5"></button>
+  <button class="rail-dot" data-beat="6" title="The answer" aria-label="Beat 6"></button>
+  <button class="rail-dot" data-beat="7" title="Pick on cost" aria-label="Beat 7"></button>
+  <button class="rail-dot" data-beat="8" title="Turn thinking off" aria-label="Beat 8"></button>
+  <button class="rail-dot" data-beat="9" title="Everything below is the data" aria-label="Beat 9"></button>
+</nav>"""
+
+    story_html = f"""<section id="story">
+  {story_rail_html}
+  <div class="story-figure-col">
+    <div class="story-figure-sticky">
+      <div class="story-figure" id="storyFigure" data-beat="0">
+        <!-- Page layer (Beats 0-3) -->
+        <div class="fig-layer fig-page-layer">
+          <div class="fig-page-frame" id="figPageFrame">
+            <div class="fig-page-wrap">
+              <img src="{p093_thumb}" class="fig-page-img" alt="Scanned leaf of Justin Martyr, p093">
+              <svg viewBox="0 0 1513 2460" class="fig-boxes-svg" id="figBoxesSvg" preserveAspectRatio="none">
+                {story_boxes_svg_html}
+              </svg>
+            </div>
+            <p class="fig-page-caption">p093 &middot; 1 of {len(pages)} in this benchmark &middot; 1 of {BOOK_PAGES} in the book</p>
+            <div class="fig-defects-strip" id="figDefects">
+              <div class="defect-counter-row">
+                <span class="defect-counter-num" id="defectCounter" data-target="{DEFECTS_TOTAL}">{DEFECTS_TOTAL}</span>
+                <span class="defect-counter-label">defects on 100 production pages</span>
+              </div>
+              <div class="defect-track" id="defectTrack">
+                <div class="defect-fill def-struct" style="width: {(DEFECTS_STRUCTURAL / DEFECTS_TOTAL) * 100:.2f}%;"></div>
+                <div class="defect-fill def-mis" style="width: {(DEFECTS_MISREAD / DEFECTS_TOTAL) * 100:.2f}%;"></div>
+                <div class="defect-fill def-oth" style="width: {(DEFECTS_OTHER / DEFECTS_TOTAL) * 100:.2f}%;"></div>
+              </div>
+              <div class="defect-legend">
+                <span class="def-seg def-struct"><span class="def-dot" style="background:var(--accent)"></span>structural <b>{DEFECTS_STRUCTURAL}</b></span>
+                &middot;
+                <span class="def-seg def-mis"><span class="def-dot" style="background:var(--warn)"></span>misread <b>{DEFECTS_MISREAD}</b></span>
+                &middot;
+                <span class="def-seg def-oth"><span class="def-dot" style="background:var(--muted)"></span>other <b>{DEFECTS_OTHER}</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deck layer (Beats 4, 5) -->
+        <div class="fig-layer fig-deck-layer" id="figDeckLayer">
+          <div class="deck-stage">
+            <div class="story-deck-fan" id="storyDeckFan">
+              {deck_cards_html}
+            </div>
+            <div class="story-chips-arc" id="storyChipsArc">
+              {chips_html}
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart layer (Beats 6, 7) -->
+        <div class="fig-layer fig-chart-layer" id="figChartLayer">
+          <div class="fig-chart-frame">
+            {story_chart_svg}
+          </div>
+          <div class="fig-cost-bars" id="figCostBars">
+            {passing_bars_html}
+          </div>
+        </div>
+
+        <!-- Thinking layer (Beat 8) -->
+        <div class="fig-layer fig-thinking-layer" id="figThinking">
+          <div class="fig-thinking-card">
+            <div class="think-row">
+              <div class="think-meta">
+                <span class="think-title">thinking on</span>
+                <span class="think-price" id="thinkOnPrice" data-target="{TF['on_book']:.2f}">${TF['on_book']:.2f}</span>
+              </div>
+              <div class="think-track">
+                <div class="think-fill think-fill-on" id="thinkFillOn" style="width: 100%;">
+                  <div class="think-seg-tokens" id="thinkSegTokens" style="width: {TF['pct']}%;">
+                    <span class="think-seg-label">thinking tokens</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="think-row" style="margin-top: 18px;">
+              <div class="think-meta">
+                <span class="think-title">thinking off</span>
+                <span class="think-price" id="thinkOffPrice" data-target="{TF['off_book']:.2f}">${TF['off_book']:.2f}</span>
+              </div>
+              <div class="think-track">
+                <div class="think-fill think-fill-off" id="thinkFillOff" style="width: {(TF['off_book'] / TF['on_book']) * 100:.2f}%;"></div>
+              </div>
+            </div>
+            <p class="fig-thinking-cap">same pages, same prompt &middot; task score {TF['on_acc']*100:.1f}% &rarr; {TF['off_acc']*100:.1f}%</p>
+          </div>
+        </div>
+
+        <!-- Outro layer (Beat 9) -->
+        <div class="fig-layer fig-outro-layer" id="figOutro">
+          <div class="fig-outro-wrap">
+            <img src="{p093_thumb}" class="fig-outro-img" alt="Scanned leaf of Justin Martyr, p093">
+            <p class="fig-outro-line">{len(pages)} pages &middot; {n_story_models} models &middot; {len(gold_pages)} read twice</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-steps-col" id="storySteps">
+    <!-- Beat 0: Hero -->
+    <article class="step step-hero" data-step="0">
+      <div class="step-content">
+        <p class="eyebrow">Benchmark &middot; {n_story_arms} arms across {n_story_models} models &middot; {len(pages)} pages</p>
+        <h1>Which model can read this page?</h1>
+        <div class="scroll-hint">scroll <span class="scroll-arrow">&darr;</span></div>
+      </div>
+    </article>
+
+    <!-- Beat 1 -->
+    <article class="step" data-step="1">
+      <div class="step-content">
+        <h2>One leaf of a {BOOK_PAGES}-page Arabic scholarly edition.</h2>
+        <p class="sub">Running head, body, a chapter heading, footnote anchors, the apparatus, a page number. Each is a different kind of thing.</p>
+      </div>
+    </article>
+
+    <!-- Beat 2 -->
+    <article class="step step-long" data-step="2">
+      <div class="step-content">
+        <h2>A model has to know what each thing is.</h2>
+      </div>
+    </article>
+
+    <!-- Beat 3 -->
+    <article class="step" data-step="3">
+      <div class="step-content">
+        <h2>Get one of them wrong and the app reads the running head aloud on every page.</h2>
+        <p class="sub">An audit of 100 production pages found {DEFECTS_TOTAL} defects. {DEFECTS_STRUCTURAL} were structural: running head in the body, page number in the body, footnotes merged. {DEFECTS_MISREAD} were misreadings.</p>
+      </div>
+    </article>
+
+    <!-- Beat 4 -->
+    <article class="step" data-step="4">
+      <div class="step-content">
+        <h2>So we asked {n_story_models} models the same question.</h2>
+        <p class="sub">The same {len(pages)} page images, the same instruction: give back the page as an ordered sequence of typed blocks, with the notes anchored where they belong.</p>
+      </div>
+    </article>
+
+    <!-- Beat 5 -->
+    <article class="step" data-step="5">
+      <div class="step-content">
+        <h2>&hellip;and scored them on {len(gold_pages)} pages that were read twice, independently.</h2>
+        <p class="sub">The reader is a model outside the ranked set. Every disagreement between its two readings was settled against the page image. No model in the ranking helped write the reference.</p>
+      </div>
+    </article>
+
+    <!-- Beat 6 -->
+    <article class="step" data-step="6">
+      <div class="step-content">
+        <h2>The answer.</h2>
+        <p class="sub">{beat6_sub}</p>
+      </div>
+    </article>
+
+    <!-- Beat 7 -->
+    <article class="step" data-step="7">
+      <div class="step-content">
+        <h2>They span <span id="storyPriceRatio" data-target="{price_ratio_num}">{price_ratio_num}&times;</span> in price. Pick on cost.</h2>
+        <p class="sub">For the whole {BOOK_PAGES}-page book.</p>
+      </div>
+    </article>
+
+    <!-- Beat 8 -->
+    <article class="step" data-step="8">
+      <div class="step-content">
+        <h2>Turn thinking off.</h2>
+        <p class="sub">On Gemini 3.8 Flash, thinking is {TF['pct']}% of what gets billed. Switch it off and the book costs ${TF['off_book']:.2f} instead of ${TF['on_book']:.2f} &mdash; for {TF['on_acc']*100:.1f}% &rarr; {TF['off_acc']*100:.1f}% on the task score.</p>
+      </div>
+    </article>
+
+    <!-- Beat 9: Outro -->
+    <article class="step step-outro" data-step="9">
+      <div class="step-content">
+        <h2>Everything below is the data.</h2>
+        <p class="sub">Every page, every reading, every number, and where each one came from.</p>
+        <div class="outro-arrow">&darr;</div>
+      </div>
+    </article>
+  </div>
+</section>
+"""
+
     teach = INS.thumb(ROOT / "pages" / f"p{TEACH_PAGE:03d}.webp", width=520)
     marks = "".join(
         f"<div class='mk' style='top:{y}%'><span class='mkn'>{i+1}</span></div>"
@@ -330,19 +817,18 @@ def main() -> None:
 
     html = (TEMPLATE
             .replace("__TEACHIMG__", teach).replace("__MARKS__", marks).replace("__LEGEND__", legend)
+            .replace("__STORY__", story_html)
             .replace("__TABLE__", "".join(tbl))
             .replace("__VERDICT__", verdict(arms, data.get("_meta", {})))
 
-            .replace("__SCATTER__", "<img src='data:image/png;base64,"
-                     + base64.b64encode((ROOT / "assets" / "accuracy-vs-cost.png").read_bytes()).decode()
-                     + "' alt='task score against price per page, one point per model'"
-                     " style='width:100%;height:auto;display:block'>")
+            .replace("__SCATTER__", scatter_chart_svg)
             .replace("__NGOLD__", str(len(data.get("_meta", {}).get("gold_pages") or [])))
             .replace("__NARMS__", str(len(arms))).replace("__NPAGES__", str(len(pages)))
             .replace("__DATA__", json.dumps(idata, ensure_ascii=False))
             .replace("__META__", json.dumps(meta, ensure_ascii=False))
             .replace("__PROMPTS__", json.dumps(prompts, ensure_ascii=False))
             .replace("__SUMMARY__", json.dumps(summary, ensure_ascii=False))
+            .replace("__STORYJS__", (ROOT / "tools" / "story.js").read_text(encoding="utf-8"))
             .replace("__APPJS__", (ROOT / "tools" / "app.js").read_text(encoding="utf-8")))
     (ROOT / "index.html").write_text(html, encoding="utf-8")
     print(f"index.html written - {len(arms)} arms, {len(pages)} pages, "
@@ -388,6 +874,222 @@ section{margin:0 0 52px;scroll-margin-top:70px}
  color:var(--muted);cursor:pointer}
 .modes button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .modes button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* story */
+#story{display:flex;flex-direction:row;width:100%;max-width:1280px;margin:0 auto;position:relative;box-sizing:border-box}
+.story-figure-col{width:46%;flex:0 0 46%;position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;z-index:10}
+.story-figure-sticky{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.story-figure{position:relative;width:100%;max-width:560px;height:82vh;max-height:740px;display:flex;align-items:center;justify-content:center}
+.story-steps-col{width:54%;flex:0 0 54%;padding:0 32px 0 24px;box-sizing:border-box}
+.step{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0;box-sizing:border-box;opacity:.35;transition:opacity 300ms ease-out}
+.step.active{opacity:1}
+.step-hero{min-height:120vh}
+.step-long{min-height:240vh}
+.step-outro{min-height:75vh}
+.step-content{max-width:40ch;margin:0 auto}
+.step-content h1{font:500 38px/1.15 Spectral,Georgia,serif;letter-spacing:-.015em;margin:0 0 16px;text-wrap:balance;color:var(--ink)}
+.step-content h2{font:500 27px/1.22 Spectral,Georgia,serif;letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance;color:var(--ink)}
+.step-content .eyebrow{font:600 12px/1 "IBM Plex Sans",sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin:0 0 16px}
+.step-content .sub{font:400 15.5px/1.6 "IBM Plex Sans",sans-serif;color:var(--muted);margin:0}
+.scroll-hint{margin-top:32px;font:500 12.5px/1 "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);display:inline-flex;align-items:center;gap:6px;opacity:1;transition:opacity 300ms ease-out}
+.scroll-arrow{display:inline-block;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.outro-arrow{margin-top:24px;font-size:24px;color:var(--accent);animation:bob 1.6s ease-in-out infinite}
+
+/* Progress rail */
+.story-rail{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:40;opacity:1;transition:opacity 300ms ease-out;pointer-events:auto}
+.story-rail.past-story{opacity:0;pointer-events:none}
+.rail-dot{width:9px;height:9px;border-radius:50%;border:none;background:var(--rule);padding:0;cursor:pointer;transition:background 250ms ease-out,transform 250ms ease-out}
+.rail-dot:hover{transform:scale(1.3)}
+.rail-dot.active{background:var(--accent);transform:scale(1.25)}
+
+/* Figure layers */
+.fig-layer{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 400ms ease-out}
+.story-figure[data-beat="0"] .fig-page-layer,
+.story-figure[data-beat="1"] .fig-page-layer,
+.story-figure[data-beat="2"] .fig-page-layer,
+.story-figure[data-beat="3"] .fig-page-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="4"] .fig-deck-layer,
+.story-figure[data-beat="5"] .fig-deck-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="6"] .fig-chart-layer,
+.story-figure[data-beat="7"] .fig-chart-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="8"] .fig-thinking-layer{opacity:1;pointer-events:auto}
+.story-figure[data-beat="9"] .fig-outro-layer{opacity:1;pointer-events:auto}
+
+/* Beat 0 & 1 Page frame */
+.fig-page-frame{position:relative;display:inline-flex;flex-direction:column;align-items:center;max-width:100%;max-height:100%}
+.fig-page-wrap{position:relative;display:inline-block;max-width:100%;max-height:100%}
+.fig-page-img{display:block;max-height:70vh;max-width:100%;width:auto;height:auto;border:1px solid var(--rule);border-radius:3px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.fig-page-caption{font:400 12px/1.4 "IBM Plex Mono",monospace;color:var(--muted);margin-top:10px;text-align:center}
+
+/* Beat 2 & 3 Boxes SVG */
+.fig-boxes-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.fig-box-rect{rx:6px;ry:6px;fill-opacity:.12;stroke-width:6px}
+.fig-box-g{transition:opacity 150ms ease-out}
+.fig-box-tab{transition:opacity 150ms ease-out}
+@media(max-width:899px){.js .fig-box-g:not(.latest) .fig-box-tab{display:none !important}}
+
+/* Beat 3 Defects strip */
+.fig-defects-strip{width:100%;margin-top:10px}
+.defect-counter-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;justify-content:center}
+.defect-counter-num{font:500 40px/1 Spectral,Georgia,serif;font-variant-numeric:tabular-nums;color:var(--accent)}
+.defect-counter-label{font:400 13px/1.2 "IBM Plex Sans",sans-serif;color:var(--muted)}
+.defect-track{display:flex;height:9px;border-radius:2px;overflow:hidden;background:var(--shade);gap:2px}
+.defect-fill{height:100%}
+.defect-fill.def-struct{background:var(--accent)}
+.defect-fill.def-mis{background:var(--warn)}
+.defect-fill.def-oth{background:var(--muted)}
+.defect-legend{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:6px;font-size:11.5px;color:var(--muted);font-family:"IBM Plex Sans",sans-serif}
+.defect-legend b{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink)}
+.def-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:0}
+
+/* Beat 4 & 5 Deck & chips */
+.fig-deck-layer{width:100%;height:100%}
+.deck-stage{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.story-deck-fan{position:relative;width:80px;height:130px;display:flex;align-items:center;justify-content:center}
+.deck-card{position:absolute;width:72px;aspect-ratio:1513/2460;background:var(--card);border:1px solid var(--rule);border-radius:2px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);transform-origin:center 120%;transition:box-shadow 250ms ease-out,opacity 250ms ease-out}
+.deck-card img{width:100%;height:100%;object-fit:cover;display:block}
+.deck-card .card-num{position:absolute;bottom:2px;left:3px;font:500 8.5px/1 "IBM Plex Mono",monospace;color:var(--ink);background:var(--card);padding:1px 2px;border-radius:2px}
+.gold-check{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font:700 10px/16px "IBM Plex Sans",sans-serif;text-align:center;opacity:0;transition:opacity 200ms ease-out,transform 200ms ease-out}
+.story-chips-arc{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:20;transition:opacity 300ms ease-out}
+.story-chip{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:3px 8px;font-size:11.5px;font-weight:500;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+
+/* Beat 6 & 7 Chart layer */
+.fig-chart-layer{width:100%;max-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fig-chart-frame{width:100%;max-width:100%;background:var(--card);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.chart-svg{width:100%;height:auto;display:block}
+.chart-point-group{transform-origin:center center}
+.point-whisker{transform-origin:center center}
+.chart-legend-mobile{display:none}
+/* Names drawn onto the plot duplicated the legend beside it and the price list beneath it,
+   and with 14 arms they piled into an unreadable smear across the top of the chart. The
+   plot carries shape and position; the lists carry names. */
+.point-name-label{display:none}
+/* The story chart names its arms in .fig-cost-bars underneath, in real HTML type. An
+   in-SVG legend duplicated that at a third of the size and collided with itself the
+   moment an arm name got long. */
+#storyChartSvg .chart-legend-desktop,#storyChartSvg .chart-legend-mobile{display:none}
+@media(max-width:899px){
+  /* The chart is ~350px wide on a phone against a 1000-unit viewBox, so anything sized for the
+     desktop lands at 4-7px. The names live in .fig-cost-bars directly below in real 12px HTML,
+     so the in-SVG legend and the per-point labels are redundant here: drop them and spend the
+     room on axis text a person can actually read. */
+  /* A 46vh sticky figure cannot hold a legible chart AND an eight-row price list: the frame was
+     being clipped to 189px, cutting the x-axis off entirely. On a phone the two beats take turns
+     using the whole figure instead of splitting it. */
+  .story-figure[data-beat="6"] .fig-cost-bars{display:none}
+  .story-figure[data-beat="7"] .fig-chart-frame{display:none}
+  .fig-chart-frame{overflow:visible}
+  /* the full axis sentence does not fit across 350px at 30 units; it is the one label that can
+     afford to be smaller, since the beat text already says what the axis measures */
+  #storyChartSvg .axis-title-x{font-size:21px}
+  .chart-legend-desktop,
+  .chart-legend-mobile{display:none}
+  #storyChartSvg .point-name-label{display:none}
+  #storyChartSvg text{font-size:30px}
+  .fig-chart-frame{margin-inline:-14px;width:calc(100% + 28px);max-width:none;border-radius:0}
+}
+.fig-cost-bars{width:100%;max-width:100%;margin-top:12px}
+.cost-bar-row{display:grid;grid-template-columns:135px 1fr 50px;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+.cost-bar-label{font:500 12px/1 "IBM Plex Sans",sans-serif;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cost-bar-track{height:10px;background:var(--shade);border-radius:2px;overflow:hidden}
+.cost-bar-fill{height:100%;border-radius:2px}
+.cost-bar-val{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+/* Beat 8 Thinking */
+.fig-thinking-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:24px 20px;box-sizing:border-box}
+.think-row{margin-bottom:16px}
+.think-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.think-title{font:500 14px/1 "IBM Plex Sans",sans-serif;color:var(--ink)}
+.think-price{font:600 14px/1 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink)}
+.think-track{height:14px;background:var(--shade);border-radius:2px;overflow:hidden}
+.think-fill-on{height:100%;background:var(--warn);border-radius:2px;display:flex}
+.think-seg-tokens{height:100%;background:color-mix(in srgb,var(--warn) 70%,#000);border-radius:2px;display:flex;align-items:center;justify-content:center}
+.think-seg-label{font:600 9px/1 "IBM Plex Sans",sans-serif;color:#fff;text-transform:uppercase;letter-spacing:.05em;padding:0 4px;white-space:nowrap;overflow:hidden}
+.think-fill-off{height:100%;background:var(--good);border-radius:2px}
+.fig-thinking-cap{font:italic 13px/1 "IBM Plex Sans",sans-serif;color:var(--muted);text-align:center;margin:12px 0 0}
+
+/* Beat 9 Outro */
+.fig-outro-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.fig-outro-img{width:180px;height:auto;border:1px solid var(--rule);border-radius:3px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+.fig-outro-line{font:500 13.5px/1.4 "IBM Plex Mono",monospace;color:var(--muted);text-align:center;margin:0}
+
+/* Phone layout (<900px) */
+@media(max-width:899px){
+  #story{flex-direction:column}
+  /* Phone rhythm: the sticky figure and one beat's text have to add up to a single screen. At
+     46vh + 85vh steps, the text floated in the middle of a block twice the height it needed, so
+     half the viewport was empty and the next beat sat off the bottom edge. 64 + 36 = 100, and beats that stack a
+     caption and a stat strip under the leaf still fit inside the figure. */
+  .story-figure-col{position:sticky;top:0;width:100%;height:64vh;flex:0 0 64vh;padding:8px 12px;background:var(--paper);border-bottom:1px solid var(--rule);z-index:25;overflow:hidden}
+  .story-figure{height:100%;max-height:100%;max-width:100%}
+  /* the annotated leaf IS the content of beats 1-3; at 36vh its labels were unreadable */
+  .fig-page-img{max-height:40vh}
+  .story-steps-col{width:100%;flex:none;padding:0 20px}
+  .step{min-height:36vh;padding:20px 0;display:flex;flex-direction:column;justify-content:center}
+  .step-hero{min-height:36vh}
+  .deck-card{width:44px}
+  .story-chips-arc{right:4px;gap:3px}
+  .story-chip{padding:2px 5px;font-size:10px}
+  .fig-chart-frame{max-width:100%}
+  .fig-cost-bars{margin-top:6px}
+  .cost-bar-row{grid-template-columns:105px 1fr 44px;gap:6px;font-size:11px;margin-bottom:3px}
+}
+
+/* Fallbacks: no-JS and reduced motion */
+html:not(.js) .fig-layer{position:static;opacity:1;pointer-events:auto;margin-bottom:24px}
+html:not(.js) .story-figure{height:auto;max-height:none;display:block}
+html:not(.js) .story-figure-col{position:static;height:auto}
+html:not(.js) .fig-box-rect{stroke-dashoffset:0 !important}
+html:not(.js) .fig-box-g{opacity:1 !important}
+html:not(.js) .fig-box-tab{opacity:1 !important}
+html:not(.js) .step{opacity:1 !important}
+html:not(.js) .story-rail{display:none !important}
+html:not(.js) .deck-card{transform:none !important;position:relative;display:inline-block;margin:4px}
+html:not(.js) .story-deck-fan{width:100%;height:auto;display:flex;flex-wrap:wrap;gap:4px}
+html:not(.js) .story-chips-arc{position:static;transform:none;display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+html:not(.js) .gold-check{opacity:1 !important}
+html:not(.js) .chart-point-group{opacity:1 !important;transform:none !important}
+html:not(.js) .point-whisker{transform:none !important}
+html:not(.js) .point-cap{opacity:1 !important}
+html:not(.js) .chart-legend-row{opacity:1 !important;transform:none !important}
+html:not(.js) .cost-bar-fill{transform:none !important}
+html:not(.js) .think-fill-on,.html:not(.js) .think-fill-off{transform:none !important}
+html:not(.js) .defect-track{clip-path:none !important}
+
+@media(prefers-reduced-motion:reduce){
+  #story *,#story *::before,#story *::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
+  .step{opacity:1 !important;transition:none !important}
+  .fig-box-rect{stroke-dashoffset:0 !important}
+  .fig-box-g{opacity:1 !important}
+  .fig-box-tab{opacity:1 !important}
+  .deck-card{transform:none !important}
+  .gold-check{opacity:1 !important;transform:none !important}
+  .chart-point-group{opacity:1 !important;transform:none !important}
+  .point-whisker{transform:none !important}
+  .point-cap{opacity:1 !important}
+  .chart-legend-row{opacity:1 !important;transform:none !important}
+  .cost-bar-fill{transform:none !important}
+  .think-fill-on,.think-fill-off{transform:none !important}
+  .defect-track{clip-path:none !important}
+}
+
+/* story: visibility fixes after browser review */
+.step-hero .step-content{position:relative;z-index:12}
+@media(max-width:899px){#storyRail{display:none !important}}
+@media(max-width:899px){
+ .js .fig-box-g:not(.latest) .fig-box-tab{opacity:0 !important}
+ .js .fig-box-g.latest .fig-box-tab-bg,.js .fig-box-g.latest .fig-box-tab-text{transform:scale(1.8);transform-box:fill-box;transform-origin:left bottom}
+}
+.js .fig-defects-strip{opacity:0;transition:opacity .4s ease-out}
+.js .story-figure[data-beat="3"] .fig-defects-strip{opacity:1}
+.js .fig-page-caption{opacity:0;transition:opacity .4s ease-out}
+.js .story-figure[data-beat="1"] .fig-page-caption,.js .story-figure[data-beat="2"] .fig-page-caption,.js .story-figure[data-beat="3"] .fig-page-caption{opacity:1}
+@media(prefers-reduced-motion:reduce){.js .fig-defects-strip,.js .fig-page-caption{opacity:1 !important}}
+.js .fig-cost-bars{opacity:0;transition:opacity .4s ease-out}
+.js .story-figure[data-beat="7"] .fig-cost-bars,.js .story-figure[data-beat="8"] .fig-cost-bars,.js .story-figure[data-beat="9"] .fig-cost-bars{opacity:1}
+@media(prefers-reduced-motion:reduce){.js .fig-cost-bars{opacity:1 !important}}
+
 /* the task */
 .teach{display:grid;grid-template-columns:minmax(210px,300px) 1fr;gap:30px;align-items:start}
 .teachimg{position:relative}
@@ -517,13 +1219,11 @@ pre.raw{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;
  .mk{left:-11px}
 }
 </style>
+__STORY__
 <div class="wrap">
 
-<p class="eyebrow">Benchmark &middot; __NARMS__ arms &middot; __NPAGES__ pages</p>
-<h1>Reading the Apparatus</h1>
-<p class="lede">Which vision model reads a scanned page of an Arabic scholarly book correctly,
-and at what price? Every model here answered the same request and is scored against the same
-fixed reference.</p>
+<h2>The data</h2>
+<p class="sub">Everything the story summarised, in full.</p>
 
 <div class="nav">
   <a href="#task">The task</a><a href="#verdict">The answer</a><a href="#results">Results</a><a href="#compare">Side by side</a><a href="#method">Method</a>
@@ -646,6 +1346,7 @@ was read once per arm, so run-to-run variation inside a model is not in the band
 <script id="m" type="application/json">__META__</script>
 <script id="pr" type="application/json">__PROMPTS__</script>
 <script id="sm" type="application/json">__SUMMARY__</script>
+<script>__STORYJS__</script>
 <script>__APPJS__</script>
 """
 

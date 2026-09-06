@@ -1,0 +1,223 @@
+TEMPLATE = """<title>Reading the Apparatus</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,500;0,700;1,300&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
+<style>
+:root{{
+  --paper:#f0efe9; --card:#fbfaf6; --ink:#1a1815; --muted:#6a675e; --rule:#d9d6cc;
+  --accent:#9e2b25; --good:#3d6b55; --warn:#a8762b; --shade:#e6e4dc;
+  color-scheme:light;
+}}
+@media (prefers-color-scheme:dark){{:root:not([data-theme="light"]){{
+  --paper:#141312; --card:#1d1b18; --ink:#e9e5db; --muted:#9b968a; --rule:#332f2a;
+  --accent:#d4736a; --good:#7aa98e; --warn:#c99a52; --shade:#232019; color-scheme:dark;
+}}}}
+:root[data-theme="dark"]{{
+  --paper:#141312; --card:#1d1b18; --ink:#e9e5db; --muted:#9b968a; --rule:#332f2a;
+  --accent:#d4736a; --good:#7aa98e; --warn:#c99a52; --shade:#232019; color-scheme:dark;
+}}
+*{{box-sizing:border-box}}
+body{{background:var(--paper);color:var(--ink);margin:0;
+  font:400 16px/1.65 "IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}}
+.wrap{{max-width:940px;margin:0 auto;padding:64px 24px 96px;display:flex;flex-direction:column;gap:0}}
+h1{{font:500 42px/1.12 Spectral,Georgia,serif;letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance}}
+h2{{font:500 23px/1.25 Spectral,Georgia,serif;margin:56px 0 4px;text-wrap:balance}}
+h3{{font:600 13px/1.4 "IBM Plex Sans",sans-serif;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--muted);margin:32px 0 10px}}
+p{{margin:0 0 16px;max-width:66ch}}
+.lede{{font:300 20px/1.55 Spectral,Georgia,serif;color:var(--muted);max-width:62ch;margin:0 0 8px}}
+.eyebrow{{font:600 12px/1 "IBM Plex Sans",sans-serif;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--accent);margin:0 0 18px}}
+.sub{{color:var(--muted);font-size:14.5px;margin:6px 0 0}}
+hr{{border:0;border-top:1px solid var(--rule);margin:40px 0 0}}
+.card{{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:22px 24px;margin:18px 0}}
+.mono,.num{{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}}
+.ar{{font-family:"Noto Naskh Arabic",serif;direction:rtl;unicode-bidi:isolate;font-size:19px}}
+.muted{{color:var(--muted)}} .small{{font-size:13px}}
+
+/* the finding, stated once, with the pair that proves it */
+.thesis{{border-left:3px solid var(--accent);padding:2px 0 2px 22px;margin:30px 0 8px}}
+.thesis p{{font:300 21px/1.5 Spectral,Georgia,serif;margin:0;max-width:58ch}}
+.pair{{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:3px;margin:22px 0 4px;overflow:hidden}}
+.pane{{background:var(--card);padding:20px 22px}}
+.pane .who{{font:600 12px/1 "IBM Plex Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);margin-bottom:14px}}
+.pane .big{{font-family:"IBM Plex Mono",monospace;font-size:33px;font-weight:500;line-height:1;
+  font-variant-numeric:tabular-nums}}
+.pane .cap{{font-size:13px;color:var(--muted);margin-top:7px}}
+.pane.win .big{{color:var(--good)}} .pane.lose .big{{color:var(--accent)}}
+.same{{text-align:center;font-size:13px;color:var(--muted);margin:12px 0 0}}
+
+table{{border-collapse:collapse;width:100%;font-size:14px}}
+th,td{{text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}}
+thead th{{font:600 11.5px/1.3 "IBM Plex Sans",sans-serif;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--muted);border-bottom:1px solid var(--ink)}}
+tbody tr:last-child td{{border-bottom:0}}
+td.num,th.num{{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}}
+.dot{{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:1px}}
+.tag{{display:inline-block;margin-left:6px;padding:1px 6px;border:1px solid var(--rule);
+  border-radius:2px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
+  font-family:"IBM Plex Sans",sans-serif}}
+.ctl{{color:var(--muted);font-style:italic}}
+
+.bars{{display:flex;flex-direction:column;gap:8px}}
+.bar-row{{display:grid;grid-template-columns:250px 1fr 84px;align-items:center;gap:14px}}
+.bar-label{{font-size:13.5px}}
+.bar-track{{background:var(--shade);border-radius:2px;height:14px;overflow:hidden}}
+.bar-fill{{height:100%;border-radius:2px}}
+.bar-val{{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:13px;
+  font-variant-numeric:tabular-nums}}
+.bar-row.win .bar-val{{color:var(--accent);font-weight:500}}
+
+.chart{{width:100%;height:auto}} .axis{{stroke:var(--muted);stroke-width:1}}
+.grid{{stroke:var(--rule);stroke-width:1}}
+.tick,.axlab{{fill:var(--muted);font-size:11px;font-family:"IBM Plex Mono",monospace}}
+.pt{{fill:var(--ink);font-size:11.5px;font-family:"IBM Plex Mono",monospace}}
+
+.heat td{{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:5px 3px}}
+.heat thead th{{font-size:10.5px;text-align:center;padding:5px 3px}}
+.rowlab{{text-align:left;white-space:nowrap;font-size:12px;text-transform:none;letter-spacing:0;
+  font-family:"IBM Plex Sans",sans-serif;font-weight:400;border-bottom:1px solid var(--rule)}}
+.g3{{background:color-mix(in srgb,var(--good) 30%,transparent)}}
+.g2{{background:color-mix(in srgb,var(--warn) 26%,transparent)}}
+.g1{{background:color-mix(in srgb,var(--accent) 22%,transparent)}}
+.g0{{background:color-mix(in srgb,var(--accent) 40%,transparent)}}
+.na{{color:var(--muted)}}
+.scroll{{overflow-x:auto}}
+.note{{border-left:2px solid var(--rule);padding-left:18px;color:var(--muted);font-size:14.5px}}
+.note strong{{color:var(--ink);font-weight:600}}
+ul{{margin:0 0 16px;padding-left:20px;max-width:66ch}} li{{margin-bottom:7px}}
+a{{color:var(--accent)}}
+@media (max-width:700px){{
+  .wrap{{padding:40px 18px 64px}} h1{{font-size:32px}}
+  .pair{{grid-template-columns:1fr}} .bar-row{{grid-template-columns:1fr;gap:4px}}
+  .bar-val{{text-align:left}}
+}}
+</style>
+<div class="wrap">
+
+<p class="eyebrow">Benchmark &middot; {n_arms} arms &middot; {n_pages} pages</p>
+<h1>Reading the Apparatus</h1>
+<p class="lede">A scanned page of an Arabic patristic edition carries a running head, a numbered
+footnote apparatus, a printed page number and a printer&rsquo;s signature mark. A vision model can
+read every character on it and still get the page wrong &mdash; by not being told those are
+different things.</p>
+
+<div class="thesis">
+<p>Naming the parts is what repairs the apparatus. Every arm given a schema reads the footnote
+structure perfectly; no arm given flat text does &mdash; and a newer, better model does not
+close the gap.</p>
+</div>
+
+<div class="pair">
+  <div class="pane lose">
+    <div class="who">Flat prompt</div>
+    <div class="big">{flat_fn}%</div>
+    <div class="cap">of pages with the right footnote count. A single
+      <span class="mono">[FOOTNOTE]</span> marker is one container, so an apparatus of twelve notes
+      comes back as one.</div>
+  </div>
+  <div class="pane win">
+    <div class="who">Schema prompt</div>
+    <div class="big">{schema_fn}%</div>
+    <div class="cap">of pages with the right footnote count, including pages whose notes are glued
+      together with no space, and pages opening with a note continued from the previous leaf.</div>
+  </div>
+</div>
+<p class="same">Same model. Same pages. Same images. Only the request changed.</p>
+
+<p class="note" style="margin-top:26px"><strong>Where the schema does not help:</strong> separating
+the running head and the printed page number. A flat-text parser recovers those from position
+&mdash; first line, last line &mdash; and scores {flat_fields}% against the schema arms&rsquo;
+{schema_fields}%. Positional heuristics are fine for things that sit in fixed positions. They have
+nothing to say about an apparatus, which is where they break.</p>
+
+<h2>The page that shows it</h2>
+<p>Page 93 prints a citation of Psalm 109. The production pipeline stored a different, real-looking
+one &mdash; the colon moved one place left, verse 1 vanished, and the digits changed Unicode block
+from Arabic-Indic (U+0660) to Extended Arabic-Indic (U+06F0).</p>
+<div class="card">
+  <table>
+    <tbody>
+      <tr><td style="width:190px">On the page</td>
+          <td class="ar">(&#x645;&#x632; &#x661;&#x660;&#x669;: &#x661; - &#x663;)</td>
+          <td class="muted small">Psalm 109:1&ndash;3</td></tr>
+      <tr><td>Production stored</td>
+          <td class="ar" style="color:var(--accent)">(&#x645;&#x632; &#x6F1;&#x6F0;:&#x6F9; &ndash; &#x6F3;)</td>
+          <td class="muted small">&ldquo;10:9&rdquo; &mdash; a citation that points somewhere else</td></tr>
+      <tr><td>Schema prompt, cheaper model</td>
+          <td class="ar" style="color:var(--good)">(&#x645;&#x632; &#x661;&#x660;&#x669;: &#x661; - &#x663;)</td>
+          <td class="muted small">correct, and in the printed digit block</td></tr>
+    </tbody>
+  </table>
+</div>
+<p class="note">This is the failure mode worth fearing: not garbage, which is obvious, but a
+plausible wrong answer that no downstream check will ever flag.</p>
+
+<h2>Results</h2>
+<div class="card scroll">{summary_table}</div>
+<p class="note"><strong>Scoring is leave-one-out.</strong> Most ground truth is adjudicated from
+agreement between arms, so each arm is scored against the agreement of the <em>others</em>; three
+pages were read from the images by hand before any arm ran and are fixed for everyone. Fields where
+the page is genuinely ambiguous are left unscored rather than settled by a coin-flip.</p>
+
+<h2>Structural field accuracy</h2>
+<p class="sub">Running header, page title, printed page number, printer mark &mdash; each in its own
+place, not merged into the body.</p>
+<div class="card">{field_bars}</div>
+
+<h2>Cost per page</h2>
+<p>The cost model is calibrated rather than assumed: production OCR of this book billed a measured
+$0.001881 per page across 468 calls, which pins output at 1.97 characters per token for this
+script. Every arm is priced from measured output characters through that one constant. Applied back
+to production it predicts <span class="num">${prod_cost}</span> against the
+<span class="num">$0.001881</span> actually billed.</p>
+<div class="card">{cost_bars}</div>
+<div class="thesis" style="border-color:var(--good)">
+<p>The best-scoring arm is <strong>{cost_ratio}&times; cheaper</strong> than production, at
+<span class="num">${best_cost}</span> per page &mdash; and gets the structure completely right.
+Better and cheaper are the same choice here.</p>
+</div>
+
+<h2>Cost against error</h2>
+<p class="sub">Log scale. Down and to the left is better. The most expensive model on the board is
+not the most accurate one.</p>
+<div class="card">{scatter}</div>
+
+<h2>Character error rate</h2>
+<div class="card">{cer_bars}</div>
+
+<h2>Where each arm fails</h2>
+<p class="sub">Structural fields correct, per page. Pages 3 and 36 are controls with no known
+defects &mdash; an arm inventing structure there is as wrong as one missing it.</p>
+<div class="card scroll">{heat}</div>
+
+<h2>Method</h2>
+<ul>
+<li><strong>Same input everywhere.</strong> One 300&nbsp;DPI page image per call. No text layer, no
+classical OCR &mdash; the production pipeline is already a vision model, so this compares
+like with like.</li>
+<li><strong>The baseline is scored through a parser.</strong> Flat-text arms are not treated as
+having produced nothing; they run through the same heuristics production uses. That is the real
+architecture: a model never asked what anything <em>is</em>, plus a parser guessing afterwards.</li>
+<li><strong>Two arms use the flat prompt, and both are controls.</strong> A is production. B is the
+same model as the schema arm, and exists only to show the prompt is the cause &mdash; without it,
+the schema arms could be dismissed as merely newer. Neither is a fair test of its model.</li>
+<li><strong>Difficulty is spread deliberately:</strong> ten hard pages, five medium, three light,
+two clean controls.</li>
+<li><strong>Price provenance travels with every price</strong> &mdash; measured, list, or proxy.</li>
+</ul>
+
+<h2>What this does not yet measure</h2>
+<p>Character and word error rate need a gold transcription of all twenty pages; only three exist,
+so those columns read as a dash rather than a zero. The structural findings do not depend on them,
+and structure is where three quarters of the observed damage lives. Open-weight local models are
+the other gap &mdash; they need a different cost axis entirely, GPU-seconds rather than tokens.</p>
+
+<hr>
+<p class="sub">Corpus: Justin Martyr, <em>&#x627;&#x644;&#x62F;&#x641;&#x627;&#x639;&#x627;&#x646;
+&#x648;&#x627;&#x644;&#x62D;&#x648;&#x627;&#x631; &#x645;&#x639; &#x62A;&#x631;&#x64A;&#x641;&#x648;&#x646;</em>
+&mdash; a 461-page Arabic scholarly edition. Adding a model is a block in the arm registry plus a
+folder of outputs; every table and chart on this page regenerates from it.</p>
+
+</div>
+"""

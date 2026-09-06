@@ -1,0 +1,162 @@
+[
+ {
+  "page": 3,
+  "prompt_tokens": 1910,
+  "output_tokens": 421,
+  "thoughts_tokens": 1619,
+  "total_tokens": 3950,
+  "chars": 1173
+ },
+ {
+  "page": 8,
+  "prompt_tokens": 1910,
+  "output_tokens": 902,
+  "thoughts_tokens": 5761,
+  "total_tokens": 8573,
+  "chars": 2462
+ },
+ {
+  "page": 9,
+  "prompt_tokens": 1910,
+  "output_tokens": 585,
+  "thoughts_tokens": 767,
+  "total_tokens": 3262,
+  "chars": 1683
+ },
+ {
+  "page": 12,
+  "prompt_tokens": 1910,
+  "output_tokens": 543,
+  "thoughts_tokens": 968,
+  "total_tokens": 3421,
+  "chars": 1551
+ },
+ {
+  "page": 15,
+  "prompt_tokens": 1910,
+  "output_tokens": 664,
+  "thoughts_tokens": 1785,
+  "total_tokens": 4359,
+  "chars": 1876
+ },
+ {
+  "page": 17,
+  "prompt_tokens": 1910,
+  "output_tokens": 615,
+  "thoughts_tokens": 1355,
+  "total_tokens": 3880,
+  "chars": 1702
+ },
+ {
+  "page": 23,
+  "prompt_tokens": 1910,
+  "output_tokens": 153,
+  "thoughts_tokens": 663,
+  "total_tokens": 2726,
+  "chars": 422
+ },
+ {
+  "page": 24,
+  "prompt_tokens": 1910,
+  "output_tokens": 1165,
+  "thoughts_tokens": 2389,
+  "total_tokens": 5464,
+  "chars": 3339
+ },
+ {
+  "page": 25,
+  "prompt_tokens": 1910,
+  "output_tokens": 965,
+  "thoughts_tokens": 2080,
+  "total_tokens": 4955,
+  "chars": 2676
+ },
+ {
+  "page": 28,
+  "prompt_tokens": 1910,
+  "output_tokens": 1133,
+  "thoughts_tokens": 2967,
+  "total_tokens": 6010,
+  "chars": 2991
+ },
+ {
+  "page": 30,
+  "prompt_tokens": 1910,
+  "output_tokens": 1269,
+  "thoughts_tokens": 3127,
+  "total_tokens": 6306,
+  "chars": 3459
+ },
+ {
+  "page": 36,
+  "prompt_tokens": 1910,
+  "output_tokens": 93,
+  "thoughts_tokens": 264,
+  "total_tokens": 2267,
+  "chars": 259
+ },
+ {
+  "page": 39,
+  "prompt_tokens": 1910,
+  "output_tokens": 844,
+  "thoughts_tokens": 1148,
+  "total_tokens": 3902,
+  "chars": 2332
+ },
+ {
+  "page": 45,
+  "prompt_tokens": 1910,
+  "output_tokens": 1051,
+  "thoughts_tokens": 1126,
+  "total_tokens": 4087,
+  "chars": 2847
+ },
+ {
+  "page": 48,
+  "prompt_tokens": 1910,
+  "output_tokens": 878,
+  "thoughts_tokens": 4884,
+  "total_tokens": 7672,
+  "chars": 2465
+ },
+ {
+  "page": 50,
+  "prompt_tokens": 1910,
+  "output_tokens": 1330,
+  "thoughts_tokens": 2478,
+  "total_tokens": 5718,
+  "chars": 3660
+ },
+ {
+  "page": 52,
+  "prompt_tokens": 1910,
+  "output_tokens": 1128,
+  "thoughts_tokens": 6841,
+  "total_tokens": 9879,
+  "chars": 3038
+ },
+ {
+  "page": 93,
+  "prompt_tokens": 1910,
+  "output_tokens": 852,
+  "thoughts_tokens": 2582,
+  "total_tokens": 5344,
+  "chars": 2352
+ },
+ {
+  "page": 95,
+  "prompt_tokens": 1910,
+  "output_tokens": 677,
+  "thoughts_tokens": 1445,
+  "total_tokens": 4032,
+  "chars": 1828
+ },
+ {
+  "page": 97,
+  "prompt_tokens": 1910,
+  "output_tokens": 746,
+  "thoughts_tokens": 2384,
+  "total_tokens": 5040,
+  "chars": 1972
+ }
+]

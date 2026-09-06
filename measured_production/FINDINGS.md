@@ -54,6 +54,8 @@ Disabling thinking reduced average output from 3,253 to 887 tokens — an immedi
 
 For this transcription and block-structuring task, deliberation buys no measurable performance. The initial benchmark could not discover this because it never requested a thinking configuration and never billed thinking tokens.
 
+**Update, 2026-09-06 — "no measurable performance" was a limit of what was measured.** The benchmark now runs both configurations itself as `B_38flash_P2` and `C_38nothink_P2`: same prompt, same images, identical but for `thinkingBudget`. Scored against gold on the full task rather than body accuracy alone, thinking off costs **99.6% → 98.2%**. The claim above survives exactly where it was measured — body accuracy moves 99.8% → 99.7%, which is nothing — but the loss shows up in the measures this section never looked at: marker fidelity 100% → 80.6% and fields 96.9% → 93.8%. Thinking off remains the right call for a book-scale ingest (the real bill falls $6.82 → $2.31), but it is a trade, not a free lunch.
+
 ### 2. Thinking makes cost unpredictable, which is a separate problem from being higher
 
 Beyond inflating average cost, thinking introduces massive page-to-page cost volatility. Because the model chooses how long to deliberate, the cost of processing a leaf becomes impossible to forecast:
@@ -73,6 +75,8 @@ That caution was entirely valid as an assessment of missing evidence. Now that t
 - On `p052`, it suffered an uncontrolled generative runaway, scoring **−51.82%** (5,419 output tokens of looping text on a leaf that Gemini 3.8 Flash transcribed cleanly in 1,165 tokens at 100.0% accuracy).
 
 The earlier caution was not wrong; it was simply empty because the experiment had not been run. The evidence now exists: Gemini 2.5 Flash cannot reliably handle structured block extraction with schema enforcement.
+
+**Update, 2026-09-06.** The cell is now also filled inside the benchmark proper: `A_25flash_P2` runs `gemini-2.5-flash` on all 20 pages under the benchmark's own call — no schema enforcement, the unmodified `prompts/P2_blocks.txt` — and is scored against the same gold as every other arm. It reaches **87.5%** task score and still fails the body-accuracy gate (0.879 < 0.95), so the conclusion above stands on comparable evidence. Two details differ under the benchmark's call and are worth recording. First, `p052` failed differently but still failed: there was no generative runaway — output was a normal 1,128 tokens with no looping — yet the model placed the leaf's Latin-script bibliography inside the body blocks, returning 1,959 characters of body against gold's 778 and scoring **0** on that page. Under both calls `p052` is the page 2.5 Flash cannot do. Second, it placed every gold footnote anchor correctly, so its structural failures are confined to what belongs in the body. Note also that the dollar figures in this document come from the pipeline's ledger on the **flex** service tier, which bills at 0.5× the configured base rate; the benchmark's own cost columns are undiscounted list rates.
 
 ---
 

@@ -1,7 +1,8 @@
 # Arm registry. To add a model: add a block here, write its outputs to runs/<id>/pNNN.json in
 # the schema prompts/P2_blocks.txt specifies, then run tools/score.py, results_md.py, chart.py,
 # build.py. Every arm answers the same prompt (P2). pricing is USD per million tokens; source is
-# `measured` (real billing), `list` (published rate) or `proxy` (a comparable model's rate).
+# `measured` (real billing), `list` (published rate), `proxy` (a comparable model's rate) or
+# `derived` (this model's own rate rebuilt from metered billing with a known discount removed).
 
 cost_model:
   # Characters per output token for this JSON shape, measured from the API's own usage metadata.
@@ -10,6 +11,33 @@ cost_model:
   input_tokens: {P2: 2744}
 
 arms:
+  - id: A_25flash_P2
+    label: "Gemini 2.5 Flash · blocks"
+    model: gemini-2.5-flash
+    prompt: P2
+    role: "the model production already shipped on — can the old workhorse do the structured request?"
+    runner: "tools/run_gemini_api.py"
+    pricing: {input: 0.3, output: 2.5, source: list}
+    price_note: "Google's GA rate (ai.google.dev/pricing), the same list basis as every other arm. The consuming pipeline runs this model on the flex service tier at half these rates, so its own ledger figures are not comparable to this column."
+
+  - id: B_38flash_P2
+    label: "Gemini 3.8 Flash · blocks"
+    model: gemini-3.8-flash
+    prompt: P2
+    role: "the newest Flash — does the current generation still read this page, and at what price?"
+    runner: "tools/run_gemini_api.py"
+    pricing: {input: 0.75, output: 3.75, source: derived}
+    price_note: "No published rate was available to quote. Reconstructed from the consuming pipeline's own metered billing (measured_production/results.json solves exactly to $0.375/$1.875 per M) with the flex service tier's 0.5x multiplier removed. The same inversion applied to gemini-2.5-flash returns $0.30/$2.50, which is that model's verified GA rate, so the method is checked against a known case. Note the Gemini 3.7 Flash arm is priced by proxy (3.5 Flash's published rate), so a 3.7-vs-3.8 price comparison is proxy against derived."
+
+  - id: C_38nothink_P2
+    label: "Gemini 3.8 Flash, thinking off · blocks"
+    model: gemini-3.8-flash
+    prompt: P2
+    role: "the same model as B, with deliberation switched off — the configuration production would actually ship"
+    runner: "tools/run_gemini_api.py --thinking off"
+    pricing: {input: 0.75, output: 3.75, source: derived}
+    price_note: "Same derived rate as B_38flash_P2. This arm is the one place the benchmark deliberately varies the call: `thinkingConfig.thinkingBudget = 0`. Everything else — prompt, image, temperature, absence of schema enforcement — is identical, so B and C isolate deliberation and nothing else. Its price is directly comparable to B's because neither figure bills thinking tokens; the difference is that this arm does not generate any."
+
   - id: K_35flash_P2
     label: "Gemini 3.5 Flash · blocks"
     model: gemini-3.5-flash

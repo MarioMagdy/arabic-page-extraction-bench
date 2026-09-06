@@ -6,7 +6,7 @@ I build a reading app over digitised Arabic patristic texts. Its OCR stage is a 
 reading page images, and an audit of 100 production pages found 365 defects, 75% of them
 structural: running heads and page numbers in the body, footnotes merged. So the request was
 rewritten to ask for the structure explicitly, and this repo is how the model behind it was chosen.
-11 models, one request, 20 pages, the same images for every arm.
+14 arms across 13 models, one request, 20 pages, the same images for every arm.
 
 ![Task score against price per page, one point per model](assets/accuracy-vs-cost.png)
 
@@ -18,22 +18,35 @@ page and every reading in the [interactive report](https://mariomagdy.github.io/
 | model | task score | 90% band | $/page | 461-page book |
 |---|---:|---:|---:|---:|
 | Gemini 3.7 Flash | 99.9% | 99.8–100.0 | $0.00070 | $0.32 |
+| Gemini 3.8 Flash | 99.6% | 98.9–99.9 | $0.00507 | $2.34 |
 | Gemini 3.5 Flash | 98.8% | 97.7–99.6 | $0.00069 | $0.32 |
 | Claude Sonnet 5 | 98.8% | 96.9–99.8 | $0.01517 | $6.99 |
 | Qwen 3.8 Max | 98.7% | 97.3–99.9 | $0.00826 | $3.81 |
+| Gemini 3.8 Flash, thinking off | 98.2% | 97.2–99.0 | $0.00501 | $2.31 |
 | GPT 5.6 Terra | 96.7% | 94.9–98.0 | $0.01100 | $5.07 |
 | Kimi K3 | 96.2% | 93.8–97.9 | $0.01542 | $7.11 |
 
-DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna and MiMo v2.5 fail one or
-more gates and are reported but not ranked.
+Gemini 2.5 Flash, DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna and
+MiMo v2.5 fail one or more gates and are reported but not ranked.
 
-- **The top four cannot be separated on 8 pages, and they span 22× in price.** Pick on cost.
-- **Turn thinking off.** These Gemini prices exclude thinking tokens. A measured run of the real
-  production call ([measured_production/FINDINGS.md](measured_production/FINDINGS.md)) found
-  thinking was 74% of Gemini 3.8 Flash's billed output; switching it off kept 99.75% body accuracy
-  and cut the price 2.6×, to $0.0027 per page.
-- **The old production model cannot use the structured request.** Gemini 2.5 Flash scores 76.5%
-  on it, with the wrong block count on 4 of 7 pages.
+- **The top five cannot be separated on 8 pages, and they span 22× in price.** Pick on cost.
+- **The newest Flash is not the upgrade.** Gemini 3.8 Flash scores 99.6%, inside the same band as
+  Gemini 3.7 Flash, and costs 7× more — $2.34 a book against $0.32 — before thinking tokens, which
+  take its real bill to $6.82. Treat the ratio as indicative: 3.8's rate is derived from metered
+  billing and 3.7's is a proxy, both flagged in `arms.yaml`.
+- **Turn thinking off — and here is what it actually costs.** Every Gemini price in the table
+  excludes thinking tokens, so the table cannot show this and the two 3.8 arms misleadingly read
+  as the same price. Measured on this benchmark's own run, same prompt and same images: Gemini 3.8
+  Flash bills **$6.82** a book with thinking on and **$2.31** with it off, a 3× cut. Thinking is
+  75% of its output. The accuracy it buys is small but not nothing — 99.6% → 98.2%, still clearing
+  every gate. Body accuracy barely moves (99.8% → 99.7%); what degrades is marker fidelity
+  (100% → 80.6%) and fields (96.9% → 93.8%). The production run in
+  [measured_production/FINDINGS.md](measured_production/FINDINGS.md) reported thinking-off as free,
+  but it scored body accuracy alone, which is exactly the measure that does not move.
+- **The model production already shipped on is the wrong one.** Gemini 2.5 Flash places every
+  gold anchor correctly but misreads the prose: 87.5%, failing the body-accuracy gate at 0.879.
+  At list rates it also costs 3.7× Gemini 3.5 Flash, which scores 98.8%. Older and cheaper are
+  not the same thing.
 
 ## How it is scored
 
@@ -66,13 +79,14 @@ Maurice Faltas. Rights holders who want the pages removed: open an issue.
 ```
 pip install -r requirements.txt
 python tools/score.py && python tools/results_md.py && python tools/chart.py && python tools/build.py
+python tools/hero.py && python tools/social.py
 python tools/test_gold.py
 ```
 
 To add a model: add a block to `arms.yaml`, write its outputs to `runs/<id>/pNNN.json` in the
 prompt's schema, run the line above.
 
-Not done: gold on the other 12 pages (the only thing that could separate the top four), repeated
+Not done: gold on the other 12 pages (the only thing that could separate the top five), repeated
 runs, open-weight models.
 
 ## License

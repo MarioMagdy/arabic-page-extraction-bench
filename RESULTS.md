@@ -1,23 +1,26 @@
 # Results
 
-11 arms scored across 20 pages of a printed Arabic patristic edition. Generated from `results.json` — do not edit by hand.
+14 arms scored across 20 pages of a printed Arabic patristic edition. Generated from `results.json` — do not edit by hand.
 
 ## The answer — which model performs the task
 
 Measured on **8 pages** (p15, p24, p25, p30, p36, p39, p52, p93) against `truth/gold/`: a reading produced outside this field of arms, double-keyed and adjudicated against the page image. Same reference for every arm, and it does not move when the field changes. **This is the only section of this document that is accuracy.**
 
-**Gemini 3.7 Flash** has the highest score, and on 8 pages this evidence **cannot distinguish it from Gemini 3.5 Flash, Claude Sonnet 5, Qwen 3.8 Max**. Any of those performs the task; the ordering between them is not a result, so choose on cost and on the specific failure each one still has.
+**Gemini 3.7 Flash** has the highest score, and on 8 pages this evidence **cannot distinguish it from Gemini 3.8 Flash, Gemini 3.5 Flash, Claude Sonnet 5, Qwen 3.8 Max**. Any of those performs the task; the ordering between them is not a result, so choose on cost and on the specific failure each one still has.
 
-**A limit worth stating.** GPT 5.6 Terra, Kimi K3 score lower than all of them, but the gap does not survive removing a single evaluation page for every member of the shortlist. On this evidence they are behind, not beaten.
+**A limit worth stating.** Gemini 3.8 Flash, thinking off, GPT 5.6 Terra, Kimi K3 score lower than all of them, but the gap does not survive removing a single evaluation page for every member of the shortlist. On this evidence they are behind, not beaten.
 
 | model | task score | 90% CI | body | heading pos | notes | note text | anchors | anchor pos | fields | markers | gate |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | Gemini 3.7 Flash | 99.9% | 99.8–100.0 | 99.8% | 100.0% | 100.0% | 99.7% | 100.0% | 100.0% | 100.0% | 100.0% | clears |
+| Gemini 3.8 Flash | 99.6% | 98.9–99.9 | 99.8% | 100.0% | 100.0% | 99.8% | 100.0% | 100.0% | 96.9% | 100.0% | clears |
 | Gemini 3.5 Flash | 98.8% | 97.7–99.6 | 99.8% | 100.0% | 100.0% | 99.5% | 100.0% | 100.0% | 96.9% | 91.7% | clears |
 | Claude Sonnet 5 | 98.8% | 96.9–99.8 | 98.8% | 100.0% | 100.0% | 98.8% | 100.0% | 100.0% | 100.0% | 100.0% | clears |
 | Qwen 3.8 Max | 98.7% | 97.3–99.9 | 99.7% | 100.0% | 83.3% | 99.7% | 83.3% | 100.0% | 100.0% | 83.3% | clears |
+| Gemini 3.8 Flash, thinking off | 98.2% | 97.2–99.0 | 99.7% | 100.0% | 100.0% | 99.8% | 100.0% | 100.0% | 93.8% | 80.6% | clears |
 | GPT 5.6 Terra | 96.7% | 94.9–98.0 | 98.7% | 100.0% | 88.9% | 99.5% | 85.0% | 94.4% | 93.8% | 83.3% | clears |
 | Kimi K3 | 96.2% | 93.8–97.9 | 97.8% | 100.0% | 88.9% | 99.9% | 83.3% | 100.0% | 84.4% | 88.9% | clears |
+| Gemini 2.5 Flash | 87.5% | 74.8–94.8 | 87.9% | 100.0% | 86.1% | 87.3% | 100.0% | 100.0% | 90.6% | 33.3% | body_accuracy 0.879 < 0.95 |
 | DeepSeek V4 Flash Vision | 86.4% | 73.5–95.0 | 91.3% | 100.0% | 50.0% | 80.5% | 50.0% | 89.3% | 75.0% | 50.8% | body_accuracy 0.913 < 0.95; footnote_f1 0.500 < 0.8; anchor_f1 0.500 < 0.8 |
 | GLM 5.3 Flash | 84.9% | 72.0–93.9 | 76.1% | 100.0% | 66.7% | 91.6% | 48.5% | 80.6% | 90.6% | 66.7% | body_accuracy 0.761 < 0.95; footnote_f1 0.667 < 0.8; anchor_f1 0.485 < 0.8 |
 | Claude Haiku 4.5 | 78.0% | 70.0–84.0 | 88.1% | 100.0% | 77.8% | 95.5% | 16.7% | 13.9% | 87.5% | 77.8% | body_accuracy 0.881 < 0.95; footnote_f1 0.778 < 0.8; anchor_f1 0.167 < 0.8 |
@@ -34,23 +37,26 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
 
 | arm | pages | body agreement | fields | footnotes | anchor self-consistency | fails | $/page |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Qwen 3.8 Max · blocks | 20 | 99.09% | 100% | 100% | 92% | 0 | $0.00826 |
-| Gemini 3.5 Flash · blocks | 20 | 99.05% | 97% | 100% | 92% | 0 | $0.00069 |
-| Claude Sonnet 5 · blocks | 20 | 98.98% | 100% | 100% | 92% | 0 | $0.01517 |
-| Gemini 3.7 Flash · blocks | 20 | 98.87% | 100% | 100% | 92% | 0 | $0.00070 |
-| Kimi K3 · blocks | 20 | 98.28% | 92% | 94% | 85% | 0 | $0.01542 |
-| GPT 5.6 Luna · blocks | 20 | 97.97% | 97% | 76% | 43% | 0 | $0.00096 |
-| GPT 5.6 Terra · blocks | 20 | 95.51% | 97% | 94% | 87% | 0 | $0.01100 |
-| DeepSeek V4 Flash Vision · blocks | 20 | 93.75% | 88% | 88% | 86% | 0 | $0.00051 |
-| Claude Haiku 4.5 · blocks | 20 | 91.55% | 86% | 94% | 17% | 0 | $0.00507 |
-| GLM 5.3 Flash · blocks | 20 | 89.89% | 94% | 81% | 70% | 1 | $0.00062 |
+| Gemini 3.8 Flash, thinking off · blocks | 20 | 99.29% | 99% | 100% | 92% | 0 | $0.00501 |
+| Qwen 3.8 Max · blocks | 20 | 99.12% | 100% | 100% | 92% | 0 | $0.00826 |
+| Claude Sonnet 5 · blocks | 20 | 98.99% | 100% | 100% | 92% | 0 | $0.01517 |
+| Gemini 3.5 Flash · blocks | 20 | 98.76% | 97% | 100% | 92% | 0 | $0.00069 |
+| Gemini 3.7 Flash · blocks | 20 | 98.53% | 100% | 100% | 92% | 0 | $0.00070 |
+| Kimi K3 · blocks | 20 | 97.93% | 93% | 94% | 85% | 0 | $0.01542 |
+| GPT 5.6 Luna · blocks | 20 | 97.59% | 97% | 76% | 43% | 0 | $0.00096 |
+| Gemini 3.8 Flash · blocks | 20 | 96.73% | 100% | 100% | 92% | 0 | $0.00507 |
+| GPT 5.6 Terra · blocks | 20 | 95.54% | 97% | 94% | 87% | 0 | $0.01100 |
+| DeepSeek V4 Flash Vision · blocks | 20 | 93.77% | 87% | 88% | 86% | 0 | $0.00051 |
+| Claude Haiku 4.5 · blocks | 20 | 91.23% | 86% | 94% | 17% | 0 | $0.00507 |
+| GLM 5.3 Flash · blocks | 20 | 89.91% | 94% | 81% | 70% | 1 | $0.00062 |
+| Gemini 2.5 Flash · blocks | 20 | 89.52% | 99% | 94% | 81% | 0 | $0.00258 |
 
 **Partial runs** — reported, never ranked:
 
 | arm | pages | transcript | fields | footnotes | anchors | fails | $/page |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| MiMo v2.5 · blocks | 14 | 79.01% | 81% | 79% | 36% | 0 | $0.00049 |
-**Best transcript accuracy:** Qwen 3.8 Max · blocks at 99.09%.
+| MiMo v2.5 · blocks | 14 | 78.49% | 81% | 79% | 36% | 0 | $0.00049 |
+**Best transcript accuracy:** Gemini 3.8 Flash, thinking off · blocks at 99.29%.
 **Cheapest priced arm:** DeepSeek V4 Flash Vision · blocks at $0.00051 per page.
 
 ## How to read these numbers
