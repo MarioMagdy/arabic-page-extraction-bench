@@ -17,8 +17,8 @@ arms:
     prompt: P2
     role: "the model production already shipped on — can the old workhorse do the structured request?"
     runner: "tools/run_gemini_api.py"
-    pricing: {input: 0.3, output: 2.5, source: list}
-    price_note: "Google's GA rate (ai.google.dev/pricing), the same list basis as every other arm. The consuming pipeline runs this model on the flex service tier at half these rates, so its own ledger figures are not comparable to this column."
+    pricing: {input: 0.15, output: 1.25, source: list}
+    price_note: "Google's published rate, checked 2026-09-07. An earlier version of this file carried $0.30/$2.50, taken from the consuming pipeline's own registry, which was double the real rate; the pipeline ledger's $0.15/$1.25 was never a discount, it was simply correct. Note this model retires 2026-10-16."
 
   - id: B_38flash_P2
     label: "Gemini 3.8 Flash · blocks"
@@ -26,8 +26,8 @@ arms:
     prompt: P2
     role: "the newest Flash — does the current generation still read this page, and at what price?"
     runner: "tools/run_gemini_api.py"
-    pricing: {input: 0.75, output: 3.75, source: derived}
-    price_note: "No published rate was available to quote. Reconstructed from the consuming pipeline's own metered billing (measured_production/results.json solves exactly to $0.375/$1.875 per M) with the flex service tier's 0.5x multiplier removed. The same inversion applied to gemini-2.5-flash returns $0.30/$2.50, which is that model's verified GA rate, so the method is checked against a known case. Note the Gemini 3.7 Flash arm is priced by proxy (3.5 Flash's published rate), so a 3.7-vs-3.8 price comparison is proxy against derived."
+    pricing: {input: 0.75, output: 3.75, source: list}
+    price_note: "Google's published introductory rate (to 2026-12-31; $1.50/$7.50 from 2027-01-01), checked 2026-09-07 and identical to the value previously derived from metered billing, which is how the derivation was confirmed. Original note: no published rate was available to quote. Reconstructed from the consuming pipeline's own metered billing (measured_production/results.json solves exactly to $0.375/$1.875 per M) with the flex service tier's 0.5x multiplier removed. The same inversion applied to gemini-2.5-flash returns $0.30/$2.50, which is that model's verified GA rate, so the method is checked against a known case. Note the Gemini 3.7 Flash arm is priced by proxy (3.5 Flash's published rate), so a 3.7-vs-3.8 price comparison is proxy against derived."
 
   - id: C_38nothink_P2
     label: "Gemini 3.8 Flash, thinking off · blocks"
@@ -35,16 +35,17 @@ arms:
     prompt: P2
     role: "the same model as B, with deliberation switched off — the configuration production would actually ship"
     runner: "tools/run_gemini_api.py --thinking off"
-    pricing: {input: 0.75, output: 3.75, source: derived}
-    price_note: "Same derived rate as B_38flash_P2. This arm is the one place the benchmark deliberately varies the call: `thinkingConfig.thinkingBudget = 0`. Everything else — prompt, image, temperature, absence of schema enforcement — is identical, so B and C isolate deliberation and nothing else. Its price is directly comparable to B's because neither figure bills thinking tokens; the difference is that this arm does not generate any."
+    pricing: {input: 0.75, output: 3.75, source: list}
+    price_note: "Same published rate as B_38flash_P2 (Google's introductory rate to 2026-12-31, checked 2026-09-07). This arm is the one place the benchmark deliberately varies the call: `thinkingConfig.thinkingBudget = 0`. Everything else — prompt, image, temperature, absence of schema enforcement — is identical, so B and C isolate deliberation and nothing else. Its price is directly comparable to B's because neither figure bills thinking tokens; the difference is that this arm does not generate any."
 
   - id: K_35flash_P2
     label: "Gemini 3.5 Flash · blocks"
     model: gemini-3.5-flash
     prompt: P2
-    role: "cheapest Gemini tier that clears the gates"
+    role: "the Gemini tier this benchmark long assumed was the cheap one"
     runner: "tools/run_gemini_api.py, completed on agy after the API credit ran out (MIXED harness)"
-    pricing: {input: 0.15, output: 0.6, source: list}
+    pricing: {input: 1.5, output: 9.0, source: list}
+    price_note: "Google's published rate, checked 2026-09-07. This file previously carried $0.15/$0.60 for this model, understating it by 10x on input and 15x on output, and that wrong rate was also used as the proxy for Gemini 3.7 Flash. It is the single largest error this benchmark has published."
 
   - id: L_37flash_P2
     label: "Gemini 3.7 Flash · blocks"
@@ -52,7 +53,9 @@ arms:
     prompt: P2
     role: "best flash on ordered structure"
     runner: "tools/run_gemini_api.py"
-    pricing: {input: 0.15, output: 0.6, source: proxy}
+    pricing: {input: 0.75, output: 3.75, source: list}
+    price_note: "Google's published rate, checked 2026-09-07. This is the introductory rate that runs to 2026-12-31; from 2027-01-01 it becomes $1.50/$7.50, which doubles every figure in this row. Sources in README under Costs. Previously priced by proxy at Gemini 3.5 Flash's supposed rate, which was itself wrong."
+
 
   - id: Q_glm53flash_P2
     label: "GLM 5.3 Flash · blocks"

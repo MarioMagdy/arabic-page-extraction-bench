@@ -40,8 +40,8 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
 | Gemini 3.8 Flash, thinking off · blocks | 20 | 99.29% | 99% | 100% | 92% | 0 | $0.00501 |
 | Qwen 3.8 Max · blocks | 20 | 99.12% | 100% | 100% | 92% | 0 | $0.00826 |
 | Claude Sonnet 5 · blocks | 20 | 98.99% | 100% | 100% | 92% | 0 | $0.01517 |
-| Gemini 3.5 Flash · blocks | 20 | 98.76% | 97% | 100% | 92% | 0 | $0.00069 |
-| Gemini 3.7 Flash · blocks | 20 | 98.53% | 100% | 100% | 92% | 0 | $0.00070 |
+| Gemini 3.5 Flash · blocks | 20 | 98.76% | 97% | 100% | 92% | 0 | $0.00828 |
+| Gemini 3.7 Flash · blocks | 20 | 98.53% | 100% | 100% | 92% | 0 | $0.00383 |
 | Kimi K3 · blocks | 20 | 97.93% | 93% | 94% | 85% | 0 | $0.01542 |
 | GPT 5.6 Luna · blocks | 20 | 97.59% | 97% | 76% | 43% | 0 | $0.00096 |
 | Gemini 3.8 Flash · blocks | 20 | 96.73% | 100% | 100% | 92% | 0 | $0.00507 |
@@ -49,7 +49,7 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
 | DeepSeek V4 Flash Vision · blocks | 20 | 93.77% | 87% | 88% | 86% | 0 | $0.00051 |
 | Claude Haiku 4.5 · blocks | 20 | 91.23% | 86% | 94% | 17% | 0 | $0.00507 |
 | GLM 5.3 Flash · blocks | 20 | 89.91% | 94% | 81% | 70% | 1 | $0.00062 |
-| Gemini 2.5 Flash · blocks | 20 | 89.52% | 99% | 94% | 81% | 0 | $0.00258 |
+| Gemini 2.5 Flash · blocks | 20 | 89.52% | 99% | 94% | 81% | 0 | $0.00129 |
 
 **Partial runs** — reported, never ranked:
 

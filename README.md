@@ -17,9 +17,9 @@ page and every reading in the [interactive report](https://mariomagdy.github.io/
 
 | model | task score | 90% band | $/page | 461-page book |
 |---|---:|---:|---:|---:|
-| Gemini 3.7 Flash | 99.9% | 99.8–100.0 | $0.00070 | $0.32 |
+| Gemini 3.7 Flash | 99.9% | 99.8–100.0 | $0.00383 | $1.77 |
 | Gemini 3.8 Flash | 99.6% | 98.9–99.9 | $0.00507 | $2.34 |
-| Gemini 3.5 Flash | 98.8% | 97.7–99.6 | $0.00069 | $0.32 |
+| Gemini 3.5 Flash | 98.8% | 97.7–99.6 | $0.00828 | $3.82 |
 | Claude Sonnet 5 | 98.8% | 96.9–99.8 | $0.01517 | $6.99 |
 | Qwen 3.8 Max | 98.7% | 97.3–99.9 | $0.00826 | $3.81 |
 | Gemini 3.8 Flash, thinking off | 98.2% | 97.2–99.0 | $0.00501 | $2.31 |
@@ -29,32 +29,62 @@ page and every reading in the [interactive report](https://mariomagdy.github.io/
 Gemini 2.5 Flash, DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna and
 MiMo v2.5 fail one or more gates and are reported but not ranked.
 
-- **The top five cannot be separated on 8 pages, and they span 22× in price.** Pick on cost.
-- **This benchmark cannot price Gemini 3.8 Flash against 3.7 Flash, and does not claim to.** The
-  two are indistinguishable on accuracy (99.6% and 99.9%, overlapping bands, both in the tied
-  group), and they emit the same volume: every Gemini arm here returns 3.1-3.2 KB per page. So the
-  gap in the cost column is not a measurement, it is the ratio of two assumptions — 3.7 is priced
-  by *proxy* at Gemini 3.5 Flash's published rate, 3.8 by a rate *derived* from metered billing.
-  Neither is a published price for the model it is attached to. Until Google's rate card for both
-  is quotable, read the Gemini rows as accuracy results with an indicative price, not as a price
-  comparison. The one Gemini cost comparison that does hold is 3.8 against itself, below, where the
-  rate cancels.
-- **Turn thinking off — and here is what it actually costs.** Every Gemini price in the table
-  excludes thinking tokens, so the table cannot show this and the two 3.8 arms misleadingly read
-  as the same price. Measured on this benchmark's own run, same prompt and same images: Gemini 3.8
-  Flash bills **$6.82** a book with thinking on and **$2.31** with it off, a 3× cut. This is the
-  one Gemini price comparison the evidence supports on its own: same model, same rate, so the
-  rate assumption cancels and what remains is measured token volume. Thinking is
-  75% of its output. The accuracy it buys is small but not nothing — 99.6% → 98.2%, still clearing
-  every gate. Body accuracy barely moves (99.8% → 99.7%); what degrades is marker fidelity
-  (100% → 80.6%) and fields (96.9% → 93.8%). The production run in
+**Every Gemini price in this table changed on 2026-09-07.** Three of the four Gemini rates were
+wrong, and the newest model looked expensive only because it was the one priced correctly. See
+[Costs](#costs) for what was wrong and what the numbers are now.
+
+- **The top five cannot be separated on 8 pages, and they span 4× in price.** Pick on cost.
+- **Gemini 3.7 Flash wins on both axes.** Highest score in the field and the cheapest of the five
+  that cannot be separated from it, at $1.77 a book. It is the recommendation.
+- **3.7 and 3.8 Flash are on the same rate card**, $0.75/$3.75 per million, so the difference
+  between their rows is token volume rather than price: 3.8 spends slightly more to reach a score
+  the evidence cannot distinguish from 3.7's. Nothing here argues for moving to the newer model,
+  and nothing here says it is worse either.
+- **Turn thinking off.** Every price above counts candidate tokens only, so the table cannot show
+  this: Gemini 3.8 Flash bills **$6.82** a book with thinking on and **$2.31** with it off, a 3×
+  cut, measured on this benchmark's own run with the same prompt and images. Thinking is 75% of its
+  output. The accuracy it buys is small but not nothing — 99.6% → 98.2%, still clearing every gate.
+  Body accuracy barely moves (99.8% → 99.7%); what degrades is marker fidelity (100% → 80.6%) and
+  fields (96.9% → 93.8%). The production run in
   [measured_production/FINDINGS.md](measured_production/FINDINGS.md) reported thinking-off as free,
   but it scored body accuracy alone, which is exactly the measure that does not move.
-- **The model production already shipped on is the wrong one.** Gemini 2.5 Flash places every
-  gold anchor correctly but misreads the prose: 87.5%, failing the body-accuracy gate at 0.879.
-  It also costs 3.7× Gemini 3.5 Flash, which scores 98.8% — and unlike the 3.7-vs-3.8 comparison
-  above, both sides of that one are published list rates, so the ratio is real. Older and cheaper
-  are not the same thing.
+- **The model production already shipped on is the cheapest Gemini here, and still the wrong one.**
+  Gemini 2.5 Flash reads the book for $0.59, a third of 3.7 Flash's price. It also places every
+  gold anchor correctly. Then it misreads the prose: 87.5%, failing the body-accuracy gate at
+  0.879, with marker fidelity at 33%. Cheap is not the constraint that binds here; being right is.
+  It also retires on 2026-10-16.
+
+## Costs
+
+Every price is the vendor's published rate applied to this benchmark's own measured output. Token
+counts are measured where the API reported them and otherwise derived from output characters
+through a constant calibrated against real billing (2.75 characters per token, confirmed at 2.71
+to 2.82 on the arms that report both).
+
+**The Gemini rates were wrong until 2026-09-07,** and the error mattered more than any single
+result in this repo. Three of the four were restated:
+
+| model | this repo used | published rate | effect |
+|---|---|---|---|
+| Gemini 3.5 Flash | $0.15 / $0.60 | $1.50 / $9.00 | understated 10× and 15× |
+| Gemini 3.7 Flash | $0.15 / $0.60, by proxy | $0.75 / $3.75 | understated 5× and 6× |
+| Gemini 2.5 Flash | $0.30 / $2.50 | $0.15 / $1.25 | overstated 2× |
+| Gemini 3.8 Flash | $0.75 / $3.75 | $0.75 / $3.75 | correct |
+
+The 3.7 rate was a proxy borrowed from 3.5, and the 3.5 rate was itself wrong, so the error
+compounded across two rows. It made Gemini 3.8 Flash — the only Gemini priced correctly — look
+five to six times more expensive than its siblings for no reason a reader could see, and it put a
+headline of "$0.32 a book" and "22× in price" on a benchmark whose real figures are $1.77 and 4×.
+
+Gemini 3.7 and 3.8 Flash are quoted at Google's **introductory** rate, which runs to 2026-12-31.
+From 2027-01-01 both become $1.50 / $7.50, doubling every Gemini 3.x figure in this repo.
+
+Rates checked 2026-09-07 against
+[Google Cloud](https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing),
+[BenchLM](https://benchlm.ai/google/api-pricing) and
+[pricepertoken](https://pricepertoken.com/pricing-page/model/google-gemini-3.8-flash).
+Non-Gemini arms carry the vendor's published rate; several were run through a flat-rate
+subscription, which `arms.yaml` says per arm.
 
 ## How it is scored
 
@@ -69,8 +99,8 @@ anchor F1 ≥ 0.8, then a weighted score over prose, note text, anchor placement
 heading position, fields and marker fidelity. The other 12 pages are scored as agreement between
 arms, leave-one-out, and never rank a model.
 
-Costs are list rates on measured output; the constant behind them was calibrated against real
-billing. Subscription-routed runs say so in `arms.yaml`.
+Costs are published rates on measured output; see [Costs](#costs) above, including the rate
+correction of 2026-09-07 and the introductory pricing that expires at the end of 2026.
 
 ## The corpus
 

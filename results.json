@@ -80,7 +80,7 @@
     "anchor_pages_scored": 4,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.002156
+    "cost_per_page_usd": 0.001078
    },
    "prompt": "P2",
    "role": "the model production already shipped on — can the old workhorse do the structured request?",
@@ -366,7 +366,7 @@
      "body_cer": 0.059190031152647975,
      "body_wer": 0.06382978723404255,
      "output_failed": false,
-     "cost_usd": 0.0016255,
+     "cost_usd": 0.00081275,
      "_hand": true
     },
     {
@@ -388,7 +388,7 @@
      "body_cer": 0.01167728237791932,
      "body_wer": 0.042682926829268296,
      "output_failed": false,
-     "cost_usd": 0.002828,
+     "cost_usd": 0.001414,
      "_hand": true
     },
     {
@@ -410,7 +410,7 @@
      "body_cer": 0.0007215007215007215,
      "body_wer": 0.003968253968253968,
      "output_failed": false,
-     "cost_usd": 0.0020355,
+     "cost_usd": 0.00101775,
      "_hand": true
     },
     {
@@ -432,7 +432,7 @@
      "body_cer": 0.12092283214001591,
      "body_wer": 0.12280701754385964,
      "output_failed": false,
-     "cost_usd": 0.0019305,
+     "cost_usd": 0.00096525,
      "_hand": true
     },
     {
@@ -454,7 +454,7 @@
      "body_cer": 0.017926734216679657,
      "body_wer": 0.02654867256637168,
      "output_failed": false,
-     "cost_usd": 0.002233,
+     "cost_usd": 0.0011165,
      "_hand": true
     },
     {
@@ -476,7 +476,7 @@
      "body_cer": 0.0542832909245123,
      "body_wer": 0.0660377358490566,
      "output_failed": false,
-     "cost_usd": 0.0021105,
+     "cost_usd": 0.00105525,
      "_hand": true
     },
     {
@@ -498,7 +498,7 @@
      "body_cer": null,
      "body_wer": null,
      "output_failed": false,
-     "cost_usd": 0.0009555,
+     "cost_usd": 0.00047775,
      "_hand": true
     },
     {
@@ -520,7 +520,7 @@
      "body_cer": 0.001899335232668566,
      "body_wer": 0.011627906976744186,
      "output_failed": false,
-     "cost_usd": 0.0034855,
+     "cost_usd": 0.00174275,
      "_hand": false
     },
     {
@@ -542,7 +542,7 @@
      "body_cer": 0.004651162790697674,
      "body_wer": 0.02702702702702703,
      "output_failed": false,
-     "cost_usd": 0.0029855,
+     "cost_usd": 0.00149275,
      "_hand": true
     },
     {
@@ -564,7 +564,7 @@
      "body_cer": 0.026359143327841845,
      "body_wer": 0.06880733944954129,
      "output_failed": false,
-     "cost_usd": 0.0034055,
+     "cost_usd": 0.00170275,
      "_hand": false
     },
     {
@@ -586,7 +586,7 @@
      "body_cer": 0.0034562211981566822,
      "body_wer": 0.021739130434782608,
      "output_failed": false,
-     "cost_usd": 0.0037455,
+     "cost_usd": 0.00187275,
      "_hand": false
     },
     {
@@ -608,7 +608,7 @@
      "body_cer": null,
      "body_wer": null,
      "output_failed": false,
-     "cost_usd": 0.0008055,
+     "cost_usd": 0.00040275,
      "_hand": false
     },
     {
@@ -630,7 +630,7 @@
      "body_cer": 0.0008278145695364238,
      "body_wer": 0.004830917874396135,
      "output_failed": false,
-     "cost_usd": 0.002683,
+     "cost_usd": 0.0013415,
      "_hand": false
     },
     {
@@ -652,7 +652,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0032005,
+     "cost_usd": 0.00160025,
      "_hand": false
     },
     {
@@ -674,7 +674,7 @@
      "body_cer": 0.0030706243602865915,
      "body_wer": 0.010869565217391304,
      "output_failed": false,
-     "cost_usd": 0.002768,
+     "cost_usd": 0.001384,
      "_hand": false
     },
     {
@@ -696,7 +696,7 @@
      "body_cer": 0.0010615711252653928,
      "body_wer": 0.0056179775280898875,
      "output_failed": false,
-     "cost_usd": 0.003898,
+     "cost_usd": 0.001949,
      "_hand": false
     },
     {
@@ -718,7 +718,7 @@
      "body_cer": 1.53125,
      "body_wer": 1.455223880597015,
      "output_failed": false,
-     "cost_usd": 0.003393,
+     "cost_usd": 0.0016965,
      "_hand": false
     },
     {
@@ -740,7 +740,7 @@
      "body_cer": 0.043227665706051875,
      "body_wer": 0.07655502392344497,
      "output_failed": false,
-     "cost_usd": 0.002703,
+     "cost_usd": 0.0013515,
      "_hand": true
     },
     {
@@ -762,7 +762,7 @@
      "body_cer": 0.0033305578684429643,
      "body_wer": 0.017777777777777778,
      "output_failed": false,
-     "cost_usd": 0.0022655,
+     "cost_usd": 0.00113275,
      "_hand": false
     },
     {
@@ -784,7 +784,7 @@
      "body_cer": 0.0031620553359683794,
      "body_wer": 0.012396694214876033,
      "output_failed": false,
-     "cost_usd": 0.002438,
+     "cost_usd": 0.001219,
      "_hand": false
     }
    ],
@@ -807,7 +807,7 @@
     "anchor_pages_scored": 12,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.002575
+    "cost_per_page_usd": 0.001287
    }
   },
   "B_38flash_P2": {
@@ -836,7 +836,7 @@
    },
    "prompt": "P2",
    "role": "the newest Flash — does the current generation still read this page, and at what price?",
-   "price_source": "derived",
+   "price_source": "list",
    "tokens_measured": true,
    "control": false,
    "derived_from": null,
@@ -1586,7 +1586,7 @@
    },
    "prompt": "P2",
    "role": "the same model as B, with deliberation switched off — the configuration production would actually ship",
-   "price_source": "derived",
+   "price_source": "list",
    "tokens_measured": true,
    "control": false,
    "derived_from": null,
@@ -2332,10 +2332,10 @@
     "anchor_pages_scored": 4,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.000667
+    "cost_per_page_usd": 0.007943
    },
    "prompt": "P2",
-   "role": "cheapest Gemini tier that clears the gates",
+   "role": "the Gemini tier this benchmark long assumed was the cheap one",
    "price_source": "list",
    "tokens_measured": false,
    "control": false,
@@ -2616,7 +2616,7 @@
      "body_cer": 0.14641744548286603,
      "body_wer": 0.14893617021276595,
      "output_failed": false,
-     "cost_usd": 0.0004940727272727273,
+     "cost_usd": 0.005353090909090909,
      "_hand": true
     },
     {
@@ -2638,7 +2638,7 @@
      "body_cer": 0.0021231422505307855,
      "body_wer": 0.012195121951219513,
      "output_failed": false,
-     "cost_usd": 0.0007057090909090909,
+     "cost_usd": 0.008527636363636364,
      "_hand": true
     },
     {
@@ -2660,7 +2660,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007262181818181819,
+     "cost_usd": 0.008835272727272728,
      "_hand": true
     },
     {
@@ -2682,7 +2682,7 @@
      "body_cer": 0.002386634844868735,
      "body_wer": 0.008771929824561403,
      "output_failed": false,
-     "cost_usd": 0.0006904363636363635,
+     "cost_usd": 0.008298545454545456,
      "_hand": true
     },
     {
@@ -2704,7 +2704,7 @@
      "body_cer": 0.001558846453624318,
      "body_wer": 0.017699115044247787,
      "output_failed": false,
-     "cost_usd": 0.0007052727272727272,
+     "cost_usd": 0.008521090909090909,
      "_hand": true
     },
     {
@@ -2726,7 +2726,7 @@
      "body_cer": 0.05258693808312129,
      "body_wer": 0.05660377358490566,
      "output_failed": false,
-     "cost_usd": 0.0006952363636363637,
+     "cost_usd": 0.008370545454545455,
      "_hand": true
     },
     {
@@ -2748,7 +2748,7 @@
      "body_cer": null,
      "body_wer": null,
      "output_failed": false,
-     "cost_usd": 0.0004227272727272727,
+     "cost_usd": 0.004282909090909091,
      "_hand": true
     },
     {
@@ -2770,7 +2770,7 @@
      "body_cer": 0.003798670465337132,
      "body_wer": 0.01744186046511628,
      "output_failed": false,
-     "cost_usd": 0.0007661454545454544,
+     "cost_usd": 0.009434181818181817,
      "_hand": false
     },
     {
@@ -2792,7 +2792,7 @@
      "body_cer": 0.0011627906976744186,
      "body_wer": 0.006756756756756757,
      "output_failed": false,
-     "cost_usd": 0.0008163272727272727,
+     "cost_usd": 0.01018690909090909,
      "_hand": true
     },
     {
@@ -2814,7 +2814,7 @@
      "body_cer": 0.007395234182415777,
      "body_wer": 0.022727272727272728,
      "output_failed": false,
-     "cost_usd": 0.0007218545454545453,
+     "cost_usd": 0.008769818181818182,
      "_hand": false
     },
     {
@@ -2836,7 +2836,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007238181818181818,
+     "cost_usd": 0.008799272727272728,
      "_hand": false
     },
     {
@@ -2858,7 +2858,7 @@
      "body_cer": null,
      "body_wer": null,
      "output_failed": false,
-     "cost_usd": 0.00041421818181818176,
+     "cost_usd": 0.004155272727272727,
      "_hand": false
     },
     {
@@ -2880,7 +2880,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007179272727272727,
+     "cost_usd": 0.008710909090909092,
      "_hand": false
     },
     {
@@ -2902,7 +2902,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0005717454545454546,
+     "cost_usd": 0.006518181818181818,
      "_hand": false
     },
     {
@@ -2924,7 +2924,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007292727272727273,
+     "cost_usd": 0.00888109090909091,
      "_hand": false
     },
     {
@@ -2946,7 +2946,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.000834,
+     "cost_usd": 0.010452,
      "_hand": false
     },
     {
@@ -2968,7 +2968,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0008839636363636362,
+     "cost_usd": 0.011201454545454544,
      "_hand": false
     },
     {
@@ -2990,7 +2990,7 @@
      "body_cer": 0.004803073967339097,
      "body_wer": 0.019138755980861243,
      "output_failed": false,
-     "cost_usd": 0.0007443272727272727,
+     "cost_usd": 0.00910690909090909,
      "_hand": true
     },
     {
@@ -3012,7 +3012,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0006906545454545453,
+     "cost_usd": 0.008301818181818183,
      "_hand": false
     },
     {
@@ -3034,7 +3034,7 @@
      "body_cer": 0.0007898894154818325,
      "body_wer": 0.004132231404958678,
      "output_failed": false,
-     "cost_usd": 0.0007279636363636362,
+     "cost_usd": 0.008861454545454544,
      "_hand": false
     }
    ],
@@ -3057,7 +3057,7 @@
     "anchor_pages_scored": 12,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.000689
+    "cost_per_page_usd": 0.008278
    }
   },
   "L_37flash_P2": {
@@ -3082,11 +3082,11 @@
     "anchor_pages_scored": 4,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.000669
+    "cost_per_page_usd": 0.003669
    },
    "prompt": "P2",
    "role": "best flash on ordered structure",
-   "price_source": "proxy",
+   "price_source": "list",
    "tokens_measured": false,
    "control": false,
    "derived_from": null,
@@ -3366,7 +3366,7 @@
      "body_cer": 0.14641744548286603,
      "body_wer": 0.14893617021276595,
      "output_failed": false,
-     "cost_usd": 0.0004940727272727273,
+     "cost_usd": 0.0025734545454545454,
      "_hand": true
     },
     {
@@ -3388,7 +3388,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007057090909090909,
+     "cost_usd": 0.003896181818181818,
      "_hand": true
     },
     {
@@ -3410,7 +3410,7 @@
      "body_cer": 0.0007215007215007215,
      "body_wer": 0.003968253968253968,
      "output_failed": false,
-     "cost_usd": 0.0007264363636363635,
+     "cost_usd": 0.004025727272727273,
      "_hand": true
     },
     {
@@ -3432,7 +3432,7 @@
      "body_cer": 0.002386634844868735,
      "body_wer": 0.008771929824561403,
      "output_failed": false,
-     "cost_usd": 0.0006902181818181819,
+     "cost_usd": 0.0037993636363636363,
      "_hand": true
     },
     {
@@ -3454,7 +3454,7 @@
      "body_cer": 0.000778816199376947,
      "body_wer": 0.00881057268722467,
      "output_failed": false,
-     "cost_usd": 0.000712690909090909,
+     "cost_usd": 0.003939818181818182,
      "_hand": true
     },
     {
@@ -3476,7 +3476,7 @@
      "body_cer": 0.05258693808312129,
      "body_wer": 0.05660377358490566,
      "output_failed": false,
-     "cost_usd": 0.0007096363636363637,
+     "cost_usd": 0.003920727272727273,
      "_hand": true
     },
     {
@@ -3498,7 +3498,7 @@
      "body_cer": null,
      "body_wer": null,
      "output_failed": false,
-     "cost_usd": 0.0004227272727272727,
+     "cost_usd": 0.0021275454545454544,
      "_hand": true
     },
     {
@@ -3520,7 +3520,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007672363636363637,
+     "cost_usd": 0.004280727272727273,
      "_hand": false
     },
     {
@@ -3542,7 +3542,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0008171999999999999,
+     "cost_usd": 0.004593,
      "_hand": true
     },
     {
@@ -3564,7 +3564,7 @@
      "body_cer": 0.007395234182415777,
      "body_wer": 0.02727272727272727,
      "output_failed": false,
-     "cost_usd": 0.0007349454545454545,
+     "cost_usd": 0.004078909090909091,
      "_hand": false
     },
     {
@@ -3586,7 +3586,7 @@
      "body_cer": 0.009216589861751152,
      "body_wer": 0.021739130434782608,
      "output_failed": false,
-     "cost_usd": 0.0007244727272727273,
+     "cost_usd": 0.004013454545454546,
      "_hand": false
     },
     {
@@ -3608,7 +3608,7 @@
      "body_cer": null,
      "body_wer": null,
      "output_failed": false,
-     "cost_usd": 0.00041421818181818176,
+     "cost_usd": 0.0020743636363636363,
      "_hand": false
     },
     {
@@ -3630,7 +3630,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007179272727272727,
+     "cost_usd": 0.003972545454545454,
      "_hand": false
     },
     {
@@ -3652,7 +3652,7 @@
      "body_cer": 0.03486750348675035,
      "body_wer": 0.42016806722689076,
      "output_failed": false,
-     "cost_usd": 0.0005771999999999999,
+     "cost_usd": 0.003093,
      "_hand": false
     },
     {
@@ -3674,7 +3674,7 @@
      "body_cer": 0.0010235414534288639,
      "body_wer": 0.005434782608695652,
      "output_failed": false,
-     "cost_usd": 0.0007395272727272728,
+     "cost_usd": 0.004107545454545454,
      "_hand": false
     },
     {
@@ -3696,7 +3696,7 @@
      "body_cer": 0.0010615711252653928,
      "body_wer": 0.0056179775280898875,
      "output_failed": false,
-     "cost_usd": 0.0008427272727272727,
+     "cost_usd": 0.004752545454545454,
      "_hand": false
     },
     {
@@ -3718,7 +3718,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0009001090909090908,
+     "cost_usd": 0.005111181818181818,
      "_hand": false
     },
     {
@@ -3740,7 +3740,7 @@
      "body_cer": 0.0067243035542747355,
      "body_wer": 0.028708133971291867,
      "output_failed": false,
-     "cost_usd": 0.0007458545454545454,
+     "cost_usd": 0.004147090909090909,
      "_hand": true
     },
     {
@@ -3762,7 +3762,7 @@
      "body_cer": 0.0,
      "body_wer": 0.0,
      "output_failed": false,
-     "cost_usd": 0.0007227272727272727,
+     "cost_usd": 0.004002545454545455,
      "_hand": false
     },
     {
@@ -3784,7 +3784,7 @@
      "body_cer": 0.0007905138339920949,
      "body_wer": 0.004132231404958678,
      "output_failed": false,
-     "cost_usd": 0.0007456363636363636,
+     "cost_usd": 0.004145727272727273,
      "_hand": false
     }
    ],
@@ -3807,7 +3807,7 @@
     "anchor_pages_scored": 12,
     "references_total": null,
     "output_failures": 0,
-    "cost_per_page_usd": 0.000696
+    "cost_per_page_usd": 0.003833
    }
   },
   "Q_glm53flash_P2": {
