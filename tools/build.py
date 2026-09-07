@@ -824,6 +824,7 @@ def main() -> None:
             .replace("__SCATTER__", scatter_chart_svg)
             .replace("__NGOLD__", str(len(data.get("_meta", {}).get("gold_pages") or [])))
             .replace("__NARMS__", str(len(arms))).replace("__NPAGES__", str(len(pages)))
+            .replace("__CLARITY__", CLARITY_TAG)
             .replace("__DATA__", json.dumps(idata, ensure_ascii=False))
             .replace("__META__", json.dumps(meta, ensure_ascii=False))
             .replace("__PROMPTS__", json.dumps(prompts, ensure_ascii=False))
@@ -835,8 +836,21 @@ def main() -> None:
           f"{(ROOT / 'index.html').stat().st_size // 1024} KB")
 
 
+# Microsoft Clarity. Set to "" to ship the page with no analytics at all; the tag is only emitted
+# when this is non-empty, so a fork gets a clean page rather than someone else's project id.
+CLARITY_ID = "yeni6hbsi1"
+
+CLARITY_TAG = ("""<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "%s");
+</script>""" % CLARITY_ID) if CLARITY_ID else ""
+
 TEMPLATE = r"""<meta charset="utf-8">
 <title>Reading the Apparatus</title>
+__CLARITY__
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,500;1,300&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
 <style>
 :root{--paper:#f0efe9;--card:#fbfaf6;--ink:#1a1815;--muted:#6a675e;--rule:#d9d6cc;
