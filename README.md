@@ -30,14 +30,21 @@ Gemini 2.5 Flash, DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT
 MiMo v2.5 fail one or more gates and are reported but not ranked.
 
 - **The top five cannot be separated on 8 pages, and they span 22× in price.** Pick on cost.
-- **The newest Flash is not the upgrade.** Gemini 3.8 Flash scores 99.6%, inside the same band as
-  Gemini 3.7 Flash, and costs 7× more — $2.34 a book against $0.32 — before thinking tokens, which
-  take its real bill to $6.82. Treat the ratio as indicative: 3.8's rate is derived from metered
-  billing and 3.7's is a proxy, both flagged in `arms.yaml`.
+- **This benchmark cannot price Gemini 3.8 Flash against 3.7 Flash, and does not claim to.** The
+  two are indistinguishable on accuracy (99.6% and 99.9%, overlapping bands, both in the tied
+  group), and they emit the same volume: every Gemini arm here returns 3.1-3.2 KB per page. So the
+  gap in the cost column is not a measurement, it is the ratio of two assumptions — 3.7 is priced
+  by *proxy* at Gemini 3.5 Flash's published rate, 3.8 by a rate *derived* from metered billing.
+  Neither is a published price for the model it is attached to. Until Google's rate card for both
+  is quotable, read the Gemini rows as accuracy results with an indicative price, not as a price
+  comparison. The one Gemini cost comparison that does hold is 3.8 against itself, below, where the
+  rate cancels.
 - **Turn thinking off — and here is what it actually costs.** Every Gemini price in the table
   excludes thinking tokens, so the table cannot show this and the two 3.8 arms misleadingly read
   as the same price. Measured on this benchmark's own run, same prompt and same images: Gemini 3.8
-  Flash bills **$6.82** a book with thinking on and **$2.31** with it off, a 3× cut. Thinking is
+  Flash bills **$6.82** a book with thinking on and **$2.31** with it off, a 3× cut. This is the
+  one Gemini price comparison the evidence supports on its own: same model, same rate, so the
+  rate assumption cancels and what remains is measured token volume. Thinking is
   75% of its output. The accuracy it buys is small but not nothing — 99.6% → 98.2%, still clearing
   every gate. Body accuracy barely moves (99.8% → 99.7%); what degrades is marker fidelity
   (100% → 80.6%) and fields (96.9% → 93.8%). The production run in
@@ -45,8 +52,9 @@ MiMo v2.5 fail one or more gates and are reported but not ranked.
   but it scored body accuracy alone, which is exactly the measure that does not move.
 - **The model production already shipped on is the wrong one.** Gemini 2.5 Flash places every
   gold anchor correctly but misreads the prose: 87.5%, failing the body-accuracy gate at 0.879.
-  At list rates it also costs 3.7× Gemini 3.5 Flash, which scores 98.8%. Older and cheaper are
-  not the same thing.
+  It also costs 3.7× Gemini 3.5 Flash, which scores 98.8% — and unlike the 3.7-vs-3.8 comparison
+  above, both sides of that one are published list rates, so the ratio is real. Older and cheaper
+  are not the same thing.
 
 ## How it is scored
 

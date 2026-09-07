@@ -1254,8 +1254,15 @@ __VERDICT__
 <div class="card scroll">__TABLE__</div>
 <p class="note small"><strong>Prices.</strong> <span class="tag">measured</span> is real billing,
 <span class="tag">list</span> the vendor&rsquo;s published rate, <span class="tag">proxy</span> a
-comparable model&rsquo;s rate borrowed because none is published. Token counts are measured either
-way. Gemini figures count candidate tokens only, not thinking tokens.</p>
+comparable model&rsquo;s rate borrowed because none is published, <span class="tag">derived</span> a
+rate rebuilt from metered billing with a known discount removed. Token counts are measured where the
+API reported them and otherwise derived from output characters through a calibrated constant.
+Gemini figures count candidate tokens only, not thinking tokens.</p>
+<p class="note small"><strong>A price on one row is not comparable to a price on another unless both
+carry the same tag.</strong> The Gemini 3.7 and 3.8 Flash rows are the case to watch: the two are
+indistinguishable on accuracy and emit the same volume per page, so the gap between their costs is
+the ratio of a <span class="tag">proxy</span> to a <span class="tag">derived</span> rate, not a
+measurement. Compare accuracy across rows freely; compare price only within a tag.</p>
 <p class="note"><strong>This table is agreement, scored leave-one-out.</strong> Each arm is scored
 against the agreement of the <em>others</em> over all 20 pages, so it finds outliers and cannot
 rank a model. For that, see the answer at the top.</p>
