@@ -47,14 +47,19 @@ def headline(fig, eyebrow: str, text: str, y: float = 0.88):
 
 
 def leaderboard(fig, rows, y0: float, dy: float = 0.075, size: int = 19):
-    """Colour dot, model, task score, price for the whole book — one row per model."""
+    """Colour dot, model, task score, price for the whole book — one row per model.
+
+    A price whose rate was derived rather than published is starred, because a reader comparing
+    two rows is entitled to know the rates did not come from the same kind of source.
+    """
     for i, r in enumerate(rows):
         y = y0 - i * dy
         fig.text(0.075, y, "●", fontsize=size + 3, color=r["c"], va="center", ha="center")
         fig.text(0.11, y, r["name"], fontsize=size, color=CH.INK, va="center")
         fig.text(0.68, y, f"{r['y']*100:.1f}%", fontsize=size, color=CH.INK, va="center", ha="right",
                  family="DejaVu Sans Mono")
-        fig.text(0.93, y, f"${r['x']:.2f}", fontsize=size, color=CH.MUTED, va="center", ha="right",
+        star = "*" if r.get("derived") else " "
+        fig.text(0.93, y, f"${r['x']:.2f}{star}", fontsize=size, color=CH.MUTED, va="center", ha="right",
                  family="DejaVu Sans Mono")
 
 
@@ -73,7 +78,7 @@ def scatter(fig, rect, rows, nudge):
     ax.set_yticklabels([f"{t*100:.0f}%" for t in yt])
     for r in rows:
         dx, dy = nudge.get(r["name"], (16, 0))
-        ax.annotate(f"{r['name']}\n{r['y']*100:.1f}%  ·  ${r['x']:.2f}", (r["x"], r["y"]),
+        ax.annotate(f"{r['name']}\n{r['y']*100:.1f}%  ·  ${r['x']:.2f}{'*' if r.get('derived') else ''}", (r["x"], r["y"]),
                     xytext=(dx, dy), textcoords="offset points", fontsize=15, color=CH.INK,
                     ha="center" if dx == 0 else ("left" if dx > 0 else "right"), va="center", linespacing=1.5)
     return ax
@@ -101,6 +106,9 @@ def square(passing, span, F):
     ax = scatter(fig, [0.10, 0.14, 0.86, 0.60], passing, NUDGE)
     ax.set_xlabel(f"price to read the whole {F['book']}-page book, USD (log scale)", color=CH.MUTED, fontsize=15, labelpad=10)
     ax.set_ylabel("task score on the verified pages", color=CH.MUTED, fontsize=15)
+    if any(r.get("derived") for r in passing):
+        fig.text(0.06, 0.075, "* rate derived from metered billing, not a published price",
+                 fontsize=13, color=CH.MUTED)
     footer(fig)
     fig.savefig(OUT / "leaderboard-square.png", facecolor=fig.get_facecolor())
     plt.close(fig)
@@ -133,8 +141,11 @@ def slide_answer(pdf, passing, tied, span, F):
     top_y, bottom_y = 0.56, 0.19
     dy = min(0.068, (top_y - bottom_y) / max(len(passing) - 1, 1))
     leaderboard(fig, passing, top_y, dy=dy, size=19 if len(passing) <= 7 else 17)
-    fig.text(0.06, 0.105, "When accuracy ties, the answer is cost.", fontsize=20, color=CH.GOOD,
+    fig.text(0.06, 0.135, "When accuracy ties, the answer is cost.", fontsize=20, color=CH.GOOD,
              fontweight="semibold")
+    if any(r.get("derived") for r in passing):
+        fig.text(0.06, 0.093, "* rate derived from metered billing, not a published price",
+                 fontsize=13, color=CH.MUTED)
     footer(fig)
     pdf.savefig(fig, facecolor=fig.get_facecolor())
     plt.close(fig)
@@ -193,6 +204,11 @@ def main() -> None:
          "truth": len(meta["truth_pages"]), "gold": len(gpages),
          "tied": len(tied), "book": CH.BOOK_PAGES, "gate": meta["gates"]["body_accuracy"],
          "body": old["gold"]["scores"]["body_accuracy"]["v"]}
+
+    src = {k: a.get("price_source") for k, a in
+           json.loads((ROOT / "results.json").read_text(encoding="utf-8"))["arms"].items()}
+    for r in rows:
+        r["derived"] = src.get(r["id"]) == "derived"
 
     square(passing, span, F)
     with PdfPages(OUT / "carousel.pdf") as pdf:
