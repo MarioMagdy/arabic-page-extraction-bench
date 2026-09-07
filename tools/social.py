@@ -191,41 +191,52 @@ def slide_limits(pdf, F):
 
 
 def task_and_results(passing, F, path=None):
-    """The task and the answer in one feed-native frame.
+    """The task and the answer, side by side, in a 4:5 frame.
 
-    post-hero.png has the right idea and the wrong dimensions: it is a 1920x1080 blog header, so
-    at a 552px feed width its chart legend is unreadable. This is the same idea rebuilt portrait
-    (4:5, the tallest LinkedIn shows), with the leaf cropped to the band where the annotation
-    labels are legible and the result as rows, which survive shrinking far better than a scatter.
+    Two separate decisions, and stacking them conflated the two: 4:5 is the tallest ratio LinkedIn
+    renders, so it wins the most feed height, but that says nothing about the arrangement inside it.
+    Side by side reads better here and still fits, because the leaf is portrait and the result is a
+    list. The leaf keeps its full width: Arabic sets right to left, so cropping the right edge cuts
+    the start of every line, not the end.
     """
     W, H = 1080, 1350
     fig = page(plt.figure(figsize=(W / 100, H / 100), dpi=100))
 
-    fig.text(0.055, 0.972, "Which model reads a scanned\nArabic page correctly?",
-             fontsize=30, color=CH.INK, fontweight="semibold", va="top", linespacing=1.25)
-    fig.text(0.055, 0.885, f"{F['arms']} arms across {F['models']} vision models \u00b7 one request \u00b7 "
-                           f"the same {F['truth']} pages \u00b7 {F['gold']} verified by hand",
+    fig.text(0.052, 0.975, "Which model reads a scanned\nArabic page correctly?",
+             fontsize=31, color=CH.INK, fontweight="semibold", va="top", linespacing=1.25)
+    fig.text(0.052, 0.878, f"{F['arms']} arms across {F['models']} vision models · one request · "
+                           f"the same {F['truth']} pages · {F['gold']} verified by hand",
              fontsize=15, color=CH.MUTED, va="top")
 
-    # THE TASK: the leaf, cropped to the labelled band rather than shrunk whole
+    # left: the task. Full page width, cropped only at the foot.
+    fig.text(0.052, 0.845, "THE TASK", fontsize=14, color=CH.GOOD, fontweight="semibold")
     im = Image.open(ROOT / "assets" / "p093-annotated.png").convert("RGB")
-    im = im.crop((0, 20, im.width, 742))
-    ax = fig.add_axes([0.055, 0.525, 0.89, 0.31])
+    im = im.crop((40, 15, im.width - 20, 1836))
+    ax = fig.add_axes([0.052, 0.250, 0.45, 0.560])
     ax.imshow(im)
     ax.axis("off")
-    fig.text(0.055, 0.852, "THE TASK", fontsize=14, color=CH.GOOD, fontweight="semibold")
-    fig.text(0.055, 0.505, "Give the page back in the shape it was printed in: typed blocks,\n"
+    fig.text(0.052, 0.218, "Give the page back in the shape\nit was printed in: typed blocks,\n"
                            "notes anchored where they belong.",
-             fontsize=15, color=CH.MUTED, va="top", linespacing=1.5)
+             fontsize=15, color=CH.MUTED, va="top", linespacing=1.6)
 
-    fig.text(0.055, 0.452, "THE ANSWER", fontsize=14, color=CH.GOOD, fontweight="semibold")
-    leaderboard(fig, passing, 0.420, dy=0.039, size=17)
+    # right: the answer
+    fig.text(0.545, 0.845, "THE ANSWER", fontsize=14, color=CH.GOOD, fontweight="semibold")
+    for i, r in enumerate(passing):
+        y = 0.800 - i * 0.057
+        fig.text(0.557, y, "●", fontsize=16, color=r["c"], va="center", ha="center")
+        fig.text(0.581, y, r["name"], fontsize=12, color=CH.INK, va="center")
+        fig.text(0.888, y, f"{r['y']*100:.1f}%", fontsize=12.5, color=CH.INK, va="center", ha="right",
+                 family="DejaVu Sans Mono")
+        star = "*" if r.get("derived") else ""
+        fig.text(0.965, y, f"${r['x']:.2f}{star}", fontsize=12.5, color=CH.MUTED, va="center",
+                 ha="right", family="DejaVu Sans Mono")
+    fig.text(0.545, 0.330, f"Top {F['tied']} cannot be separated\non this evidence, and they\n"
+                           f"span {max(r['x'] for r in passing)/min(r['x'] for r in passing):.0f}× in price.",
+             fontsize=17, color=CH.GOOD, fontweight="semibold", va="top", linespacing=1.5)
+
     if any(r.get("derived") for r in passing):
-        fig.text(0.055, 0.075, "* rate derived from metered billing, not a published price",
+        fig.text(0.052, 0.075, "* rate derived from metered billing, not a published price",
                  fontsize=12, color=CH.MUTED)
-    fig.text(0.055, 0.105, f"Top {F['tied']} cannot be separated on this evidence, and span "
-                           f"{max(r['x'] for r in passing)/min(r['x'] for r in passing):.0f}\u00d7 in price.",
-             fontsize=17, color=CH.GOOD, fontweight="semibold")
     footer(fig)
     fig.savefig(path or (OUT / "task-and-results.png"), facecolor=fig.get_facecolor())
     plt.close(fig)
