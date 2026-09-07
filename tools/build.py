@@ -75,7 +75,7 @@ def _thinking_facts(on_id="B_38flash_P2", off_id="C_38nothink_P2"):
 # keep in sync with tools/chart.py line 28
 CHART_COLOURS = [
     "#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b",
-    "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815", "#5b3a8e", "#00796b", "#b5651d"
+    "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815", "#5b3a8e", "#00796b", "#b5651d", "#4a6fa5"
 ]
 
 # Hand-placed annotation boxes for p093.webp (1513 x 2460 px).

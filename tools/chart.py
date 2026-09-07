@@ -26,7 +26,7 @@ import gold as GOLD  # noqa: E402
 
 PAPER, CARD, INK, MUTED, RULE, GOOD = "#f0efe9", "#fbfaf6", "#1a1815", "#6a675e", "#d9d6cc", "#2f6f5e"
 COLOURS = ["#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b",
-           "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815", "#5b3a8e", "#00796b", "#b5651d"]
+           "#e377c2", "#17becf", "#bcbd22", "#7f7f7f", "#1a1815", "#5b3a8e", "#00796b", "#b5651d", "#4a6fa5"]
 BOOK_PAGES = 461            # the edition this corpus comes from; prices are quoted for the whole book
 XTICKS = [0.2, 0.5, 1, 2, 5, 10]
 XLABELS = ["$0.20", "$0.50", "$1", "$2", "$5", "$10"]

@@ -36,6 +36,23 @@ The table below averages the seven gold pages that completed across all three te
 | gemini-3.8-flash | 99.85% | 99.43% | 7/7 | 7/7 | 3253 | 2409 | $0.007184 | $3.31 | $0.012347 |
 | gemini-3.8-flash, thinking off | 99.75% | 99.34% | 7/7 | 7/7 | 887 | 0 | $0.002746 | $1.27 | $0.003578 |
 
+> **Correction, 2026-09-07 — the dollar columns are not all on the same basis.** They are the
+> pipeline ledger's own output, and the ledger multiplied a per-model rate from the consuming
+> project's registry by the `flex` service tier's 0.5. Checked against Google's published rates,
+> that registry carried `gemini-2.5-flash` at double the real rate and `gemini-3.8-flash` correctly,
+> so the halving cancelled one error and introduced another:
+>
+> | row | how the figure was built | at published rates |
+> |---|---|---|
+> | gemini-2.5-flash | $0.30/$2.50 registry, halved to $0.15/$1.25 | right by accident; $2.05/book stands |
+> | gemini-3.8-flash | $0.75/$3.75 published, halved to $0.375/$1.875 | **double it: $0.014368/page, $6.62/book** |
+> | gemini-3.8-flash, thinking off | same halving | **double it: $0.005492/page, $2.53/book** |
+>
+> Ratios within one model are unaffected, since the same rate sits on both sides: thinking off is
+> still a 2.6x cut. The absolute figures in the two 3.8 rows are half what they should be, and every
+> sentence below quoting $3.31 or $1.27 a book should be read as $6.62 and $2.53. The benchmark's
+> own `results.json` now carries published rates throughout; see the repo README under Costs.
+
 - **Body accuracy** is $100 \times (1 - \text{CER})$ after normalisation with `tools/metrics.py` (`normalize_ar`). A negative score indicates that the model generated substantially more text than exists on the leaf (runaway repetition / hallucination).
 - **blocks exact** and **notes exact** count pages where the count of returned blocks and footnotes matches the gold count exactly.
 - **Run economics & failures:** Total measured expenditure was **$0.1077 across 27 API calls** (24 calls in the initial pass, 3 refills). Three calls failed with HTTP 503 "The model is overloaded" (high demand): `gemini-3.8-flash` on `p015` and `p025`, and thinking-off on `p030`. Retries succeeded for `p015` and `p030`; `p025` failed twice on thinking-on and remains the only missing cell. These were transient infrastructure capacity limits, not model capability failures.
@@ -76,7 +93,7 @@ That caution was entirely valid as an assessment of missing evidence. Now that t
 
 The earlier caution was not wrong; it was simply empty because the experiment had not been run. The evidence now exists: Gemini 2.5 Flash cannot reliably handle structured block extraction with schema enforcement.
 
-**Update, 2026-09-06.** The cell is now also filled inside the benchmark proper: `A_25flash_P2` runs `gemini-2.5-flash` on all 20 pages under the benchmark's own call — no schema enforcement, the unmodified `prompts/P2_blocks.txt` — and is scored against the same gold as every other arm. It reaches **87.5%** task score and still fails the body-accuracy gate (0.879 < 0.95), so the conclusion above stands on comparable evidence. Two details differ under the benchmark's call and are worth recording. First, `p052` failed differently but still failed: there was no generative runaway — output was a normal 1,128 tokens with no looping — yet the model placed the leaf's Latin-script bibliography inside the body blocks, returning 1,959 characters of body against gold's 778 and scoring **0** on that page. Under both calls `p052` is the page 2.5 Flash cannot do. Second, it placed every gold footnote anchor correctly, so its structural failures are confined to what belongs in the body. Note also that the dollar figures in this document come from the pipeline's ledger on the **flex** service tier, which bills at 0.5× the configured base rate; the benchmark's own cost columns are undiscounted list rates.
+**Update, 2026-09-06.** The cell is now also filled inside the benchmark proper: `A_25flash_P2` runs `gemini-2.5-flash` on all 20 pages under the benchmark's own call — no schema enforcement, the unmodified `prompts/P2_blocks.txt` — and is scored against the same gold as every other arm. It reaches **87.5%** task score and still fails the body-accuracy gate (0.879 < 0.95), so the conclusion above stands on comparable evidence. Two details differ under the benchmark's call and are worth recording. First, `p052` failed differently but still failed: there was no generative runaway — output was a normal 1,128 tokens with no looping — yet the model placed the leaf's Latin-script bibliography inside the body blocks, returning 1,959 characters of body against gold's 778 and scoring **0** on that page. Under both calls `p052` is the page 2.5 Flash cannot do. Second, it placed every gold footnote anchor correctly, so its structural failures are confined to what belongs in the body. On the dollar figures in this document, see the correction under The Measured Numbers above: the registry rate behind them was itself wrong for 2.5 Flash.
 
 ---
 

@@ -57,6 +57,15 @@ arms:
     price_note: "Google's published rate, checked 2026-09-07. This is the introductory rate that runs to 2026-12-31; from 2027-01-01 it becomes $1.50/$7.50, which doubles every figure in this row. Sources in README under Costs. Previously priced by proxy at Gemini 3.5 Flash's supposed rate, which was itself wrong."
 
 
+  - id: M_35lite_P2
+    label: "Gemini 3.5 Flash Lite · blocks"
+    model: gemini-3.5-flash-lite
+    prompt: P2
+    role: "the cheap tier of the 3.5 line — does dropping to Lite still read the apparatus?"
+    runner: "tools/run_gemini_api.py"
+    pricing: {input: 0.3, output: 2.5, source: list}
+    price_note: "Google's published rate, checked 2026-09-07. Worth noting: this is the rate the consuming pipeline's registry had wrongly attached to gemini-2.5-flash, which is a plausible origin for that error."
+
   - id: Q_glm53flash_P2
     label: "GLM 5.3 Flash · blocks"
     model: glm-5.3-flash
