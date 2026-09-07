@@ -190,6 +190,47 @@ def slide_limits(pdf, F):
     plt.close(fig)
 
 
+def task_and_results(passing, F, path=None):
+    """The task and the answer in one feed-native frame.
+
+    post-hero.png has the right idea and the wrong dimensions: it is a 1920x1080 blog header, so
+    at a 552px feed width its chart legend is unreadable. This is the same idea rebuilt portrait
+    (4:5, the tallest LinkedIn shows), with the leaf cropped to the band where the annotation
+    labels are legible and the result as rows, which survive shrinking far better than a scatter.
+    """
+    W, H = 1080, 1350
+    fig = page(plt.figure(figsize=(W / 100, H / 100), dpi=100))
+
+    fig.text(0.055, 0.972, "Which model reads a scanned\nArabic page correctly?",
+             fontsize=30, color=CH.INK, fontweight="semibold", va="top", linespacing=1.25)
+    fig.text(0.055, 0.885, f"{F['arms']} arms across {F['models']} vision models \u00b7 one request \u00b7 "
+                           f"the same {F['truth']} pages \u00b7 {F['gold']} verified by hand",
+             fontsize=15, color=CH.MUTED, va="top")
+
+    # THE TASK: the leaf, cropped to the labelled band rather than shrunk whole
+    im = Image.open(ROOT / "assets" / "p093-annotated.png").convert("RGB")
+    im = im.crop((0, 20, im.width, 742))
+    ax = fig.add_axes([0.055, 0.525, 0.89, 0.31])
+    ax.imshow(im)
+    ax.axis("off")
+    fig.text(0.055, 0.852, "THE TASK", fontsize=14, color=CH.GOOD, fontweight="semibold")
+    fig.text(0.055, 0.505, "Give the page back in the shape it was printed in: typed blocks,\n"
+                           "notes anchored where they belong.",
+             fontsize=15, color=CH.MUTED, va="top", linespacing=1.5)
+
+    fig.text(0.055, 0.452, "THE ANSWER", fontsize=14, color=CH.GOOD, fontweight="semibold")
+    leaderboard(fig, passing, 0.420, dy=0.039, size=17)
+    if any(r.get("derived") for r in passing):
+        fig.text(0.055, 0.075, "* rate derived from metered billing, not a published price",
+                 fontsize=12, color=CH.MUTED)
+    fig.text(0.055, 0.105, f"Top {F['tied']} cannot be separated on this evidence, and span "
+                           f"{max(r['x'] for r in passing)/min(r['x'] for r in passing):.0f}\u00d7 in price.",
+             fontsize=17, color=CH.GOOD, fontweight="semibold")
+    footer(fig)
+    fig.savefig(path or (OUT / "task-and-results.png"), facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     gpages, rows = CH.load()
@@ -211,12 +252,14 @@ def main() -> None:
         r["derived"] = src.get(r["id"]) == "derived"
 
     square(passing, span, F)
+    task_and_results(passing, F)
     with PdfPages(OUT / "carousel.pdf") as pdf:
         slide_problem(pdf)
         slide_answer(pdf, passing, tied, span, F)
         slide_incumbent(pdf, old, cheap, F)
         slide_limits(pdf, F)
 
+    print("assets/social/task-and-results.png - task + answer, 1080x1350")
     print(f"assets/social/leaderboard-square.png - {len(passing)} models, {span:.1f}x price span")
     print(f"assets/social/carousel.pdf - 4 slides")
 
