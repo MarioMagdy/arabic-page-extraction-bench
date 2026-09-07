@@ -1,6 +1,6 @@
 # Results
 
-14 arms scored across 20 pages of a printed Arabic patristic edition. Generated from `results.json` — do not edit by hand.
+15 arms scored across 20 pages of a printed Arabic patristic edition. Generated from `results.json` — do not edit by hand.
 
 ## The answer — which model performs the task
 
@@ -22,6 +22,7 @@ Measured on **8 pages** (p15, p24, p25, p30, p36, p39, p52, p93) against `truth/
 | Kimi K3 | 96.2% | 93.8–97.9 | 97.8% | 100.0% | 88.9% | 99.9% | 83.3% | 100.0% | 84.4% | 88.9% | clears |
 | Gemini 2.5 Flash | 87.5% | 74.8–94.8 | 87.9% | 100.0% | 86.1% | 87.3% | 100.0% | 100.0% | 90.6% | 33.3% | body_accuracy 0.879 < 0.95 |
 | DeepSeek V4 Flash Vision | 86.4% | 73.5–95.0 | 91.3% | 100.0% | 50.0% | 80.5% | 50.0% | 89.3% | 75.0% | 50.8% | body_accuracy 0.913 < 0.95; footnote_f1 0.500 < 0.8; anchor_f1 0.500 < 0.8 |
+| Gemini 3.5 Flash Lite | 85.0% | 77.2–91.0 | 93.7% | 100.0% | 76.5% | 93.8% | 36.1% | 44.0% | 96.9% | 56.4% | body_accuracy 0.937 < 0.95; footnote_f1 0.765 < 0.8; anchor_f1 0.361 < 0.8 |
 | GLM 5.3 Flash | 84.9% | 72.0–93.9 | 76.1% | 100.0% | 66.7% | 91.6% | 48.5% | 80.6% | 90.6% | 66.7% | body_accuracy 0.761 < 0.95; footnote_f1 0.667 < 0.8; anchor_f1 0.485 < 0.8 |
 | Claude Haiku 4.5 | 78.0% | 70.0–84.0 | 88.1% | 100.0% | 77.8% | 95.5% | 16.7% | 13.9% | 87.5% | 77.8% | body_accuracy 0.881 < 0.95; footnote_f1 0.778 < 0.8; anchor_f1 0.167 < 0.8 |
 | GPT 5.6 Luna | 70.9% | 49.7–85.9 | 75.8% | 100.0% | 54.3% | 51.8% | 47.6% | 50.0% | 93.8% | 43.6% | body_accuracy 0.758 < 0.95; footnote_f1 0.543 < 0.8; anchor_f1 0.476 < 0.8 |
@@ -43,13 +44,14 @@ Everything below compares an arm to the *other arms*, over all 20 pages. It answ
 | Gemini 3.5 Flash · blocks | 20 | 98.76% | 97% | 100% | 92% | 0 | $0.00828 |
 | Gemini 3.7 Flash · blocks | 20 | 98.53% | 100% | 100% | 92% | 0 | $0.00383 |
 | Kimi K3 · blocks | 20 | 97.93% | 93% | 94% | 85% | 0 | $0.01542 |
-| GPT 5.6 Luna · blocks | 20 | 97.59% | 97% | 76% | 43% | 0 | $0.00096 |
+| GPT 5.6 Luna · blocks | 20 | 97.58% | 97% | 76% | 43% | 0 | $0.00096 |
 | Gemini 3.8 Flash · blocks | 20 | 96.73% | 100% | 100% | 92% | 0 | $0.00507 |
+| Gemini 3.5 Flash Lite · blocks | 20 | 95.97% | 100% | 100% | 70% | 0 | $0.00282 |
 | GPT 5.6 Terra · blocks | 20 | 95.54% | 97% | 94% | 87% | 0 | $0.01100 |
 | DeepSeek V4 Flash Vision · blocks | 20 | 93.77% | 87% | 88% | 86% | 0 | $0.00051 |
 | Claude Haiku 4.5 · blocks | 20 | 91.23% | 86% | 94% | 17% | 0 | $0.00507 |
 | GLM 5.3 Flash · blocks | 20 | 89.91% | 94% | 81% | 70% | 1 | $0.00062 |
-| Gemini 2.5 Flash · blocks | 20 | 89.52% | 99% | 94% | 81% | 0 | $0.00129 |
+| Gemini 2.5 Flash · blocks | 20 | 89.51% | 99% | 94% | 81% | 0 | $0.00129 |
 
 **Partial runs** — reported, never ranked:
 

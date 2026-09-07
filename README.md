@@ -6,7 +6,7 @@ I build a reading app over digitised Arabic patristic texts. Its OCR stage is a 
 reading page images, and an audit of 100 production pages found 365 defects, 75% of them
 structural: running heads and page numbers in the body, footnotes merged. So the request was
 rewritten to ask for the structure explicitly, and this repo is how the model behind it was chosen.
-14 arms across 13 models, one request, 20 pages, the same images for every arm.
+15 arms across 14 models, one request, 20 pages, the same images for every arm.
 
 ![Task score against price per page, one point per model](assets/accuracy-vs-cost.png)
 
@@ -26,8 +26,8 @@ page and every reading in the [interactive report](https://mariomagdy.github.io/
 | GPT 5.6 Terra | 96.7% | 94.9–98.0 | $0.01100 | $5.07 |
 | Kimi K3 | 96.2% | 93.8–97.9 | $0.01542 | $7.11 |
 
-Gemini 2.5 Flash, DeepSeek V4 Flash Vision, GLM 5.3 Flash, Claude Haiku 4.5, GPT 5.6 Luna and
-MiMo v2.5 fail one or more gates and are reported but not ranked.
+Gemini 2.5 Flash, DeepSeek V4 Flash Vision, Gemini 3.5 Flash Lite, GLM 5.3 Flash, Claude Haiku 4.5,
+GPT 5.6 Luna and MiMo v2.5 fail one or more gates and are reported but not ranked.
 
 **Every Gemini price in this table changed on 2026-09-07.** Three of the four Gemini rates were
 wrong, and the newest model looked expensive only because it was the one priced correctly. See
@@ -48,6 +48,10 @@ wrong, and the newest model looked expensive only because it was the one priced 
   fields (96.9% → 93.8%). The production run in
   [measured_production/FINDINGS.md](measured_production/FINDINGS.md) reported thinking-off as free,
   but it scored body accuracy alone, which is exactly the measure that does not move.
+- **Dropping to the Lite tier does not pay.** Gemini 3.5 Flash Lite comes closer than anything else
+  that fails, at 85.0% with body accuracy of 0.937 against a 0.95 gate, and it misses on notes
+  too (footnote F1 0.76). It reads the book for $1.30 against Gemini 3.7 Flash's $1.77. Saving
+  27% to fall below the bar is not a trade worth making for a corpus you only ingest once.
 - **The model production already shipped on is the cheapest Gemini here, and still the wrong one.**
   Gemini 2.5 Flash reads the book for $0.59, a third of 3.7 Flash's price. It also places every
   gold anchor correctly. Then it misreads the prose: 87.5%, failing the body-accuracy gate at
